@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
+import { Activity, CalendarIcon, CreditCard, DollarSign, User } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -9,6 +9,31 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { Card, CardContent } from "@/components/Card";
+import BarChart from "@/components/BarChart";
+
+const cardData = [
+    {
+      label: "Jumlah Aset",
+      amount: "123",
+      description: "+2 from last month",
+    },
+    {
+      label: "Total Aset Aktif",
+      amount: "120",
+      description: "+3 from last month",
+    },
+    {
+      label: "Aset Rusak",
+      amount: "3",
+      description: "+1 from last month",
+    },
+    {
+      label: "Aset Dipinjamkan",
+      amount: "10",
+      description: "+1 from last hour",
+    }
+  ];
 
 const FormSchema = z.object({
   dob: z.date({
@@ -17,6 +42,7 @@ const FormSchema = z.object({
 });
 
 export default function Dashboard() {
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
   });
@@ -82,6 +108,31 @@ export default function Dashboard() {
             </form>
           </Form>
         </div>
+        <section className="grid w-full grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4 mb-4">
+        {cardData.map((d, i) => (
+          <Card
+            key={i}
+            amount={d.amount}
+            description={d.description}
+            label={d.label}
+          />
+        ))}
+      </section>
+      <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-2">
+        <CardContent>
+            
+        <p className="p-4 font-semibold">Kategori Aset</p>
+        <BarChart />
+        </CardContent>
+        <CardContent className="flex justify-between gap-4">
+        <section>
+            <p className="text-base font-bold">Pengembalian Terdekat</p>
+            <p className="text-sm text-gray-400">
+              Terdapat 5 pengembalian terdekat
+            </p>
+          </section>
+        </CardContent>
+      </section>
       </div>
     </div>
   );

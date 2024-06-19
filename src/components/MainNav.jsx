@@ -40,7 +40,7 @@ export function MainNav(props) {
                 className={cn(
                     "text-sm font-medium transition-colors hover:text-primary",
                     route.active
-                    ? "text-black dark:text-white"
+                    ? "active-route"
                     : "text-muted-foreground"
                 )}
             >
