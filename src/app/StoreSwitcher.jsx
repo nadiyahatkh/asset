@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ChevronsUpDown, Store, User, LogOut } from "lucide-react";
+import Link from "next/link";
 
 export default function StoreSwitcher({ className, items = [] }) {
     const [open, setOpen] = useState(false);
@@ -31,10 +32,10 @@ export default function StoreSwitcher({ className, items = [] }) {
                         My Account
                     </div>
                     <hr className="my-1 border-gray-200" />
-                    <button className="flex items-center p-1 rounded-md hover:bg-gray-100">
+                    <Link href="./profil" className="flex items-center p-1 rounded-md hover:bg-gray-100">
                         <User className="mr-2 h-4 w-4" />
                         Profile
-                    </button>
+                    </Link>
                     <button className="flex items-center p-1 rounded-md hover:bg-gray-100">
                         <LogOut className="mr-2 h-4 w-4" />
                         Logout

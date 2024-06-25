@@ -79,3 +79,20 @@
 .active-route {
   color: #F9B421;
 }
+
+.profile {
+  width: 250.8px;
+  height: 36px;
+  top: 208px;
+  left: 40px;
+  padding: 8px 190.54px 8px 16px;
+  gap: 0px;
+  border-radius: 6px 6px 6px 6px;
+  opacity: 0px;
+  background: #F4F4F5;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: left;
+  
+}

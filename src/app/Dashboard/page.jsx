@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Card, CardContent } from "@/components/Card";
 import BarChart from "@/components/BarChart";
+import SalesCard from "@/components/SalesCard";
 
 const cardData = [
     {
@@ -32,6 +33,35 @@ const cardData = [
       label: "Aset Dipinjamkan",
       amount: "10",
       description: "+1 from last hour",
+    }
+  ];
+
+  const uesrSalesData = [
+    {
+      name: "Olivia Martin",
+      date: "21-10-2024",
+      merk: "Macbook Air 2020",
+      
+    },
+    {
+      name: "Jackson Lee",
+      date: "21-10-2024",
+      merk: "Macbook Air 2020"
+    },
+    {
+      name: "Isabella Nguyen",
+      date: "21-10-2024",
+      merk: "Macbook Air 2020"
+    },
+    {
+      name: "William Kim",
+      date: "21-10-2024",
+      merk: "Macbook Air 2020"
+    },
+    {
+      name: "Sofia Davis",
+      date: "21-10-2024",
+      merk: "Macbook Air 2020"
     }
   ];
 
@@ -131,6 +161,14 @@ export default function Dashboard() {
               Terdapat 5 pengembalian terdekat
             </p>
           </section>
+          {uesrSalesData.map((d, i) => (
+            <SalesCard
+              key={i}
+              date={d.date}
+              name={d.name}
+              merk={d.merk}
+            />
+          ))}
         </CardContent>
       </section>
       </div>

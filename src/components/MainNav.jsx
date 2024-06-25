@@ -16,19 +16,19 @@ export function MainNav(props) {
             active: pathname === `/Dashboard`
         },
         {
-            href: `/dataaset`,
+            href: `/DataAset`,
             label: `Data Aset`,
-            active: pathname === `/dataaset`
+            active: pathname === `/DataAset`
         },
         {
-            href: `/pengajuan`,
+            href: `/Pengajuan`,
             label: `Pengajuan`,
-            active: pathname === `/pengajuan`
+            active: pathname === `/Pengajuan`
         },
         {
-            href: `/mk`,
+            href: `/EmployeeManagement`,
             label: `Manajemen Karyawan`,
-            active: pathname === `/mk`
+            active: pathname === `/EmployeeManagement`
         }
     ]
  return(
