@@ -10,6 +10,68 @@ import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import { z } from "zod";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { columns } from "./columns";
+import { DataTable } from "@/components/dataAset-table/data-table";
+
+const data = [
+  {
+    id: "m5gr84i9",
+    kodeaset: "A-8782",
+    namaaset: "Hp Pav Pro",
+    kategori: "Handphone",
+    kondisi: "Baru",
+    harga: "Rp. 13.000.000",
+    tanggal: "21-06-2024",
+    expired: "21-07-2024",
+    status: "Dipinjam",
+  },
+  {
+    id: "3u1reuv4",
+    kodeaset: "A-8782",
+    namaaset: "Hp Pav Pro",
+    kategori: "Handphone",
+    kondisi: "Baru",
+    harga: "Rp. 13.000.000",
+    tanggal: "21-06-2024",
+    expired: "21-07-2024",
+    status: "Dipinjam",
+  },
+  {
+    id: "derv1ws0",
+    kodeaset: "A-8782",
+    namaaset: "Hp Pav Pro",
+    kategori: "Handphone",
+    kondisi: "Baru",
+    harga: "Rp. 13.000.000",
+    tanggal: "21-06-2024",
+    expired: "21-07-2024",
+    status: "Dipinjam",
+  },
+  {
+    id: "5kma53ae",
+    kodeaset: "A-8782",
+    namaaset: "Hp Pav Pro",
+    kategori: "Handphone",
+    kondisi: "Baru",
+    harga: "Rp. 13.000.000",
+    tanggal: "21-06-2024",
+    expired: "21-07-2024",
+    status: "Dipinjam",
+  },
+  {
+    id: "bhqecj4p",
+    kodeaset: "A-8782",
+    namaaset: "Hp Pav Pro",
+    kategori: "Handphone",
+    kondisi: "Baru",
+    harga: "Rp. 13.000.000",
+    tanggal: "21-06-2024",
+    expired: "21-07-2024",
+    status: "Dipinjam",
+  },
+]
 
 const FormSchema = z.object({
     dob: z.date({
@@ -18,6 +80,7 @@ const FormSchema = z.object({
   });
 
 export default function DataAset() {
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
       });
@@ -96,12 +159,17 @@ export default function DataAset() {
                 </Button>
                 {/* Add Asset Button */}
                 <Button variant="solid" className="" style={{ background: "#F9B421" }}>
-                    <Link href="./DataAset/TambahAset">
+                    <Link href="./asetData/addAset">
                         Tambah Aset
                     </Link>
                 </Button>
               </div>
             </div>
+            <Card className="shadow-md">
+              <div className="container mx-auto p-4">
+                <DataTable columns={columns} data={data} />
+              </div>
+            </Card>
           </div>
         </div>
     );

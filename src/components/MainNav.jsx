@@ -11,24 +11,24 @@ export function MainNav(props) {
 
     const routes = [
         {
-            href: `/Dashboard`,
+            href: `/dashboard`,
             label: `Dashboard`,
-            active: pathname === `/Dashboard`
+            active: pathname.startsWith(`/dashboard`)
         },
         {
-            href: `/DataAset`,
+            href: `/asetData`,
             label: `Data Aset`,
-            active: pathname === `/DataAset`
+            active: pathname.startsWith(`/asetData`)
         },
         {
-            href: `/Pengajuan`,
+            href: `/submission`,
             label: `Pengajuan`,
-            active: pathname === `/Pengajuan`
+            active: pathname.startsWith(`/submission`)
         },
         {
             href: `/EmployeeManagement`,
             label: `Manajemen Karyawan`,
-            active: pathname === `/EmployeeManagement`
+            active: pathname.startsWith(`/EmployeeManagement`)
         }
     ]
  return(

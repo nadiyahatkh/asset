@@ -34,7 +34,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CirclePlus } from 'lucide-react';
+import { CirclePlus, Settings2 } from 'lucide-react';
 
 export function DataTable({ columns, data }) {
   const [sorting, setSorting] = useState([]);
@@ -65,9 +65,9 @@ export function DataTable({ columns, data }) {
         <div className='flex items-center py-4'>
           <Input
             placeholder='Filter tasks...'
-            value={(table.getColumn('name')?.getFilterValue() ?? '')}
+            value={(table.getColumn('namaaset', 'kategori', 'pengaju')?.getFilterValue() ?? '')}
             onChange={event =>
-              table.getColumn('name')?.setFilterValue(event.target.value)
+              table.getColumn('namaaset', 'kategori', 'pengaju')?.setFilterValue(event.target.value)
             }
             className='max-w-sm'
           />
@@ -76,18 +76,12 @@ export function DataTable({ columns, data }) {
             <button className="flex items-center ml-4 py-2 px-3 rounded-lg border-2 border-dashed relative">
                 <CirclePlus className="h-4 w-4 mr-2" /> 
                 <span className='text-sm font-semibold'>Status</span>
-                <span className="flex-grow ml-3"></span> {/* Untuk memberi ruang kosong di antara teks */}
-                <span className="border-l border-gray-400 h-5 absolute left-[50%] transform translate-x-[-50%]"></span>
-                <div className="ml-2 text-sm font-semibold">disetujui</div>
             </button>
         </div>
         <div className="">
             <button className="flex items-center ml-4 py-2 px-3 rounded-lg border-2 border-dashed relative">
                 <CirclePlus className="h-4 w-4 mr-2" /> 
                 <span className='text-sm font-semibold'>Tipe</span>
-                <span className="flex-grow ml-3"></span> {/* Untuk memberi ruang kosong di antara teks */}
-                <span className="border-l border-gray-400 h-5 absolute left-[50%] transform translate-x-[-50%]"></span>
-                <div className="ml-8 text-sm font-semibold">Peminjaman</div>
             </button>
         </div>
 
@@ -97,7 +91,7 @@ export function DataTable({ columns, data }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='outline' className='ml-auto'>
-              View
+             <Settings2 className='h-4 w-4 mr-2'/> View
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
@@ -142,7 +136,7 @@ export function DataTable({ columns, data }) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel()?.rows?.length ? (
               table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
@@ -173,23 +167,29 @@ export function DataTable({ columns, data }) {
       </div>
 
       {/* Pagination */}
-      <div className='flex items-center justify-end space-x-2 py-4'>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </>
   );

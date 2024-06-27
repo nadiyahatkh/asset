@@ -10,51 +10,51 @@ import {
 
 const data = [
   {
-    name: "Jan",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Feb",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Mar",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Apr",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "May",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Jun",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Jul",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Aug",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Sep",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Oct",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Nov",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   },
   {
-    name: "Dec",
+    name: "Kategori",
     total: Math.floor(Math.random() * 5000) + 1000
   }
 ];

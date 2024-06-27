@@ -1,12 +1,14 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
+import { CloudDownload } from "lucide-react";
 
-export default function AddAset(){
-    return(
+export default function UpdateAset(){
+    return (
         <div className="py-4">
             <div className="w-full max-w-7xl mx-auto">
-                <p className="title font-manrope font-bold text-2xl leading-10">Tambah Aset</p>
+                <p className="title font-manrope font-bold text-2xl leading-10">Ubah Aset</p>
                 <p className="title text-muted-foreground text-sm mb-5">Here's a list of your assets.</p>
                 <hr className="mb-4" />
                 <div className="flex items-start">
@@ -93,6 +95,15 @@ export default function AddAset(){
                                     <SelectItem value="Tidak Layak Pakai">Tidak Layak Pakai</SelectItem>
                                 </SelectContent>
                             </Select>
+                        </div>
+                        <div className="mb-4">
+                            <Label className="block text-sm mb-2">Gambar Aset</Label>
+                            <div className="border-dashed border-2 rounded-lg flex flex-col items-center justify-center p-8">
+                                <CloudDownload className="h-4 w-4 mb-4" />
+                                <div className="text-sm font-semibold mb-2">Choose a file or drag & drop it here</div>
+                                <div className="text-muted-foreground text-xs mb-5">JEPG, PNG up to 5 MB</div>
+                                <Button variant="outline" className="mb-4">Browse File</Button>
+                            </div>
                         </div>
                         <div className="flex justify-end">
                             <button className="px-4 py-2 font-semibold rounded-lg" style={{ background: "#F9B421" }}>Tambah Aset</button>

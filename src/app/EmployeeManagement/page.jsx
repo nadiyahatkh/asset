@@ -10,6 +10,52 @@ import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import { z } from "zod";
 import Link from "next/link";
+import { DataTable } from "@/components/managemenKaryawan-table/data-table";
+import { columns } from "./columns";
+import { Card } from "@/components/ui/card";
+
+const data = [
+  {
+    id: "1",
+    namakaryawan: "Olivia",
+    nip: 28932,
+    email: "olivia@gmail.com",
+    departemen: "Human Resources",
+    posisi: "Head of Engineering",
+  },
+  {
+    id: "2",
+    namakaryawan: "Nicolas",
+    nip: 28932,
+    email: "Nicolas@gmail.com",
+    departemen: "Human Resources",
+    posisi: "Head of Engineering",
+  },
+  {
+    id: "3",
+    namakaryawan: "Jefri",
+    nip: 28932,
+    email: "Jefri@gmail.com",
+    departemen: "Human Resources",
+    posisi: "Head of Engineering",
+  },
+  {
+    id: "4",
+    namakaryawan: "Audia",
+    nip: 28932,
+    email: "Audia@gmail.com",
+    departemen: "Human Resources",
+    posisi: "Head of Engineering",
+  },
+  {
+    id: "5",
+    namakaryawan: "Angga",
+    nip: 28932,
+    email: "Angga@gmail.com",
+    departemen: "Human Resources",
+    posisi: "Head of Engineering",
+  },
+]
 
 const FormSchema = z.object({
     dob: z.date({
@@ -92,12 +138,17 @@ export default function EmployeeManagement() {
                 </Form>
                 {/* Add Asset Button */}
                 <Button variant="solid" className="" style={{ background: "#F9B421" }}>
-                    <Link href="./EmployeeManagement/AddEmployee">
+                    <Link href="./EmployeeManagement/addEmployee">
                         Tambah Karyawan
                     </Link>
                 </Button>
               </div>
             </div>
+            <Card className="shadow-md">
+              <div className="container mx-auto p-4">
+                <DataTable columns={columns} data={data} />
+              </div>
+            </Card>
           </div>
         </div>
     );

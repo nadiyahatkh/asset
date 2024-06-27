@@ -1,5 +1,4 @@
 'use client'
-import { User, columns } from './columns'
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -13,15 +12,56 @@ import { z } from "zod";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { useEffect, useState } from 'react';
-import { DataTable } from '@/components/data-table';
+import { DataTable } from "@/components/pengajuan-table/data-table";
+import { columns } from "./columns";
 
-
-
-function getUsers() {
-  return fetch('https://64a6f5fc096b3f0fcc80e3fa.mockapi.io/api/users')
-    .then(res => res.json())
-    .then(data => data);
-}
+const data = [
+  {
+    id: "m5gr84i9",
+    namaaset: "Mackbook Air M1 2020",
+    kategori: "Laptop",
+    tanggalpengajuan: "22-02-2023",
+    tanggalmasahabis: "22-02-2023",
+    pengaju: "Olivia",
+    tipe: "peminjaman",
+  },
+  {
+    id: "3u1reuv4",
+    namaaset: "Hp Pav Pro",
+    kategori: "Handphone",
+    tanggalpengajuan: "22-02-2023",
+    tanggalmasahabis: "22-02-2023",
+    pengaju: "Olivia",
+    tipe: "peminjaman",
+  },
+  {
+    id: "derv1ws0",
+    namaaset: "iPhone 13",
+    kategori: "Handphone",
+    tanggalpengajuan: "22-02-2023",
+    tanggalmasahabis: "22-02-2023",
+    pengaju: "Olivia",
+    tipe: "peminjaman",
+  },
+  {
+    id: "5kma53ae",
+    namaaset: "Macbook Pro 13",
+    kategori: "Laptop",
+    tanggalpengajuan: "22-02-2023",
+    tanggalmasahabis: "22-02-2023",
+    pengaju: "Olivia",
+    tipe: "peminjaman",
+  },
+  {
+    id: "bhqecj4p",
+    namaaset: "Samsung Galaxy Fold Z 3 ",
+    kategori: "Handphone",
+    tanggalpengajuan: "22-02-2023",
+    tanggalmasahabis: "22-02-2023",
+    pengaju: "Olivia",
+    tipe: "peminjaman",
+  },
+]
 
 
 const FormSchema = z.object({
@@ -31,14 +71,6 @@ const FormSchema = z.object({
   });
 
 export default function Pengajuan() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    getUsers().then(fetchedData => setData(fetchedData));
-  }, []);
-
-
-
     const form = useForm({
         resolver: zodResolver(FormSchema),
       });
@@ -62,7 +94,7 @@ export default function Pengajuan() {
               <div>
                 <p className="title font-manrope font-bold text-2xl leading-10">Pengajuan</p>
                 <p className="text-muted-foreground text-sm">
-                    Here's a list of your employe.
+                    Here's a list of your asset.
                 </p>
               </div>
               {/* Right section */}

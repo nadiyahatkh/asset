@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import { MoreHorizontal, ArrowUpDown, PencilLine, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
+import Link from 'next/link';
 
 export const columns = [
     {
@@ -39,78 +40,65 @@ export const columns = [
         enableHiding: false,
       },
   {
-    accessorKey: 'assetName',
+    accessorKey: 'namakaryawan',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Nama Aset
+          Nama Karyawan
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
     }
   },
   {
-    accessorKey: 'kategori',
-    header: 'Kategori'
+    accessorKey: 'nip',
+    header: 'NIP'
   },
   {
-    accessorKey: 'kondisi',
-    header: 'Kondisi'
+    accessorKey: 'email',
+    header: 'Email'
   },
   {
-    accessorKey: 'price',
-    header: 'Harga'
+    accessorKey: 'departemen',
+    header: 'Departemen',
+    // cell: ({ row }) => {
+    //   const date = new Date(row.getValue('tanggalmasahabis'));
+    //   const formatted = date.toLocaleDateString();
+    //   return <div className='font-medium'>{formatted}</div>;
+    // }
   },
   {
-    accessorKey: 'date',
-    header: 'Tanggal'
-  },
-  {
-    accessorKey: 'lastSeen',
-    header: 'Last seen',
-    cell: ({ row }) => {
-      const date = new Date(row.getValue('lastSeen'));
-      const formatted = date.toLocaleDateString();
-      return <div className='font-medium'>{formatted}</div>;
-    }
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status'
-  },
-  {
-    accessorKey: 'document',
-    header: 'Document'
+    accessorKey: 'posisi',
+    header: 'Posisi'
   },
   {
     accessorKey: 'Aksi',
-    id: 'actions',
+    id: 'aksi',
     cell: ({ row }) => {
       const user = row.original;
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <MoreHorizontal className='h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator /> */}
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Hapus</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant='ghost' className='h-4 w-4 p-0'>
+            <span className='sr-only'>Open menu</span>
+            <MoreHorizontal className='h-4 w-4' />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end'>
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <PencilLine className='h-4 w-4 mr-2'/> Ubah
+          </DropdownMenuItem>
+          <DropdownMenuItem className="text-red-500">
+            <Trash2 className='h-4 w-4 mr-2' /> Hapus
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       );
     }
   }

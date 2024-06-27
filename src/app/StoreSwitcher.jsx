@@ -21,7 +21,8 @@ export default function StoreSwitcher({ className, items = [] }) {
                     aria-label="Select a store"
                     className={cn("w-[200px] justify-between", className)}
                 >
-                    <Store className="mr-2 h-4 w-4" />
+                    <img src="maskgroup.png" alt="Profile Image" className="w-4 h-4 rounded-full mr-2" />
+                    {/* <Store className="mr-2 h-4 w-4" /> */}
                     Alicia
                     <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -32,7 +33,7 @@ export default function StoreSwitcher({ className, items = [] }) {
                         My Account
                     </div>
                     <hr className="my-1 border-gray-200" />
-                    <Link href="./profil" className="flex items-center p-1 rounded-md hover:bg-gray-100">
+                    <Link href="./profile" className="flex items-center p-1 rounded-md hover:bg-gray-100">
                         <User className="mr-2 h-4 w-4" />
                         Profile
                     </Link>
