@@ -26,6 +26,7 @@ const data = [
     tanggal: "21-06-2024",
     expired: "21-07-2024",
     status: "Dipinjam",
+    image: "maskgroup.png"
   },
   {
     id: "3u1reuv4",
@@ -37,6 +38,7 @@ const data = [
     tanggal: "21-06-2024",
     expired: "21-07-2024",
     status: "Dipinjam",
+    image: "maskgroup.png"
   },
   {
     id: "derv1ws0",
@@ -48,6 +50,7 @@ const data = [
     tanggal: "21-06-2024",
     expired: "21-07-2024",
     status: "Dipinjam",
+    image: "maskgroup.png"
   },
   {
     id: "5kma53ae",
@@ -59,6 +62,7 @@ const data = [
     tanggal: "21-06-2024",
     expired: "21-07-2024",
     status: "Dipinjam",
+    image: "maskgroup.png"
   },
   {
     id: "bhqecj4p",
@@ -70,6 +74,7 @@ const data = [
     tanggal: "21-06-2024",
     expired: "21-07-2024",
     status: "Dipinjam",
+    image: "maskgroup.png"
   },
 ]
 
@@ -159,7 +164,7 @@ export default function DataAset() {
                 </Button>
                 {/* Add Asset Button */}
                 <Button variant="solid" className="" style={{ background: "#F9B421" }}>
-                    <Link href="./asetData/addAset">
+                    <Link href="./asetData/add-aset">
                         Tambah Aset
                     </Link>
                 </Button>

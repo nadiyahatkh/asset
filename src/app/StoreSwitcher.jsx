@@ -4,11 +4,16 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { ChevronsUpDown, Store, User, LogOut } from "lucide-react";
+import { ChevronsUpDown, Store, User, LogOut, LogIn } from "lucide-react";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 
 export default function StoreSwitcher({ className, items = [] }) {
     const [open, setOpen] = useState(false);
+    const { status } = useSession();
+    const router = useRouter()
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -37,10 +42,18 @@ export default function StoreSwitcher({ className, items = [] }) {
                         <User className="mr-2 h-4 w-4" />
                         Profile
                     </Link>
-                    <button className="flex items-center p-1 rounded-md hover:bg-gray-100">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Logout
-                    </button>
+                    {status === 'authenticated' ? (
+                        <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={() => signOut()}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            LogOut
+                         </button>
+                    ) :(
+                        <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={() => router.push("/login")}>
+                            <LogIn className="mr-2 h-4 w-4" />
+                            LogIn
+                         </button>
+                    )}
+                    
                 </div>
             </PopoverContent>
         </Popover>

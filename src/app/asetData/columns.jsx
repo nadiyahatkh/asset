@@ -15,6 +15,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Card, CardContent } from '@/components/ui/card';
+import React, { useRef } from 'react';
+import Autoplay from "embla-carousel-autoplay"
+
+
+  
 
 export const columns = [
     {
@@ -94,11 +102,38 @@ export const columns = [
       const user = row.original;
 
       return (
+        <Dialog>
+          <DialogTrigger>
             <Button variant='ghost' className='h-4 w-4 p-0' style={{ color: "#F9B421" }}>
-                <Link href="/">
-                    Lihat
-                </Link>
+              Lihat
             </Button>
+          </DialogTrigger>
+          <DialogContent className="flex items-center justify-center">
+            <div className="w-full max-w-xs">
+              <Carousel
+                plugins={[Autoplay({ delay: 2000 })]}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {user.image.split(',').map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <Card>
+                          <CardContent className="flex aspect-square items-center justify-center p-0">
+                            <img src={image} alt={`Asset Image ${index}`} className="w-full h-full object-cover" />
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          </DialogContent>
+        </Dialog>
+
       );
     }
   },
@@ -120,7 +155,7 @@ export const columns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-            <Link href="./asetData/updateAset" className="flex items-center p-1 rounded-md hover:bg-gray-100">
+            <Link href="./asetData/update-aset" className="flex items-center p-1 rounded-md hover:bg-gray-100">
                         <PencilLine className="mr-2 h-4 w-4" />
                         Ubah
               </Link>
