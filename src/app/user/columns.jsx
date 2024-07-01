@@ -16,8 +16,13 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useState } from 'react';
+import { removeApplicant } from '../apiService';
+import { useSession } from 'next-auth/react';
+
 
 export const columns = [
+  
     {
         id: "select",
         header: ({ table }) => (
@@ -41,7 +46,7 @@ export const columns = [
         enableHiding: false,
       },
   {
-    accessorKey: 'namaaset',
+    accessorKey: 'asset.asset_name',
     header: ({ column }) => {
       return (
         <Button
@@ -55,24 +60,22 @@ export const columns = [
     }
   },
   {
-    accessorKey: 'kategori',
-    header: 'Kategori'
+    accessorKey: 'asset.category.name',
+    header: 'Kategori',
+    cell: info => info.row.original.asset.category.name,
   },
   {
-    accessorKey: 'tanggalpengajuan',
-    header: 'Tanggal Pengajuan'
+    accessorKey: 'submission_date',
+    header: 'Tanggal Pengajuan',
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   },
   {
-    accessorKey: 'tanggalmasahabis',
-    header: 'Tanggal Masa Habis',
-    // cell: ({ row }) => {
-    //   const date = new Date(row.getValue('tanggalmasahabis'));
-    //   const formatted = date.toLocaleDateString();
-    //   return <div className='font-medium'>{formatted}</div>;
-    // }
+    accessorKey: 'expiry_date',
+    header: 'Tanggal Kedaluwarsa',
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   },
   {
-    accessorKey: 'tipe',
+    accessorKey: 'type',
     header: 'Tipe'
   },
   {
@@ -82,14 +85,29 @@ export const columns = [
   {
     accessorKey: 'Aksi',
     id: 'aksi',
-    cell: ({ row }) => {
-      const user = row.original;
+    cell: ({ row, data }) => {
+      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+      const { data: session } = useSession();
+      const token = session?.user?.token;
+
+      const handleDelete = async () => {
+        try {
+          const idToDelete = row.original.id;
+          console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
+          await removeApplicant({ id: idToDelete, token: token });
+          setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+          // Jika berhasil, Anda mungkin perlu memuat ulang data setelah penghapusan
+          // data();
+        } catch (error) {
+          console.error('Gagal menghapus data:', error);
+        }
+      };
 
       return (
-            <DropdownMenu>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
+              <span className='sr-only'>Buka menu</span>
               <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
@@ -97,40 +115,29 @@ export const columns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-            <Link href="./user/update-submission" className="flex items-center p-1 rounded-md hover:bg-gray-100">
-                        <PencilLine className="mr-2 h-4 w-4" />
-                        Ubah
+              <Link href="./user/update-submission" className="flex items-center p-1 rounded-md hover:bg-gray-100">
+                <PencilLine className="mr-2 h-4 w-4" />
+                Ubah
               </Link>
-              {/* <Link href="./asetData/updateAset">
-              <p><PencilLine className='h-4 w-4 mr-2'/> Ubah</p>
-              </Link> */}
             </DropdownMenuItem>
-            <AlertDialog>
-                <AlertDialogTrigger>
-                <DropdownMenuItem className="text-red-500">
-                <Trash2 className='h-4 w-4 mr-2' /> Hapus
-                </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the
-                    the data from the server.
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>
-                    Delete
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-            {/* <DropdownMenuItem className="text-red-500">
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus
-            </DropdownMenuItem> */}
+            </DropdownMenuItem>
           </DropdownMenuContent>
+          <AlertDialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data secara permanen dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenu>
       );
     }
