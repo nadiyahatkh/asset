@@ -96,8 +96,6 @@ export const columns = [
           console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
           await removeApplicant({ id: idToDelete, token: token });
           setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
-          // Jika berhasil, Anda mungkin perlu memuat ulang data setelah penghapusan
-          // data();
         } catch (error) {
           console.error('Gagal menghapus data:', error);
         }

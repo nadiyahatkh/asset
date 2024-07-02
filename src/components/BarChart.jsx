@@ -8,80 +8,25 @@ import {
   Bar
 } from "recharts";
 
-const data = [
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
-  },
-  {
-    name: "Kategori",
-    total: Math.floor(Math.random() * 5000) + 1000
+const formatYAxisTick = (value) => {
+  if (value >= 1000000) {
+    return `${value / 1000000} Juta`; // Mengonversi ke jutaan
+  } else if (value >= 1000) {
+    return `${value / 1000} Ribu`; // Mengonversi ke ribuan
+  } else {
+    return `${value}`;
   }
-];
+};
 
-export default function BarChart() {
-  // Function to format ticks on YAxis
-  const formatYAxisTick = (value) => {
-    if (value >= 100000000) {
-      return `${value / 1000000}M`; // Convert to millions
-    } else if (value >= 10000000) {
-      return `${value / 1000000}M`;
-    } else if (value >= 1000000) {
-      return `${value / 1000000}M`;
-    } else if (value >= 100000) {
-      return `${value / 1000}K`; // Convert to thousands
-    } else if (value >= 10000) {
-      return `${value / 1000}K`;
-    } else if (value >= 1000) {
-      return `${value / 1000}K`;
-    } else {
-      return `${value}`;
-    }
-  };
+export default function BarChart({ data }) {
+  const formattedData = data.map(item => ({
+    name: item.category,
+    total: item.total_price,
+  }));
 
   return (
     <ResponsiveContainer width={"100%"} height={350}>
-      <BarGraph data={data}>
+      <BarGraph data={formattedData}>
         <XAxis
           dataKey={"name"}
           tickLine={false}
@@ -95,7 +40,7 @@ export default function BarChart() {
           stroke="#888888"
           fontSize={12}
           tickFormatter={formatYAxisTick}
-          domain={[0, 'auto']} // Adjust the domain as per your data
+          domain={[0, 'auto']}
         />
         <Bar dataKey={"total"} radius={[4, 4, 0, 0]} fill="#F9B421" />
       </BarGraph>

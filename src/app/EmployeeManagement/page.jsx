@@ -13,49 +13,10 @@ import Link from "next/link";
 import { DataTable } from "@/components/managemenKaryawan-table/data-table";
 import { columns } from "./columns";
 import { Card } from "@/components/ui/card";
+import { fetchEmployee } from "../apiService";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-const data = [
-  {
-    id: "1",
-    namakaryawan: "Olivia",
-    nip: 28932,
-    email: "olivia@gmail.com",
-    departemen: "Human Resources",
-    posisi: "Head of Engineering",
-  },
-  {
-    id: "2",
-    namakaryawan: "Nicolas",
-    nip: 28932,
-    email: "Nicolas@gmail.com",
-    departemen: "Human Resources",
-    posisi: "Head of Engineering",
-  },
-  {
-    id: "3",
-    namakaryawan: "Jefri",
-    nip: 28932,
-    email: "Jefri@gmail.com",
-    departemen: "Human Resources",
-    posisi: "Head of Engineering",
-  },
-  {
-    id: "4",
-    namakaryawan: "Audia",
-    nip: 28932,
-    email: "Audia@gmail.com",
-    departemen: "Human Resources",
-    posisi: "Head of Engineering",
-  },
-  {
-    id: "5",
-    namakaryawan: "Angga",
-    nip: 28932,
-    email: "Angga@gmail.com",
-    departemen: "Human Resources",
-    posisi: "Head of Engineering",
-  },
-]
 
 const FormSchema = z.object({
     dob: z.date({
@@ -64,6 +25,25 @@ const FormSchema = z.object({
   });
 
 export default function EmployeeManagement() {
+
+  const [data, setData] = useState([]);
+  const { data: session } = useSession();
+  const token = session?.user?.token;
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const employeeData = await fetchEmployee({ token });
+        setData(employeeData.data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+    if (token) {
+      loadData();
+    }
+  }, [token]);
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
       });

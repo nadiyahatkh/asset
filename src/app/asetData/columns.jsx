@@ -18,8 +18,11 @@ import Link from 'next/link';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Autoplay from "embla-carousel-autoplay"
+import { useSession } from 'next-auth/react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { removeAssetData } from '../apiService';
 
 
   
@@ -49,11 +52,11 @@ export const columns = [
       },
       
       {
-        accessorKey: 'kodeaset',
+        accessorKey: 'asset_code',
         header: 'Kode Aset'
       },
   {
-    accessorKey: 'namaaset',
+    accessorKey: 'asset_name',
     header: ({ column }) => {
       return (
         <Button
@@ -67,29 +70,26 @@ export const columns = [
     }
   },
   {
-    accessorKey: 'kategori',
+    accessorKey: 'category',
     header: 'Kategori'
   },
   {
-    accessorKey: 'kondisi',
+    accessorKey: 'item_condition',
     header: 'Kondisi'
   },
   {
-    accessorKey: 'harga',
+    accessorKey: 'price',
     header: 'Harga'
   },
   {
-    accessorKey: 'tanggal',
-    header: 'Tanggal'
+    accessorKey: 'received_date',
+    header: 'Tanggal',
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   },
   {
-    accessorKey: 'expired',
+    accessorKey: 'expiration_date',
     header: 'Expired',
-    // cell: ({ row }) => {
-    //   const date = new Date(row.getValue('lastSeen'));
-    //   const formatted = date.toLocaleDateString();
-    //   return <div className='font-medium'>{formatted}</div>;
-    // }
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   },
   {
     accessorKey: 'status',
@@ -100,6 +100,9 @@ export const columns = [
     header: 'Document',
     cell: ({ row }) => {
       const user = row.original;
+
+      // Pastikan user.image adalah array sebelum menggunakan split
+      const images = Array.isArray(user.image) ? user.image : [];
 
       return (
         <Dialog>
@@ -115,17 +118,17 @@ export const columns = [
                 className="w-full"
               >
                 <CarouselContent>
-                  {user.image.split(',').map((image, index) => (
-                    <CarouselItem key={index}>
-                      <div className="p-1">
-                        <Card>
-                          <CardContent className="flex aspect-square items-center justify-center p-0">
-                            <img src={image} alt={`Asset Image ${index}`} className="w-full h-full object-cover" />
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </CarouselItem>
-                  ))}
+                {images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-square items-center justify-center p-0">
+                          <img src={image} alt={`Asset Image ${index}`} className="w-full h-full object-cover" />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
@@ -141,7 +144,20 @@ export const columns = [
     accessorKey: 'Aksi',
     id: 'actions',
     cell: ({ row }) => {
-      const user = row.original;
+      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+      const { data: session } = useSession();
+      const token = session?.user?.token;
+
+      const handleDelete = async () => {
+        try {
+          const idToDelete = row.original.id;
+          console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
+          await removeAssetData({ id: idToDelete, token: token });
+          setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+        } catch (error) {
+          console.error('Gagal menghapus data:', error);
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -163,10 +179,24 @@ export const columns = [
               <p><PencilLine className='h-4 w-4 mr-2'/> Ubah</p>
               </Link> */}
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-red-500">
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus
             </DropdownMenuItem>
           </DropdownMenuContent>
+          <AlertDialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data secara permanen dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenu>
       );
     }

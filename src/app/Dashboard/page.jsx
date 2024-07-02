@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Activity, CalendarIcon, CreditCard, DollarSign, User } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,58 +12,37 @@ import { format } from "date-fns";
 import { Card, CardContent } from "@/components/Card";
 import BarChart from "@/components/BarChart";
 import SalesCard from "@/components/SalesCard";
+import { fetchDashboard } from "../apiService";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-const cardData = [
-    {
-      label: "Jumlah Aset",
-      amount: "123",
-      description: "+2 from last month",
-    },
-    {
-      label: "Total Aset Aktif",
-      amount: "120",
-      description: "+3 from last month",
-    },
-    {
-      label: "Aset Rusak",
-      amount: "3",
-      description: "+1 from last month",
-    },
-    {
-      label: "Aset Dipinjamkan",
-      amount: "10",
-      description: "+1 from last hour",
-    }
-  ];
-
-  const uesrSalesData = [
-    {
-      name: "Olivia Martin",
-      date: "21-10-2024",
-      merk: "Macbook Air 2020",
-      
-    },
-    {
-      name: "Jackson Lee",
-      date: "21-10-2024",
-      merk: "Macbook Air 2020"
-    },
-    {
-      name: "Isabella Nguyen",
-      date: "21-10-2024",
-      merk: "Macbook Air 2020"
-    },
-    {
-      name: "William Kim",
-      date: "21-10-2024",
-      merk: "Macbook Air 2020"
-    },
-    {
-      name: "Sofia Davis",
-      date: "21-10-2024",
-      merk: "Macbook Air 2020"
-    }
-  ];
+const uesrSalesData = [
+  {
+    name: "Olivia Martin",
+    date: "21-10-2024",
+    merk: "Macbook Air 2020",
+  },
+  {
+    name: "Jackson Lee",
+    date: "21-10-2024",
+    merk: "Macbook Air 2020"
+  },
+  {
+    name: "Isabella Nguyen",
+    date: "21-10-2024",
+    merk: "Macbook Air 2020"
+  },
+  {
+    name: "William Kim",
+    date: "21-10-2024",
+    merk: "Macbook Air 2020"
+  },
+  {
+    name: "Sofia Davis",
+    date: "21-10-2024",
+    merk: "Macbook Air 2020"
+  }
+];
 
 const FormSchema = z.object({
   dob: z.date({
@@ -72,6 +51,49 @@ const FormSchema = z.object({
 });
 
 export default function Dashboard() {
+  const [cardData, setCardData] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const { data: session } = useSession();
+  const token = session?.user?.token;
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchDashboard({ token });
+        setCardData([
+          {
+            label: "Jumlah Aset",
+            amount: data.total_assets.toString(),
+            description: "+2 dari bulan lalu",
+          },
+          {
+            label: "Total Aset Aktif",
+            amount: data.total_active_assets.toString(),
+            description: "+3 dari bulan lalu",
+          },
+          {
+            label: "Aset Rusak",
+            amount: data.total_damaged_assets.toString(),
+            description: "+1 dari bulan lalu",
+          },
+          {
+            label: "Aset Dipinjamkan",
+            amount: data.total_loaned_assets.toString(),
+            description: "+1 dari jam terakhir",
+          }
+        ]);
+        setChartData(data.asset_category.map(category => ({
+          category: category.category,
+          total_price: category.total_price,
+        })));
+      } catch (error) {
+        console.error('Gagal mengambil data:', error);
+      }
+    };
+    if (token) {
+      loadData();
+    }
+  }, [token]);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -139,38 +161,37 @@ export default function Dashboard() {
           </Form>
         </div>
         <section className="grid w-full grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4 mb-4">
-        {cardData.map((d, i) => (
-          <Card
-            key={i}
-            amount={d.amount}
-            description={d.description}
-            label={d.label}
-          />
-        ))}
-      </section>
-      <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-2">
-        <CardContent>
-            
-        <p className="p-4 font-semibold">Kategori Aset</p>
-        <BarChart />
-        </CardContent>
-        <CardContent className="flex justify-between gap-4">
-        <section>
-            <p className="text-base font-bold">Pengembalian Terdekat</p>
-            <p className="text-sm text-gray-400">
-              Terdapat 5 pengembalian terdekat
-            </p>
-          </section>
-          {uesrSalesData.map((d, i) => (
-            <SalesCard
+          {cardData.map((d, i) => (
+            <Card
               key={i}
-              date={d.date}
-              name={d.name}
-              merk={d.merk}
+              amount={d.amount}
+              description={d.description}
+              label={d.label}
             />
           ))}
-        </CardContent>
-      </section>
+        </section>
+        <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-2">
+          <CardContent>
+            <p className="p-4 font-semibold">Kategori Aset</p>
+            <BarChart data={chartData} />
+          </CardContent>
+          <CardContent className="flex justify-between gap-4">
+            <section>
+              <p className="text-base font-bold">Pengembalian Terdekat</p>
+              <p className="text-sm text-gray-400">
+                Terdapat 5 pengembalian terdekat
+              </p>
+            </section>
+            {uesrSalesData.map((d, i) => (
+              <SalesCard
+                key={i}
+                date={d.date}
+                name={d.name}
+                merk={d.merk}
+              />
+            ))}
+          </CardContent>
+        </section>
       </div>
     </div>
   );

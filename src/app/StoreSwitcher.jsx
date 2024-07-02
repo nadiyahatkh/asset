@@ -14,7 +14,7 @@ export default function StoreSwitcher({ className, items = [] }) {
     const { status, data: session } = useSession();
     const router = useRouter();
     const isAdmin = session?.user?.role === 1 ;  // Assuming role is stored in session
-    const profileImage = session?.user?.image || 'default_profile_image_url';
+    const profileImage = session?.user?.foto || 'default_profile_image_url';
     const handleSignOut = () => {
         signOut({ callbackUrl: '/login' }); // Redirect to login page after sign out
     };

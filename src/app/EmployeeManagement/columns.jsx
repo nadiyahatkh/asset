@@ -40,7 +40,7 @@ export const columns = [
         enableHiding: false,
       },
   {
-    accessorKey: 'namakaryawan',
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
@@ -54,7 +54,7 @@ export const columns = [
     }
   },
   {
-    accessorKey: 'nip',
+    accessorKey: 'employee.nip',
     header: 'NIP'
   },
   {
@@ -62,7 +62,7 @@ export const columns = [
     header: 'Email'
   },
   {
-    accessorKey: 'departemen',
+    accessorKey: 'employee.department.name',
     header: 'Departemen',
     // cell: ({ row }) => {
     //   const date = new Date(row.getValue('tanggalmasahabis'));
@@ -71,7 +71,7 @@ export const columns = [
     // }
   },
   {
-    accessorKey: 'posisi',
+    accessorKey: 'employee.position.name',
     header: 'Posisi'
   },
   {

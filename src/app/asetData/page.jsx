@@ -14,69 +14,10 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "@/components/dataAset-table/data-table";
+import { useSession } from "next-auth/react";
+import { fetchAssetData } from "../apiService";
 
-const data = [
-  {
-    id: "m5gr84i9",
-    kodeaset: "A-8782",
-    namaaset: "Hp Pav Pro",
-    kategori: "Handphone",
-    kondisi: "Baru",
-    harga: "Rp. 13.000.000",
-    tanggal: "21-06-2024",
-    expired: "21-07-2024",
-    status: "Dipinjam",
-    image: "maskgroup.png"
-  },
-  {
-    id: "3u1reuv4",
-    kodeaset: "A-8782",
-    namaaset: "Hp Pav Pro",
-    kategori: "Handphone",
-    kondisi: "Baru",
-    harga: "Rp. 13.000.000",
-    tanggal: "21-06-2024",
-    expired: "21-07-2024",
-    status: "Dipinjam",
-    image: "maskgroup.png"
-  },
-  {
-    id: "derv1ws0",
-    kodeaset: "A-8782",
-    namaaset: "Hp Pav Pro",
-    kategori: "Handphone",
-    kondisi: "Baru",
-    harga: "Rp. 13.000.000",
-    tanggal: "21-06-2024",
-    expired: "21-07-2024",
-    status: "Dipinjam",
-    image: "maskgroup.png"
-  },
-  {
-    id: "5kma53ae",
-    kodeaset: "A-8782",
-    namaaset: "Hp Pav Pro",
-    kategori: "Handphone",
-    kondisi: "Baru",
-    harga: "Rp. 13.000.000",
-    tanggal: "21-06-2024",
-    expired: "21-07-2024",
-    status: "Dipinjam",
-    image: "maskgroup.png"
-  },
-  {
-    id: "bhqecj4p",
-    kodeaset: "A-8782",
-    namaaset: "Hp Pav Pro",
-    kategori: "Handphone",
-    kondisi: "Baru",
-    harga: "Rp. 13.000.000",
-    tanggal: "21-06-2024",
-    expired: "21-07-2024",
-    status: "Dipinjam",
-    image: "maskgroup.png"
-  },
-]
+
 
 const FormSchema = z.object({
     dob: z.date({
@@ -85,6 +26,24 @@ const FormSchema = z.object({
   });
 
 export default function DataAset() {
+  const [data, setData] = useState([]);
+  const { data: session } = useSession();
+  const token = session?.user?.token;
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const asseData = await fetchAssetData({ token });
+        setData(asseData.data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+    if (token) {
+      loadData();
+    }
+  }, [token]);
+
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
