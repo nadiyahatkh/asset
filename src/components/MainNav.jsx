@@ -2,51 +2,58 @@
 
 import { cn } from "@/lib/utils"
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 export function MainNav(props) {
     const { className, ...restProps } = props;
     const pathname = usePathname();
-    const params = useParams();
+    const { data: session } = useSession();
+    const userRole = session?.user?.role;
 
     const routes = [
         {
             href: `/dashboard`,
             label: `Dashboard`,
-            active: pathname.startsWith(`/dashboard`)
+            active: pathname.startsWith(`/dashboard`),
+            roles: [1]  // Both admin and user
         },
         {
             href: `/asetData`,
             label: `Data Aset`,
-            active: pathname.startsWith(`/asetData`)
+            active: pathname.startsWith(`/asetData`),
+            roles: [1]  // Admin only
         },
         {
             href: `/submission`,
             label: `Pengajuan`,
-            active: pathname.startsWith(`/submission`)
+            active: pathname.startsWith(`/submission`),
+            roles: [1]  // Admin only
         },
         {
             href: `/EmployeeManagement`,
             label: `Manajemen Karyawan`,
-            active: pathname.startsWith(`/EmployeeManagement`)
+            active: pathname.startsWith(`/EmployeeManagement`),
+            roles: [1]  // Admin only
         }
-    ]
- return(
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)}>
-        {routes.map((route) => (
-            <Link 
-                key={route.href}
-                href={route.href}
-                className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    route.active
-                    ? "active-route"
-                    : "text-muted-foreground"
-                )}
-            >
-                {route.label}
-            </Link>
-        ))}
-    </nav>
- )
+    ];
+
+    const filteredRoutes = routes.filter(route => route.roles.includes(userRole));
+
+    return (
+        <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)}>
+            {filteredRoutes.map((route) => (
+                <Link 
+                    key={route.href}
+                    href={route.href}
+                    className={cn(
+                        "text-sm font-medium transition-colors hover:text-primary",
+                        route.active ? "active-route" : "text-muted-foreground"
+                    )}
+                >
+                    {route.label}
+                </Link>
+            ))}
+        </nav>
+    )
 }
