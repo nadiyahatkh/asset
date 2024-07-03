@@ -14,54 +14,10 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useState } from 'react';
 import { DataTable } from "@/components/pengajuan-table/data-table";
 import { columns } from "./columns";
+import { fetchApplicantAdmin } from "../apiService";
+import { useSession } from "next-auth/react";
 
-const data = [
-  {
-    id: "m5gr84i9",
-    namaaset: "Mackbook Air M1 2020",
-    kategori: "Laptop",
-    tanggalpengajuan: "22-02-2023",
-    tanggalmasahabis: "22-02-2023",
-    pengaju: "Olivia",
-    tipe: "peminjaman",
-  },
-  {
-    id: "3u1reuv4",
-    namaaset: "Hp Pav Pro",
-    kategori: "Handphone",
-    tanggalpengajuan: "22-02-2023",
-    tanggalmasahabis: "22-02-2023",
-    pengaju: "Olivia",
-    tipe: "peminjaman",
-  },
-  {
-    id: "derv1ws0",
-    namaaset: "iPhone 13",
-    kategori: "Handphone",
-    tanggalpengajuan: "22-02-2023",
-    tanggalmasahabis: "22-02-2023",
-    pengaju: "Olivia",
-    tipe: "peminjaman",
-  },
-  {
-    id: "5kma53ae",
-    namaaset: "Macbook Pro 13",
-    kategori: "Laptop",
-    tanggalpengajuan: "22-02-2023",
-    tanggalmasahabis: "22-02-2023",
-    pengaju: "Olivia",
-    tipe: "peminjaman",
-  },
-  {
-    id: "bhqecj4p",
-    namaaset: "Samsung Galaxy Fold Z 3 ",
-    kategori: "Handphone",
-    tanggalpengajuan: "22-02-2023",
-    tanggalmasahabis: "22-02-2023",
-    pengaju: "Olivia",
-    tipe: "peminjaman",
-  },
-]
+
 
 
 const FormSchema = z.object({
@@ -71,6 +27,26 @@ const FormSchema = z.object({
   });
 
 export default function Pengajuan() {
+
+  const [data, setData] = useState([]);
+  const { data: session } = useSession();
+  const token = session?.user?.token;
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const pengajuan = await fetchApplicantAdmin({ token });
+        console.log(pengajuan)
+        setData(pengajuan.data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+    if (token) {
+      loadData();
+    }
+  }, [token]);
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
       });

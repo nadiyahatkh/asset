@@ -15,6 +15,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { removeEmployee } from '../apiService';
+
 
 export const columns = [
     {
@@ -78,7 +83,20 @@ export const columns = [
     accessorKey: 'Aksi',
     id: 'aksi',
     cell: ({ row }) => {
-      const user = row.original;
+      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+      const { data: session } = useSession();
+      const token = session?.user?.token;
+
+      const handleDelete = async () => {
+        try {
+          const idToDelete = row.original.id;
+          console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
+          await removeEmployee({ id: idToDelete, token: token });
+          setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+        } catch (error) {
+          console.error('Gagal menghapus data:', error);
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -94,10 +112,24 @@ export const columns = [
           <DropdownMenuItem>
             <PencilLine className='h-4 w-4 mr-2'/> Ubah
           </DropdownMenuItem>
-          <DropdownMenuItem className="text-red-500">
-            <Trash2 className='h-4 w-4 mr-2' /> Hapus
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
+              <Trash2 className='h-4 w-4 mr-2' /> Hapus
+            </DropdownMenuItem>
         </DropdownMenuContent>
+        <AlertDialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data secara permanen dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
       </DropdownMenu>
       );
     }

@@ -40,7 +40,7 @@ export const columns = [
         enableHiding: false,
       },
   {
-    accessorKey: 'namaaset',
+    accessorKey: 'asset.asset_name',
     header: ({ column }) => {
       return (
         <Button
@@ -54,42 +54,39 @@ export const columns = [
     }
   },
   {
-    accessorKey: 'kategori',
+    accessorKey: 'asset.category.name',
     header: 'Kategori'
   },
   {
-    accessorKey: 'tanggalpengajuan',
-    header: 'Tanggal Pengajuan'
+    accessorKey: 'expiry_date',
+    header: 'Tanggal Pengajuan',
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   },
   {
-    accessorKey: 'tanggalmasahabis',
+    accessorKey: 'accepted_at',
     header: 'Tanggal Masa Habis',
-    // cell: ({ row }) => {
-    //   const date = new Date(row.getValue('tanggalmasahabis'));
-    //   const formatted = date.toLocaleDateString();
-    //   return <div className='font-medium'>{formatted}</div>;
-    // }
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   },
   {
-    accessorKey: 'pengaju',
+    accessorKey: 'user.name',
     header: 'Pengaju'
   },
   {
-    accessorKey: 'tipe',
+    accessorKey: 'type',
     header: 'Tipe'
   },
   {
     accessorKey: 'Aksi',
     id: 'aksi',
     cell: ({ row }) => {
-      const user = row.original;
-
+      const id = row.original.id;
+  
       return (
-            <Button variant='ghost' className='h-8 w-8 p-0' style={{ color: "#F9B421" }}>
-                <Link href="./submission/applicationDetails">
-                    Detail
-                </Link>
-            </Button>
+        <Button variant='ghost' className='h-8 w-8 p-0' style={{ color: "#F9B421" }}>
+          <Link href={`/submission/applicationDetails/${id}`}>
+            Detail
+          </Link>
+        </Button>
       );
     }
   }
