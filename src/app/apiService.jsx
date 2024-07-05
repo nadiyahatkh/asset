@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export const fetchApplicant = async ({token}) => {
     try {
         const response = await fetch(`http://45.64.99.242:8850/api/applicant/index`, {
@@ -105,14 +107,30 @@ export const fetchApplicant = async ({token}) => {
 
 
 
-      export const createAset = async ({data, token}) => {
+      export const createAset = async ({ data, token, path }) => {
         try {
+          const formData = new FormData();
+          formData.append('asset_code', data.asset_code);
+          formData.append('asset_name', data.asset_name);
+          formData.append('category_id', data.category_id);
+          formData.append('item_condition', data.item_condition);
+          formData.append('price', data.price);
+          formData.append('received_date', format(data.received_date, 'yyyy-MM-dd'));
+          formData.append('expiration_date', format(data.expiration_date, 'yyyy-MM-dd'));
+          formData.append('status', data.status);
+      
+          if (path && path.length > 0) {
+              path.forEach((file) => {
+              formData.append('path[]', file);
+            });
+          }
+      
           const response = await fetch('http://45.64.99.242:8850/api/aset/create', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify(data),
+            body: formData,
           });
       
           if (!response.ok) {
@@ -127,14 +145,30 @@ export const fetchApplicant = async ({token}) => {
         }
       };
 
+      export const updateAset = async ({ id, token }) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/aset/update/${id}`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Failed to update Aset');
+          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error update Aset:', error);
+        }
+      };
+      
+
       export const removeAssetData = async ({ id, token }) => {
-        console.log(id, token)
         try {
           const response = await fetch(`http://45.64.99.242:8850/api/aset/delete/${id}`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`,
-              // 'Content-Type': 'application/json',
             },
           });
           if (!response.ok) {
