@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
-import { fetchApplicantDetail } from "@/app/apiService";
+import { acceptApplicant, denyApplicant, fetchApplicantDetail } from "@/app/apiService";
 import { useParams, useRouter } from "next/navigation";
 
 export default function DetailPengajuan() {
@@ -12,6 +12,8 @@ export default function DetailPengajuan() {
   const { data: session } = useSession();
   const token = session?.user?.token;
   const [detail, setDetail] = useState(null);
+  const [isActionCompleted, setActionCompleted] = useState(false);
+  const router = useRouter()
 
   useEffect(() => {
     const loadDetail = async () => {
@@ -24,6 +26,28 @@ export default function DetailPengajuan() {
 
     loadDetail();
   }, [token, id]);
+
+  const handleAccept = async () => {
+    try {
+      const result = await acceptApplicant({ id, token });
+      console.log('Applicant accepted:', result);
+      setActionCompleted(true); // Set state to true after successful acceptance
+    } catch (error) {
+      console.error('Error accepting applicant:', error);
+    }
+  };
+  
+  const handleDeny = async () => {
+    try {
+      const result = await denyApplicant({ id, token });
+      console.log('Applicant denied:', result);
+      setActionCompleted(true); // Set state to true after successful denial
+      router.push('/submission');
+    } catch (error) {
+      console.error('Error denying applicant:', error);
+    }
+  };
+  
 
   if (!detail) return <p>Loading...</p>;
 
@@ -39,10 +63,16 @@ export default function DetailPengajuan() {
           <div className="flex">
             <div className="flex-shrink-0">
               <div className="flex">
-                <div className="bg-gray-200 w-60 h-60"></div>
+                <div className="bg-gray-200 w-60 h-60">
+                <img src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
+                </div>
                 <div className="flex flex-col space-y-2 ml-2">
-                  <div className="bg-gray-200 w-28 h-28"></div>
-                  <div className="bg-gray-200 w-28 h-28"></div>
+                  <div className="bg-gray-200 w-28 h-28">
+                  <img src={detail.Images[1]} alt="Image 2" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="bg-gray-200 w-28 h-28">
+                  <img src={detail.Images[2]} alt="Image 3" className="w-full h-full object-cover" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -76,8 +106,9 @@ export default function DetailPengajuan() {
             </div>
             <div className="flex flex-col justify-end">
               <div className="flex space-x-2">
-                <Button variant="outline" style={{ border: 'none', color: '#F9B421' }}>Tolak</Button>
-                <Button variant="outline" style={{ backgroundColor: "#F9B421" }}>Setujui</Button>
+              <Button variant="outline" onClick={handleDeny} style={{ display: isActionCompleted ? 'none' : 'inline-block', border: 'none', color: '#F9B421' }}>Tolak</Button>
+              <Button variant="outline" onClick={handleAccept} style={{ display: isActionCompleted ? 'none' : 'inline-block', backgroundColor: "#F9B421" }}>Setujui</Button>
+
               </div>
             </div>
           </div>

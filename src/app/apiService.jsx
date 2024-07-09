@@ -21,6 +21,61 @@ export const fetchApplicant = async ({token}) => {
       }
     };
 
+    export const fetchGetAsetApplicant = async ({token}) => {
+      try {
+        const response = await fetch('http://45.64.99.242:8850/api/applicant/getaset', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        })
+        .then((res) => res.json())
+        .then((data) => {
+         return {
+          data: data,
+          message: "successs"
+         }
+        })
+        return response.data
+      } catch (error) {
+        console.error(error);
+        return "abs"
+      }
+    }
+
+    export const createApplicantUser = async ({ data, token, path }) => {
+      try {
+        const formData = new FormData();
+        formData.append('asset_id', data.asset_id);
+        formData.append('submission_date', format(data.submission_date, 'yyyy-MM-dd'));
+        formData.append('expiry_date', format(data.expiry_date, 'yyyy-MM-dd'));
+        formData.append('type', data.type);
+    
+        if (path && path.length > 0) {
+            path.forEach((file) => {
+            formData.append('path[]', file);
+          });
+        }
+    
+        const response = await fetch('http://45.64.99.242:8850/api/applicant/create', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+    
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error('Error creating applicant:', error);
+        throw error;
+      }
+    };
+
     export const removeApplicant = async ({ id, token }) => {
       console.log(id, token)
       try {
@@ -64,6 +119,27 @@ export const fetchApplicant = async ({token}) => {
       export const fetchAssetData = async ({token}) => {
         try {
           const response = await fetch('http://45.64.99.242:8850/api/aset/index', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          })
+          .then((res) => res.json())
+          .then((data) => {
+           return {
+            data: data,
+            message: "successs"
+           }
+          })
+          return response.data
+        } catch (error) {
+          console.error(error);
+          return "abs"
+        }
+      }
+
+      export const fetchAssetDataId = async ({token, id}) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/aset/detail/${id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -145,13 +221,29 @@ export const fetchApplicant = async ({token}) => {
         }
       };
 
-      export const updateAset = async ({ id, token }) => {
+      export const updateAset = async ({ id, token, path }) => {
         try {
+          const formData = new FormData();
+          formData.append('asset_code', data.asset_code);
+          formData.append('asset_name', data.asset_name);
+          formData.append('category_id', data.category_id);
+          formData.append('item_condition', data.item_condition);
+          formData.append('price', data.price);
+          formData.append('received_date', format(data.received_date, 'yyyy-MM-dd'));
+          formData.append('expiration_date', format(data.expiration_date, 'yyyy-MM-dd'));
+          formData.append('status', data.status);
+      
+          if (path && path.length > 0) {
+              path.forEach((file) => {
+              formData.append('path[]', file);
+            });
+          }
           const response = await fetch(`http://45.64.99.242:8850/api/aset/update/${id}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
             },
+            body: formData,
           });
           if (!response.ok) {
             throw new Error('Failed to update Aset');
@@ -220,6 +312,35 @@ export const fetchApplicant = async ({token}) => {
         }
       };
       
+    export const acceptApplicant = async ({id, token}) => {
+        const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/accepted/${id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        });
+      
+        if (!response.ok) {
+          throw new Error('Failed to accept applicant');
+        }
+      
+        return await response.json();
+      };
+
+      export const denyApplicant = async ({id, token}) => {
+        const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/denied/${id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        });
+      
+        if (!response.ok) {
+          throw new Error('Failed to deny applicant');
+        }
+      
+        return await response.json();
+      };
 
 
       export const fetchEmployee = async ({token}) => {
@@ -243,6 +364,8 @@ export const fetchApplicant = async ({token}) => {
         }
       };
 
+
+
       export const removeEmployee = async ({ id, token }) => {
         console.log(id, token)
         try {
@@ -261,3 +384,77 @@ export const fetchApplicant = async ({token}) => {
           console.error('Error removing item Applicant:', error);
         }
       };
+
+      export const createEmployee = async ({ data, token }) => {
+        console.log(data)
+        try {
+          const formData = new FormData();
+          formData.append('name', data.name);
+          formData.append('email', data.email);
+          formData.append('password', data.password);
+          formData.append('nip', data.nip);
+          formData.append('department_id', data.department_id);
+          formData.append('position_id', data.position_id);
+
+      
+          const response = await fetch('http://45.64.99.242:8850/api/employee/create', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+      
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+      
+          const result = await response.json();
+          return result;
+        } catch (error) {
+          console.error('Error creating aset:', error);
+          throw error;
+        }
+      };
+
+      export const fetchDepartement = async ({token}) => {
+        try {
+          const response = await fetch('http://45.64.99.242:8850/api/department/index', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          })
+          .then((res) => res.json())
+          .then((data) => {
+           return {
+            data: data,
+            message: "successs"
+           }
+          })
+          return response.data
+        } catch (error) {
+          console.error(error);
+          return "abs"
+        }
+      }
+
+      export const fetchPosition = async ({token}) => {
+        try {
+          const response = await fetch('http://45.64.99.242:8850/api/position/index', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          })
+          .then((res) => res.json())
+          .then((data) => {
+           return {
+            data: data,
+            message: "successs"
+           }
+          })
+          return response.data
+        } catch (error) {
+          console.error(error);
+          return "abs"
+        }
+      }

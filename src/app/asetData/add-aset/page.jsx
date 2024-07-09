@@ -71,9 +71,7 @@ export default function AddAset() {
   const onSubmit = async (data) => {
     data.category_id = categoryId; // Set category_id from state
     data.item_condition = itemCondition; // Set item_condition from state
-    data.status = status; // Set status from state
-
-    console.log('Files to upload:', selectedFiles.map(file => file.file));
+    data.status = status; 
 
     try {
       const result = await createAset({ data, token, path: selectedFiles.map(file => file.file) });
@@ -129,7 +127,12 @@ export default function AddAset() {
                     control={form.control}
                     name="asset_code"
                     render={({ field }) => (
+                      <>
                       <Input {...field} placeholder="A-827" type="text" />
+                      {form.formState.errors.asset_code && (
+                        <FormMessage type="error" className="italic">{form.formState.errors.asset_code.message}</FormMessage>
+                      )}
+                      </>
                     )}
                   />
                   <Label className="title text-muted-foreground text-xs">Untuk mengisi kode aset silahkan sesuaikan agar mudah ditemukan</Label>
@@ -141,7 +144,12 @@ export default function AddAset() {
                     control={form.control}
                     name="asset_name"
                     render={({ field }) => (
+                      <>
                       <Input {...field} placeholder="Name" type="text" />
+                      {form.formState.errors.asset_name && (
+                        <FormMessage type="error" className="italic">{form.formState.errors.asset_name.message}</FormMessage>
+                      )}
+                      </>
                     )}
                   />
                 </div>
@@ -299,21 +307,39 @@ export default function AddAset() {
                 </div>
 
                 <div className="mb-4">
-                  <Label className="block text-sm mb-2">Upload Files</Label>
-                  <input type="file" name="path" multiple onChange={handleFileChange} />
+                  <Label className="block text-sm mb-2">Gambar Aset</Label>
+                  <div className="border-dashed border-2 rounded-lg flex flex-col items-center justify-center p-4 mb-1">
+                      <CloudDownload className="h-4 w-4 mb-4" />
+                          <div className="text-sm font-semibold mb-2">Choose a file or drag & drop it here</div>
+                          <div className="text-muted-foreground text-xs mb-5">JEPG, PNG up to 5 MB</div>
+                          <input
+                              name='path'
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              id="fileInput"
+                              onChange={handleFileChange}
+                          />
+                          <Button type="button" variant="outline" className="mb-4" onClick={() => document.getElementById('fileInput').click()}>Browse File</Button>
+                      </div>
+                  {/* <input type="file" name="path" className='hidden' multiple onChange={handleFileChange} /> */}
                   {selectedFiles.length > 0 && (
-                    <ul>
+                    <div className='mt-4 space-y-2'>
                       {selectedFiles.map((file) => (
-                        <li key={file.name}>
-                          {file.name}
-                          <button type="button" onClick={() => handleRemoveFile(file.name)}>Remove</button>
-                        </li>
+                        <Card key={file.name} className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground text-black" >{file.name}</span>
+                          <Button variant="danger" type="button" onClick={() => handleRemoveFile(file.name)}>
+                            <CircleX className="h-4 w-4"/>
+                          </Button>
+                        </Card>
                       ))}
-                    </ul>
+                    </div>
                   )}
                 </div>
+                  <div className="flex justify-end">
+                  <Button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Submit</Button>
 
-                <Button type="submit">Submit</Button>
+                  </div>
               </form>
             </Form>
           </div>

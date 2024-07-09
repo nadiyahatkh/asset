@@ -147,12 +147,14 @@ export const columns = [
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
       const { data: session } = useSession();
       const token = session?.user?.token;
+      const id = row.original.id;
 
       const handleDelete = async () => {
         try {
           const idToDelete = row.original.id;
           console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
           await removeAssetData({ id: idToDelete, token: token });
+          
           setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
         } catch (error) {
           console.error('Gagal menghapus data:', error);
@@ -171,10 +173,16 @@ export const columns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-            <Link href="./asetData/update-aset" className="flex items-center p-1 rounded-md hover:bg-gray-100">
-                        <PencilLine className="mr-2 h-4 w-4" />
+              <Button variant='ghost' className='h-8 w-8 p-0'>
+                <Link href={`./asetData/update-aset/${id}`}>
+                  <PencilLine className="mr-2 h-4 w-4" />
+                  Ubah
+                </Link>
+              </Button>
+            {/* <Link href="./asetData/update-aset" className="flex items-center p-1 rounded-md hover:bg-gray-100">
+                        
                         Ubah
-              </Link>
+              </Link> */}
               {/* <Link href="./asetData/updateAset">
               <p><PencilLine className='h-4 w-4 mr-2'/> Ubah</p>
               </Link> */}
