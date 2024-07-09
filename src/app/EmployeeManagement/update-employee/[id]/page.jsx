@@ -1,5 +1,5 @@
 "use client"
-import { createEmployee, fetchDepartement, fetchPosition } from "@/app/apiService";
+import { changeEmployees, fetchDepartement, fetchEmployeeDataId, fetchPosition } from "@/app/apiService";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -22,10 +22,13 @@ const FormSchema = z.object({
   position_id: z.string().min(1, { message: "Posisi wajib diisi." }),
 });
 
-export default function AddEmployee() {
+export default function updateEmpolyee() {
+    const { id } = useParams()
   const { data: session } = useSession();
   const token = session?.user?.token;
   const router = useRouter();
+
+  const [dataInput, setDataInput] = useState()
 
   const [departmentId, setDepartmentId] = useState();
   const [positionId, setPositionId] = useState();
@@ -67,7 +70,7 @@ export default function AddEmployee() {
     data.departement_id = departmentId;
     data.position_id = positionId
     try {
-      const result = await createEmployee({ data, token });
+      const result = await changeEmployees({ id, data, token });
       toast.success("Employee created successfully");
       form.reset();
       router.push('/EmployeeManagement');
@@ -76,6 +79,23 @@ export default function AddEmployee() {
       console.error('Error creating employee:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+        if(token && id) {
+            const response = await fetchEmployeeDataId({ token, id });
+            console.log(response)
+            form.setValue('name', response.name)
+            form.setValue('email', response.email)
+            form.setValue('password', response.password)
+            form.setValue('nip', response.employee.nip)
+            form.setValue('department_id', response.employee.department_id)
+            form.setValue('position_id', response.employee.position_id)
+            setDataInput(response?.data)
+        }
+    };
+    fetchData()
+  }, [token, id])
 
   return (
     <div className="py-4">

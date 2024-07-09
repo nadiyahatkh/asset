@@ -173,19 +173,10 @@ export const columns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Button variant='ghost' className='h-8 w-8 p-0'>
-                <Link href={`./asetData/update-aset/${id}`}>
+                <Link href={`./asetData/update-aset/${id}`} className='flex items-center'>
                   <PencilLine className="mr-2 h-4 w-4" />
                   Ubah
                 </Link>
-              </Button>
-            {/* <Link href="./asetData/update-aset" className="flex items-center p-1 rounded-md hover:bg-gray-100">
-                        
-                        Ubah
-              </Link> */}
-              {/* <Link href="./asetData/updateAset">
-              <p><PencilLine className='h-4 w-4 mr-2'/> Ubah</p>
-              </Link> */}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus

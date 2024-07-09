@@ -86,6 +86,7 @@ export const columns = [
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
       const { data: session } = useSession();
       const token = session?.user?.token;
+      const id = row.original.id;
 
       const handleDelete = async () => {
         try {
@@ -110,7 +111,10 @@ export const columns = [
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <PencilLine className='h-4 w-4 mr-2'/> Ubah
+            <Link href={`/EmployeeManagement/update-employee/${id}`} className='flex items-center'>
+              <PencilLine className='h-4 w-4 mr-2'/> Ubah
+            
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus

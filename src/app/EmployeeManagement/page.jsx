@@ -118,7 +118,7 @@ export default function EmployeeManagement() {
                 </Form>
                 {/* Add Asset Button */}
                 <Button variant="solid" className="" style={{ background: "#F9B421" }}>
-                    <Link href="./EmployeeManagement/addEmployee">
+                    <Link href="./EmployeeManagement/add-employee">
                         Tambah Karyawan
                     </Link>
                 </Button>

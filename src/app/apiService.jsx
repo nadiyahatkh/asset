@@ -417,6 +417,38 @@ export const fetchApplicant = async ({token}) => {
         }
       };
 
+      export const changeEmployees = async ({ id, data, token }) => {
+        console.log(data)
+        try {
+          const formData = new FormData();
+          formData.append('name', data.name);
+          formData.append('email', data.email);
+          formData.append('password', data.password);
+          formData.append('nip', data.nip);
+          formData.append('department_id', data.department_id);
+          formData.append('position_id', data.position_id);
+
+      
+          const response = await fetch(`http://45.64.99.242:8850/api/employee/update/${id}`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+      
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+      
+          const result = await response.json();
+          return result;
+        } catch (error) {
+          console.error('Error update employee:', error);
+          throw error;
+        }
+      };
+
       export const fetchDepartement = async ({token}) => {
         try {
           const response = await fetch('http://45.64.99.242:8850/api/department/index', {
@@ -441,6 +473,27 @@ export const fetchApplicant = async ({token}) => {
       export const fetchPosition = async ({token}) => {
         try {
           const response = await fetch('http://45.64.99.242:8850/api/position/index', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          })
+          .then((res) => res.json())
+          .then((data) => {
+           return {
+            data: data,
+            message: "successs"
+           }
+          })
+          return response.data
+        } catch (error) {
+          console.error(error);
+          return "abs"
+        }
+      }
+
+      export const fetchEmployeeDataId = async ({token, id}) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/employee/detail/${id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
