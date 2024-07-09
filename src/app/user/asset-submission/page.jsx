@@ -15,10 +15,9 @@ import { format } from "date-fns";
 import { CalendarIcon, CircleX, CloudDownload } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
-
 
 const FormSchema = z.object({
     asset_id: z.preprocess((val) => Number(val), z.number().min(1, { message: "asset wajib diisi." })),
@@ -28,14 +27,14 @@ const FormSchema = z.object({
     expiry_date: z.date({
       required_error: "Tanggal habis is required.",
     }),
-    type: z.number().min(1, { message: "type is required." }),
-  });
+    type: z.string().min(1, { message: "type is required." }),
+});
 
 export default function PengajuanAset(){
     const { data: session } = useSession();
     const token = session?.user?.token;
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [assets, setAssets] = useState([])
+    const [assets, setAssets] = useState([]);
 
     useEffect(() => {
         const loadData = async () => {
@@ -49,11 +48,11 @@ export default function PengajuanAset(){
         if (token) {
           loadData();
         }
-      }, [token]);
+    }, [token]);
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
-        const newFiles = files.map(file => ({ url: URL.createObjectURL(file), name: file.name }));
+        const newFiles = files.map(file => ({ url: URL.createObjectURL(file), name: file.name, file }));
         setSelectedFiles([...selectedFiles, ...newFiles]);
     };
 
@@ -63,19 +62,19 @@ export default function PengajuanAset(){
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
-      });
+    });
 
-      const onSubmit= async (data) => {
+    const onSubmit= async (data) => {
         try{
-            const result = await createApplicantUser({data, token, path: selectedFiles.map(file => file.file) })
-            toast.success("created successfully")
+            const result = await createApplicantUser({data, token, path: selectedFiles.map(file => file.file) });
+            toast.success("created successfully");
             form.reset();
+            setSelectedFiles([]);
         } catch (error) {
             toast.error("Failed to create asset.");
             console.error('Error creating asset:', error);
-          }
-        
-      }
+        }
+    }
 
     return(
         <div className="py-4">
@@ -98,22 +97,28 @@ export default function PengajuanAset(){
                             <form onSubmit={form.handleSubmit(onSubmit)}>
                                 <div className="mb-4">
                                     <Label className="block text-sm mb-2 font-semibold">Tipe</Label>
-                                    <RadioGroup className=''>
-                                        <div className="border rounded-lg p-4">
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem name="type" value="1" id="r1" style={{ color: "#F9B421" }} />
-                                                <Label htmlFor="r1">Peminjaman</Label>
-                                            </div>
-                                            <p className="title text-muted-foreground text-xs ml-6">Memungkinkan pegguna untuk mengajukan permohonan peminjaman.</p>
-                                        </div>
-                                        <div className="border rounded-lg p-4">
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem name="type" value="2" id="r2" style={{ color: "#F9B421" }} />
-                                                <Label htmlFor="r1">Pengembalian</Label>
-                                            </div>
-                                            <p className="title text-muted-foreground text-xs ml-6">Mengembalikan aset setelah penggunaan selesai</p>
-                                        </div>
-                                    </RadioGroup>
+                                    <FormField
+                                        control={form.control}
+                                        name="type"
+                                        render={({ field }) => (
+                                            <RadioGroup onValueChange={field.onChange} value={field.value?.toString()}>
+                                                <div className="border rounded-lg p-4">
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem name="type" value="1" id="r1" style={{ color: "#F9B421" }} />
+                                                        <Label htmlFor="r1">Peminjaman</Label>
+                                                    </div>
+                                                    <p className="title text-muted-foreground text-xs ml-6">Memungkinkan pengguna untuk mengajukan permohonan peminjaman.</p>
+                                                </div>
+                                                <div className="border rounded-lg p-4">
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem name="type" value="2" id="r2" style={{ color: "#F9B421" }} />
+                                                        <Label htmlFor="r2">Pengembalian</Label>
+                                                    </div>
+                                                    <p className="title text-muted-foreground text-xs ml-6">Mengembalikan aset setelah penggunaan selesai</p>
+                                                </div>
+                                            </RadioGroup>
+                                        )}
+                                    />
                                 </div>
                                 <div className="mb-4">
                                     <Label className="block text-sm mb-2 font-semibold" htmlFor="kategori">Aset</Label>
@@ -122,19 +127,19 @@ export default function PengajuanAset(){
                                         name="asset_id"
                                         render={({ field }) => (
                                         <Select
-                                        value={field.value ? field.value.toString() : ""}
+                                            value={field.value ? field.value.toString() : ""}
                                             onValueChange={(value) => {
-                                            field.onChange(value); // Update react-hook-form state
+                                                field.onChange(Number(value)); // Update react-hook-form state
                                             }}
                                             {...field}
                                         >
                                             <SelectTrigger>
-                                            <SelectValue placeholder="Pilih asset untuk ditampilkan" />
+                                                <SelectValue placeholder="Pilih asset untuk ditampilkan" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                            {assets?.map((item) => (
-                                                <SelectItem key={item.id} value={item.id.toString()}>{item.asset_name}</SelectItem>
-                                            ))}
+                                                {assets?.map((item) => (
+                                                    <SelectItem key={item.id} value={item.id.toString()}>{item.asset_name}</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                         )}
@@ -195,6 +200,7 @@ export default function PengajuanAset(){
                                         <div className="text-sm font-semibold mb-2">Choose a file or drag & drop it here</div>
                                         <div className="text-muted-foreground text-xs mb-5">JEPG, PNG up to 5 MB</div>
                                         <input
+                                            name="path"
                                             type="file"
                                             accept="image/*"
                                             className="hidden"
@@ -217,9 +223,8 @@ export default function PengajuanAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
+                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
                                 </div>
-
                             </form>
                         </Form>
                     </div>

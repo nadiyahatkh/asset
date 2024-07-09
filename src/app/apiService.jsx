@@ -221,7 +221,7 @@ export const fetchApplicant = async ({token}) => {
         }
       };
 
-      export const updateAset = async ({ id, token, path }) => {
+      export const updateAset = async ({ id, data, token, path }) => {
         try {
           const formData = new FormData();
           formData.append('asset_code', data.asset_code);

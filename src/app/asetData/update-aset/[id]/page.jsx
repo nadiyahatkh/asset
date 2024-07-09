@@ -24,7 +24,7 @@ import { z } from "zod";
 const FormSchema = z.object({
     asset_code: z.string().min(1, { message: "Kode aset is required." }),
     asset_name: z.string().min(1, { message: "Nama aset is required." }),
-    category_id: z.preprocess((val) => Number(val), z.number().min(1, { message: "Kategori wajib diisi." })),
+    category_id: z.string().min(1, { message: "Kategori wajib diisi." }),
     item_condition: z.string().min(1, { message: "Kondisi is required." }),
     price: z.string().min(1, { message: "Harga aset is required." }),
     received_date: z.date({
@@ -40,6 +40,9 @@ export default function ubahAset(){
     const { id } = useParams();
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [category, setCategory] = useState();
+    const [categoryId, setCategoryId] = useState();
+    const [itemCondition, setItemCondition] = useState('');
+    const [status, setStatus] = useState('');
     const { data: session } = useSession();
     const token = session?.user?.token;
     const router = useRouter();
@@ -47,9 +50,9 @@ export default function ubahAset(){
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
-        const newFiles = files.map(file => ({ url: URL.createObjectURL(file), name: file.name }));
+        const newFiles = files.map(file => ({ file: file }));
         setSelectedFiles([...selectedFiles, ...newFiles]);
-    };
+      };
 
     const handleRemoveFile = (fileName) => {
         setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
@@ -61,8 +64,11 @@ export default function ubahAset(){
       });
 
       const onSubmit = async (data) => {
+        data.category_id = categoryId; // Set category_id from state
+        data.item_condition = itemCondition; // Set item_condition from state
+        data.status = status; 
         try{
-            const result = await updateAset({data, id, token, path})
+            const result = await updateAset({data, id, token, path: selectedFiles.map(file => file.file)})
             toast.success("Asset update successfully!");
             form.reset();
             router.push('/asetData')
@@ -158,7 +164,7 @@ export default function ubahAset(){
                                         value={field.value ? field.value.toString() : ""}
                                             onValueChange={(value) => {
                                             field.onChange(value); // Update react-hook-form state
-                                            // Update component state
+                                            setCategoryId(value); // Update component state
                                             }}
                                             {...field}
                                         >
@@ -183,7 +189,7 @@ export default function ubahAset(){
                                         <Select
                                             onValueChange={(value) => {
                                             field.onChange(value); // Update react-hook-form state
-                                            // setItemCondition(value); // Update component state
+                                            setItemCondition(value); // Update component state
                                             }}
                                             {...field}
                                         >
@@ -274,7 +280,7 @@ export default function ubahAset(){
                                         <Select
                                             onValueChange={(value) => {
                                             field.onChange(value); // Update react-hook-form state
-                                            // setStatus(value); // Update component state
+                                            setStatus(value); // Update component state
                                             }}
                                             {...field}
                                         >
@@ -302,20 +308,21 @@ export default function ubahAset(){
                                         <div className="text-sm font-semibold mb-2">Choose a file or drag & drop it here</div>
                                         <div className="text-muted-foreground text-xs mb-5">JEPG, PNG up to 5 MB</div>
                                         <input
+                                            name="path"
                                             type="file"
                                             accept="image/*"
                                             className="hidden"
                                             id="fileInput"
                                             onChange={handleFileChange}
                                         />
-                                        <Button variant="outline" className="mb-4" onClick={() => document.getElementById('fileInput').click()}>Browse File</Button>
+                                        <Button type="button" variant="outline" className="mb-4" onClick={() => document.getElementById('fileInput').click()}>Browse File</Button>
                                     </div>
                                     {selectedFiles.length > 0 && (
                                         <div className="mt-4 space-y-2">
                                             {selectedFiles.map(file => (
                                                 <Card key={file.name} className="flex justify-between items-center">
                                                     <span className="text-sm text-muted-foreground">{file.name}</span>
-                                                    <Button variant="danger" onClick={() => handleRemoveFile(file.name)}>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.name)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>
                                                 </Card>
@@ -323,11 +330,11 @@ export default function ubahAset(){
                                         </div>
                                     )}
                                 </div>
+                                <div className="flex justify-end">
+                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
+                                </div>
                             </form>
                         </Form>  
-                        <div className="flex justify-end">
-                            <button className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
-                        </div>
                     </div>
                 </div>
             </div>
