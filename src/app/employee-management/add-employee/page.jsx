@@ -69,7 +69,7 @@ export default function AddEmployee() {
       const result = await createEmployee({ data, token });
       toast.success("Employee created successfully");
       form.reset();
-      router.push('/EmployeeManagement');
+      router.push('/employee-management');
     } catch (error) {
       toast.error("Failed to create employee.");
       console.error('Error creating employee:', error);

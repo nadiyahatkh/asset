@@ -10,12 +10,13 @@ import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import { z } from "zod";
 import Link from "next/link";
-import { DataTable } from "@/components/managemenKaryawan-table/data-table";
-import { columns } from "./columns";
 import { Card } from "@/components/ui/card";
-import { fetchEmployee } from "../apiService";
 import { useEffect, useState } from "react";
+import { columns } from "./columns";
+import { DataTable } from "@/components/dataAset-table/data-table";
 import { useSession } from "next-auth/react";
+import { fetchAssetData } from "../apiService";
+
 
 
 const FormSchema = z.object({
@@ -24,8 +25,7 @@ const FormSchema = z.object({
     }),
   });
 
-export default function EmployeeManagement() {
-
+export default function DataAset() {
   const [data, setData] = useState([]);
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -33,8 +33,8 @@ export default function EmployeeManagement() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const employeeData = await fetchEmployee({ token });
-        setData(employeeData.data);
+        const asseData = await fetchAssetData({ token });
+        setData(asseData.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -43,6 +43,7 @@ export default function EmployeeManagement() {
       loadData();
     }
   }, [token]);
+
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -65,9 +66,9 @@ export default function EmployeeManagement() {
             <div className="flex justify-between items-center mb-8">
               {/* Left section */}
               <div>
-                <p className="title font-manrope font-bold text-2xl leading-10">Manajemen Karyawan</p>
+                <p className="title font-manrope font-bold text-2xl leading-10">Data Aset</p>
                 <p className="text-muted-foreground text-sm">
-                    Here's a list of your employe.
+                  Here's a list of your assets.
                 </p>
               </div>
               {/* Right section */}
@@ -116,10 +117,14 @@ export default function EmployeeManagement() {
                     />
                   </form>
                 </Form>
+                {/* Delete Button */}
+                <Button variant="outline" className="text-red-500" style={{ color: '#F9B421', border: 'none' }}>
+                    Delete
+                </Button>
                 {/* Add Asset Button */}
                 <Button variant="solid" className="" style={{ background: "#F9B421" }}>
-                    <Link href="./EmployeeManagement/add-employee">
-                        Tambah Karyawan
+                    <Link href="./asset-data/add-aset">
+                        Tambah Aset
                     </Link>
                 </Button>
               </div>

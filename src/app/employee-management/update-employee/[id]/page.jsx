@@ -73,7 +73,7 @@ export default function updateEmpolyee() {
       const result = await changeEmployees({ id, data, token });
       toast.success("Employee created successfully");
       form.reset();
-      router.push('/EmployeeManagement');
+      router.push('/employee-management');
     } catch (error) {
       toast.error("Failed to create employee.");
       console.error('Error creating employee:', error);
@@ -208,7 +208,9 @@ export default function updateEmpolyee() {
                         )}
                         />
                     </div>
-                        <Button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Tambah Karyawan</Button>
+                    <div className="flex justify-end">
+                         <Button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Karyawan</Button>
+                    </div>
 
                 </form>
             </Form>

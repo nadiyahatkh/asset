@@ -71,7 +71,7 @@ export default function ubahAset(){
             const result = await updateAset({data, id, token, path: selectedFiles.map(file => file.file)})
             toast.success("Asset update successfully!");
             form.reset();
-            router.push('/asetData')
+            router.push('/asset-data')
         } catch(error) {
             toast.error("Failed to update asset");
             console.error("Error creating asser", error)
@@ -331,7 +331,7 @@ export default function ubahAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
+                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Aset</button>
                                 </div>
                             </form>
                         </Form>  

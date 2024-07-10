@@ -16,12 +16,12 @@ export function MainNav(props) {
             href: `/dashboard`,
             label: `Dashboard`,
             active: pathname.startsWith(`/dashboard`),
-            roles: [1]  // Both admin and user
+            roles: [1]
         },
         {
-            href: `/asetData`,
+            href: `/asset-data`,
             label: `Data Aset`,
-            active: pathname.startsWith(`/asetData`),
+            active: pathname.startsWith(`/asset-data`),
             roles: [1]  // Admin only
         },
         {
@@ -31,9 +31,9 @@ export function MainNav(props) {
             roles: [1]  // Admin only
         },
         {
-            href: `/EmployeeManagement`,
+            href: `/employee-management`,
             label: `Manajemen Karyawan`,
-            active: pathname.startsWith(`/EmployeeManagement`),
+            active: pathname.startsWith(`/employee-management`),
             roles: [1]  // Admin only
         }
     ];

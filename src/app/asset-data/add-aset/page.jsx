@@ -80,7 +80,7 @@ export default function AddAset() {
       form.reset();
 
       // Redirect to another page
-      router.push('/asetData'); // Ganti dengan path halaman tujuan
+      router.push('/asset-data'); // Ganti dengan path halaman tujuan
     } catch (error) {
       toast.error("Failed to create asset.");
       console.error('Error creating asset:', error);

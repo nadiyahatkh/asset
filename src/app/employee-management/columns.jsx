@@ -111,7 +111,7 @@ export const columns = [
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link href={`/EmployeeManagement/update-employee/${id}`} className='flex items-center'>
+            <Link href={`/employee-management/update-employee/${id}`} className='flex items-center'>
               <PencilLine className='h-4 w-4 mr-2'/> Ubah
             
             </Link>
