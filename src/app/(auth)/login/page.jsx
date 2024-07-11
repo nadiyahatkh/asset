@@ -72,10 +72,6 @@ export default function LoginPage() {
               <Button style={{ backgroundColor: '#F9B421' }} className="text-gray-800 w-full" type="submit">
                 Sign In
               </Button>
-              <Label className="text-sm text-muted-foreground">
-                Don’t have an account?
-                <Link href="./register" style={{ color: '#F9B421' }} className="ml-1 underline">Sign Up</Link>
-              </Label>
             </div>
           </form>
         </div>

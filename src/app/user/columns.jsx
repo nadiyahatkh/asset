@@ -89,6 +89,7 @@ export const columns = [
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
       const { data: session } = useSession();
       const token = session?.user?.token;
+      const id = row.original.id;
 
       const handleDelete = async () => {
         try {
@@ -113,7 +114,7 @@ export const columns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href="./user/update-submission" className="flex items-center p-1 hover:bg-gray-100">
+              <Link href={`./user/update-submission/${id}`} className="flex items-center hover:bg-gray-100">
                 <PencilLine className="mr-2 h-4 w-4" />
                 Ubah
               </Link>

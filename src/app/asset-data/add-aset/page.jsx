@@ -198,15 +198,13 @@ export default function AddAset() {
                           <SelectValue placeholder="Pilih kondisi untuk ditampilkan" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">Aktif</SelectItem>
-                          <SelectItem value="2">Tidak Aktif</SelectItem>
+                          <SelectItem value="1">Baik</SelectItem>
+                          <SelectItem value="2">Perlu Perbaikan</SelectItem>
                           <SelectItem value="3">Rusak</SelectItem>
-                          <SelectItem value="4">Dipinjamkan</SelectItem>
-                          <SelectItem value="5">Dalam Pemeliharaan</SelectItem>
-                          <SelectItem value="6">Dalam Penyimpanan</SelectItem>
-                          <SelectItem value="7">Dalam Perbaikan</SelectItem>
-                          <SelectItem value="8">Dalam Proses Peminjaman</SelectItem>
-                          <SelectItem value="9">Tidak Layak Pakai</SelectItem>
+                          <SelectItem value="4">Dalam Perlbaikan</SelectItem>
+                          <SelectItem value="5">Tidak Aktif</SelectItem>
+                          <SelectItem value="6">Hilang</SelectItem>
+                          <SelectItem value="7">Tidak Layak Pakai</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -327,7 +325,7 @@ export default function AddAset() {
                     <div className='mt-4 space-y-2'>
                       {selectedFiles.map((file) => (
                         <Card key={file.name} className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground text-black" >{file.name}</span>
+                          <span className="text-sm text-muted-foreground text-black" >{file.file.name}</span>
                           <Button variant="danger" type="button" onClick={() => handleRemoveFile(file.name)}>
                             <CircleX className="h-4 w-4"/>
                           </Button>

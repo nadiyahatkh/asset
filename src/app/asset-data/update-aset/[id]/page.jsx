@@ -47,6 +47,7 @@ export default function ubahAset(){
     const token = session?.user?.token;
     const router = useRouter();
     const [dataInput, setDataInput] = useState();
+    const [image, setImage] = useState()
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -106,13 +107,13 @@ export default function ubahAset(){
             form.setValue('received_date', response.received_date)
             form.setValue('expiration_date', response.expiration_date)
             form.setValue('status', response.status)
+            setImage(response.image_assets)
             setDataInput(response?.data);
           }
         };
     
         fetchData();
       }, [token, id]);
-
 
     return(
         <div className="py-4">
@@ -197,15 +198,13 @@ export default function ubahAset(){
                                             <SelectValue placeholder="Pilih kondisi untuk ditampilkan" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                            <SelectItem value="1">Aktif</SelectItem>
-                                            <SelectItem value="2">Tidak Aktif</SelectItem>
-                                            <SelectItem value="3">Rusak</SelectItem>
-                                            <SelectItem value="4">Dipinjamkan</SelectItem>
-                                            <SelectItem value="5">Dalam Pemeliharaan</SelectItem>
-                                            <SelectItem value="6">Dalam Penyimpanan</SelectItem>
-                                            <SelectItem value="7">Dalam Perbaikan</SelectItem>
-                                            <SelectItem value="8">Dalam Proses Peminjaman</SelectItem>
-                                            <SelectItem value="9">Tidak Layak Pakai</SelectItem>
+                                            <SelectItem value="Baik">Baik</SelectItem>
+                                            <SelectItem value="Perlu_Perbaikan">Perlu Perbaikan</SelectItem>
+                                            <SelectItem value="Rusak">Rusak</SelectItem>
+                                            <SelectItem value="Dalam_Perbaikan">Dalam Perbaikan</SelectItem>
+                                            <SelectItem value="Tidak_Aktif">Tidak Aktif</SelectItem>
+                                            <SelectItem value="Hilang">Hilang</SelectItem>
+                                            <SelectItem value="Tidak_Layak_Pakai">Tidak Layak Pakai</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         )}
@@ -288,14 +287,14 @@ export default function ubahAset(){
                                             <SelectValue placeholder="Pilih status untuk ditampilkan" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                            <SelectItem value="1">Aktif</SelectItem>
-                                            <SelectItem value="2">Tidak Aktif</SelectItem>
-                                            <SelectItem value="3">Dipinjamkan</SelectItem>
-                                            <SelectItem value="4">Dalam Pemeliharaan</SelectItem>
-                                            <SelectItem value="5">Dalam Penyimpanan</SelectItem>
-                                            <SelectItem value="6">Dalam Perbaikan</SelectItem>
-                                            <SelectItem value="7">Dalam Proses Peminjaman</SelectItem>
-                                            <SelectItem value="8">Tidak Layak Pakai</SelectItem>
+                                            <SelectItem value="Aktif">Aktif</SelectItem>
+                                            <SelectItem value="Tidak_Aktif">Tidak Aktif</SelectItem>
+                                            <SelectItem value="Dipinjamkan">Dipinjamkan</SelectItem>
+                                            <SelectItem value="Dalam_Pemeliharaan">Dalam Pemeliharaan</SelectItem>
+                                            <SelectItem value="Dalam_Penyimpanan">Dalam Penyimpanan</SelectItem>
+                                            <SelectItem value="Dalam_Perbaikan">Dalam Perbaikan</SelectItem>
+                                            <SelectItem value="Dalam_Proses_Peminjaman">Dalam Proses Peminjaman</SelectItem>
+                                            <SelectItem value="Tidak_Layak_Pakai">Tidak Layak Pakai</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         )}
@@ -321,8 +320,20 @@ export default function ubahAset(){
                                         <div className="mt-4 space-y-2">
                                             {selectedFiles.map(file => (
                                                 <Card key={file.name} className="flex justify-between items-center">
-                                                    <span className="text-sm text-muted-foreground">{file.name}</span>
-                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.name)}>
+                                                    <span className="text-sm text-muted-foreground">{file.file.name}</span>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.file.name)}>
+                                                        <CircleX className="h-4 w-4"/>
+                                                    </Button>
+                                                </Card>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {image?.length > 0 && (
+                                        <div className="mt-4 space-y-2">
+                                            {image?.map(file => (
+                                                <Card key={file.path} className="flex justify-between items-center">
+                                                    <span className="text-sm text-muted-foreground">{file.file?.path}</span>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.file?.path)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>
                                                 </Card>
@@ -331,7 +342,7 @@ export default function ubahAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Aset</button>
+                                    <button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Aset</button>
                                 </div>
                             </form>
                         </Form>  

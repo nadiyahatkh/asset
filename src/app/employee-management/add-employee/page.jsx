@@ -1,4 +1,5 @@
 "use client"
+import { createEmployee, fetchDepartement, fetchPosition } from "@/app/apiService";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -187,8 +188,9 @@ export default function AddEmployee() {
                         )}
                         />
                     </div>
+                    <div className="flex justify-end">
                         <Button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Tambah Karyawan</Button>
-
+                    </div>
                 </form>
             </Form>
           </div>

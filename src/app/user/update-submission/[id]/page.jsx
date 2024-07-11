@@ -1,5 +1,5 @@
 'use client'
-import { createApplicantUser, fetchAssetData, fetchGetAsetApplicant } from "@/app/apiService";
+import { fetchApplicantUserId, fetchGetAsetApplicant, updateApplicantUser } from "@/app/apiService";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -14,11 +14,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, CircleX, CloudDownload } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 
 const FormSchema = z.object({
     asset_id: z.preprocess((val) => Number(val), z.number().min(1, { message: "asset wajib diisi." })),
@@ -31,12 +31,38 @@ const FormSchema = z.object({
     type: z.string().min(1, { message: "type is required." }),
 });
 
-export default function PengajuanAset(){
+export default function UbahPengajuanAset(){
+    const { id } = useParams()
     const { data: session } = useSession();
     const token = session?.user?.token;
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [assets, setAssets] = useState([]);
-    const router = useRouter()
+    const [assets, setAssets] = useState()
+
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        const newFiles = files.map(file => ({ url: URL.createObjectURL(file), name: file.name }));
+        setSelectedFiles([...selectedFiles, ...newFiles]);
+    };
+
+    const handleRemoveFile = (fileName) => {
+        setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
+    };
+
+    const form = useForm({
+        resolver: zodResolver(FormSchema),
+      });
+
+      const onSubmit= async (data) => {
+        try{
+            const result = await updateApplicantUser({id, data, token, path: selectedFiles.map(file => file.file) });
+            toast.success("created successfully");
+            form.reset();
+            router.push('/')
+        } catch (error) {
+            toast.error("Failed to create asset.");
+            console.error('Error creating asset:', error);
+        }
+    }
 
     useEffect(() => {
         const loadData = async () => {
@@ -52,35 +78,25 @@ export default function PengajuanAset(){
         }
     }, [token]);
 
-    const handleFileChange = (event) => {
-        const files = Array.from(event.target.files);
-        const newFiles = files.map(file => ({ file: file }));
-        setSelectedFiles([...selectedFiles, ...newFiles]);
-      };
+    useEffect(() => {
+        const fetchData = async () => {
+          if (token && id) {
+            const response = await fetchApplicantUserId({ token, id });
+            console.log(response);
+            form.setValue('asset_id', response.asset_id)
+            form.setValue('submission_date', response.submission_date)
+            form.setValue('expiry_date', response.expiry_date)
+            form.setValue('type', response.type)
+          }
+        };
+    
+        fetchData();
+      }, [token, id]);
 
-    const handleRemoveFile = (fileName) => {
-        setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
-    };
-
-    const form = useForm({
-        resolver: zodResolver(FormSchema),
-    });
-
-    const onSubmit= async (data) => {
-        try{
-            const result = await createApplicantUser({data, token, path: selectedFiles.map(file => file.file) });
-            toast.success("created successfully");
-            form.reset();
-            router.push('/')
-        } catch (error) {
-            toast.error("Failed to create asset.");
-            console.error('Error creating asset:', error);
-        }
-    }
     return(
         <div className="py-4">
             <div className="w-full max-w-7xl mx-auto">
-                <p className="title font-manrope font-bold text-2xl leading-10">Pengajuan Aset</p>
+                <p className="title font-manrope font-bold text-2xl leading-10">Ubah Pengajuan Aset</p>
                 <p className="title text-muted-foreground text-sm mb-5">Here's a list of your assets.</p>
                 <hr className="mb-4" />
                 <div className="flex items-start">
@@ -214,8 +230,8 @@ export default function PengajuanAset(){
                                         <div className="mt-4 space-y-2">
                                             {selectedFiles.map(file => (
                                                 <Card key={file.name} className="flex justify-between items-center">
-                                                    <span className="text-sm text-muted-foreground">{file.file.name}</span>
-                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.file.name)}>
+                                                    <span className="text-sm text-muted-foreground">{file.name}</span>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.name)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>
                                                 </Card>
@@ -224,7 +240,7 @@ export default function PengajuanAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
+                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Pengajuan</button>
                                 </div>
                             </form>
                         </Form>

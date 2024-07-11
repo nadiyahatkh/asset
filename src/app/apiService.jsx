@@ -76,6 +76,57 @@ export const fetchApplicant = async ({token}) => {
       }
     };
 
+    export const updateApplicantUser = async ({ id, data, token, path }) => {
+      try {
+        const formData = new FormData();
+        formData.append('asset_id', data.asset_id);
+        formData.append('submission_date', format(data.submission_date, 'yyyy-MM-dd'));
+        formData.append('expiry_date', format(data.expiry_date, 'yyyy-MM-dd'));
+        formData.append('type', data.type);
+    
+        if (path && path.length > 0) {
+            path.forEach((file) => {
+            formData.append('path[]', file);
+          });
+        }
+
+        const response = await fetch(`http://45.64.99.242:8850/api/applicant/update/${id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error('Failed to update Aset');
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('Error update Aset:', error);
+      }
+    };
+
+    export const fetchApplicantUserId = async ({token, id}) => {
+      try {
+        const response = await fetch(`http://45.64.99.242:8850/api/applicant/detail/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        })
+        .then((res) => res.json())
+        .then((data) => {
+         return {
+          data: data,
+          message: "successs"
+         }
+        })
+        return response.data
+      } catch (error) {
+        console.error(error);
+        return "abs"
+      }
+    }
+
     export const removeApplicant = async ({ id, token }) => {
       console.log(id, token)
       try {
