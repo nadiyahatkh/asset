@@ -27,7 +27,7 @@ const FormSchema = z.object({
   });
 
 export default function Pengajuan() {
-
+  const [search, setSearch] = useState('')
   const [data, setData] = useState([]);
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -35,7 +35,7 @@ export default function Pengajuan() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const pengajuan = await fetchApplicantAdmin({ token });
+        const pengajuan = await fetchApplicantAdmin({ token, search });
         console.log(pengajuan)
         setData(pengajuan.data);
       } catch (error) {
@@ -45,7 +45,7 @@ export default function Pengajuan() {
     if (token) {
       loadData();
     }
-  }, [token]);
+  }, [token, search]);
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -123,7 +123,7 @@ export default function Pengajuan() {
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns} data={data} />
+                <DataTable columns={columns} data={data} search={search} setSearch={setSearch} />
               </div>
             </Card>
           </div>

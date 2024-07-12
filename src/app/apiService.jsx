@@ -325,9 +325,10 @@ export const fetchApplicant = async ({token, search = ''}) => {
         }
       };
 
-      export const fetchApplicantAdmin = async ({token}) => {
+      export const fetchApplicantAdmin = async ({token, search}) => {
         try {
-          const response = await fetch('http://45.64.99.242:8850/api/data/applicant/index', {
+          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index?search=${search}`, {
+            method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             }

@@ -36,7 +36,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CirclePlus, Settings2 } from 'lucide-react';
 
-export function DataTable({ columns, data }) {
+export function DataTable({ columns, data, search, setSearch }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -65,10 +65,8 @@ export function DataTable({ columns, data }) {
         <div className='flex items-center py-4'>
           <Input
             placeholder='Filter tasks...'
-            value={(table.getColumn('namaaset', 'kategori', 'pengaju')?.getFilterValue() ?? '')}
-            onChange={event =>
-              table.getColumn('namaaset', 'kategori', 'pengaju')?.setFilterValue(event.target.value)
-            }
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className='max-w-sm'
           />
         </div>
