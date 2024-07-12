@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { removeEmployee } from '../apiService';
 
 
-export const columns = [
+export const columns = (deleteRow) => [
     {
         id: "select",
         header: ({ table }) => (
@@ -93,6 +93,7 @@ export const columns = [
           const idToDelete = row.original.id;
           console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
           await removeEmployee({ id: idToDelete, token: token });
+          deleteRow(idToDelete);
           setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
         } catch (error) {
           console.error('Gagal menghapus data:', error);

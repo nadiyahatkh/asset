@@ -23,11 +23,11 @@ import Autoplay from "embla-carousel-autoplay"
 import { useSession } from 'next-auth/react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { removeAssetData } from '../apiService';
-
+import { formatCurrency } from '../utils/formatCurrency';
 
   
 
-export const columns = [
+export const columns = (deleteRow) => [
     {
         id: "select",
         header: ({ table }) => (
@@ -79,7 +79,8 @@ export const columns = [
   },
   {
     accessorKey: 'price',
-    header: 'Harga'
+    header: 'Harga',
+    cell: info => formatCurrency(info.getValue())
   },
   {
     accessorKey: 'received_date',
@@ -155,6 +156,7 @@ export const columns = [
           console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
           await removeAssetData({ id: idToDelete, token: token });
           
+          deleteRow(idToDelete);
           setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
         } catch (error) {
           console.error('Gagal menghapus data:', error);

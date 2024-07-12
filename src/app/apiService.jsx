@@ -1,8 +1,9 @@
 import { format } from "date-fns";
 
-export const fetchApplicant = async ({token}) => {
+export const fetchApplicant = async ({token, search = ''}) => {
     try {
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/index`, {
+        const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?search=${search}`, {
+          method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
           }

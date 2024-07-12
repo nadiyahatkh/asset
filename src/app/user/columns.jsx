@@ -21,7 +21,7 @@ import { removeApplicant } from '../apiService';
 import { useSession } from 'next-auth/react';
 
 
-export const columns = [
+export const columns = (deleteRow) => [
   
     {
         id: "select",
@@ -96,6 +96,7 @@ export const columns = [
           const idToDelete = row.original.id;
           console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
           await removeApplicant({ id: idToDelete, token: token });
+          deleteRow(idToDelete)
           setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
         } catch (error) {
           console.error('Gagal menghapus data:', error);

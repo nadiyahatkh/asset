@@ -44,6 +44,10 @@ export default function DataAset() {
     }
   }, [token]);
 
+  const deleteRow = (id) => {
+    setData((prevData) => prevData.filter(item => item.id !== id));
+  };
+
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -131,7 +135,7 @@ export default function DataAset() {
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns} data={data} />
+                <DataTable columns={columns(deleteRow)} data={data} setData={setData} />
               </div>
             </Card>
           </div>

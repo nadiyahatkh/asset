@@ -25,13 +25,14 @@ import { useSession } from "next-auth/react";
 
 export default function User() {
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState('');
   const { data: session } = useSession();
   const token = session?.user?.token;
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const pengajuanData = await fetchApplicant({ token });
+        const pengajuanData = await fetchApplicant({ token, search });
         setData(pengajuanData.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -40,7 +41,11 @@ export default function User() {
     if (token) {
       loadData();
     }
-  }, [token]);
+  }, [token, search]);
+
+  const deleteRow = (id) => {
+    setData((prevData) => prevData.filter(item => item.id !== id))
+  }
 
   // const form = useForm({
   //   resolver: zodResolver(FormSchema),
@@ -126,7 +131,7 @@ export default function User() {
         </div>
         <Card className="shadow-md">
           <div className="container mx-auto p-4">
-            <DataTable columns={columns} data={data} />
+            <DataTable columns={columns(deleteRow)} data={data} search={search} setSearch={setSearch} />
           </div>
         </Card>
       </div>

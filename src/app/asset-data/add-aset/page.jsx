@@ -61,7 +61,7 @@ export default function AddAset() {
   
 
   const handleRemoveFile = (fileName) => {
-    setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
+    setSelectedFiles(selectedFiles.filter(file => file.file.name !== fileName));
   };
 
   const form = useForm({
@@ -326,7 +326,7 @@ export default function AddAset() {
                       {selectedFiles.map((file) => (
                         <Card key={file.name} className="flex justify-between items-center">
                           <span className="text-sm text-muted-foreground text-black" >{file.file.name}</span>
-                          <Button variant="danger" type="button" onClick={() => handleRemoveFile(file.name)}>
+                          <Button variant="danger" type="button" onClick={() => handleRemoveFile(file.file.name)}>
                             <CircleX className="h-4 w-4"/>
                           </Button>
                         </Card>

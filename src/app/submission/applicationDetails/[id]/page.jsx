@@ -19,8 +19,8 @@ export default function DetailPengajuan() {
     const loadDetail = async () => {
       if (token && id) {
         const response = await fetchApplicantDetail({ token, id });
-        console.log(response); // Debugging: check what response is being returned
         setDetail(response?.data);
+        setActionCompleted(response?.data?.status === 'accepted' || response?.data?.status === 'denied');
       }
     };
 
