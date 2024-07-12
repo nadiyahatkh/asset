@@ -27,13 +27,14 @@ const FormSchema = z.object({
 
 export default function DataAset() {
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState('')
   const { data: session } = useSession();
   const token = session?.user?.token;
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const asseData = await fetchAssetData({ token });
+        const asseData = await fetchAssetData({ token, search });
         setData(asseData.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -42,7 +43,7 @@ export default function DataAset() {
     if (token) {
       loadData();
     }
-  }, [token]);
+  }, [token, search]);
 
   const deleteRow = (id) => {
     setData((prevData) => prevData.filter(item => item.id !== id));
@@ -135,7 +136,7 @@ export default function DataAset() {
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns(deleteRow)} data={data} setData={setData} />
+                <DataTable columns={columns(deleteRow)} data={data} setData={setData} search={search} setSearch={setSearch} />
               </div>
             </Card>
           </div>

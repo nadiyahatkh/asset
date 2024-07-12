@@ -168,9 +168,10 @@ export const fetchApplicant = async ({token, search = ''}) => {
         }
       };
 
-      export const fetchAssetData = async ({token}) => {
+      export const fetchAssetData = async ({token, search = ''}) => {
         try {
-          const response = await fetch('http://45.64.99.242:8850/api/aset/index', {
+          const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}`, {
+            method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
             }
