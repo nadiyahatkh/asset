@@ -59,22 +59,18 @@ export default function Dashboard() {
           {
             label: "Jumlah Aset",
             amount: data.total_assets.toString(),
-            description: "+2 dari bulan lalu",
           },
           {
             label: "Total Aset Aktif",
             amount: data.total_active_assets.toString(),
-            description: "+3 dari bulan lalu",
           },
           {
             label: "Aset Rusak",
             amount: data.total_damaged_assets.toString(),
-            description: "+1 dari bulan lalu",
           },
           {
             label: "Aset Dipinjamkan",
             amount: data.total_loaned_assets.toString(),
-            description: "+1 dari jam terakhir",
           }
         ]);
         setChartData(data.asset_category.map(category => ({
@@ -104,7 +100,6 @@ export default function Dashboard() {
             <Card
               key={i}
               amount={d.amount}
-              description={d.description}
               label={d.label}
             />
           ))}

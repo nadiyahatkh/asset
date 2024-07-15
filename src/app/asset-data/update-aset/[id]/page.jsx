@@ -56,7 +56,7 @@ export default function ubahAset(){
       };
 
     const handleRemoveFile = (fileName) => {
-        setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
+        setSelectedFiles(selectedFiles.filter(file => file.file.name !== fileName));
     };
 
     const form = useForm({

@@ -168,6 +168,55 @@ export const fetchApplicant = async ({token, search = ''}) => {
         }
       };
 
+      export const updateProfile = async ({ data, token }) => {
+        try {
+          const formData = new FormData();
+          formData.append('username', data.username);
+          formData.append('email', data.email);
+          formData.append('password', data.password);
+          formData.append('password_confirmation', data.password_confirmation);
+          if (data.foto) {
+            formData.append('foto', data.foto);
+          }
+      
+          
+          const response = await fetch(`http://45.64.99.242:8850/api/update`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+          if (!response.ok) {
+            throw new Error('Failed to update Aset');
+          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error update Aset:', error);
+        }
+      };
+
+      export const fetchProfileAdminId = async ({token}) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/detail`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          })
+          .then((res) => res.json())
+          .then((data) => {
+           return {
+            data: data,
+            message: "successs"
+           }
+          })
+          return response.data
+        } catch (error) {
+          console.error(error);
+          return "abs"
+        }
+      }
+
       export const fetchAssetData = async ({token, search = ''}) => {
         try {
           const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}`, {
@@ -397,9 +446,9 @@ export const fetchApplicant = async ({token, search = ''}) => {
       };
 
 
-      export const fetchEmployee = async ({token}) => {
+      export const fetchEmployee = async ({token, search}) => {
         try {
-          const response = await fetch('http://45.64.99.242:8850/api/employee/index', {
+          const response = await fetch(`http://45.64.99.242:8850/api/employee/index?search=${search}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }

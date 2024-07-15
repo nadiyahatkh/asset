@@ -25,7 +25,7 @@ const FormSchema = z.object({
   });
 
 export default function EmployeeManagement() {
-
+  const [search, setSearch] = useState('')
   const [data, setData] = useState([]);
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -33,7 +33,7 @@ export default function EmployeeManagement() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const employeeData = await fetchEmployee({ token });
+        const employeeData = await fetchEmployee({ token, search });
         setData(employeeData.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -42,7 +42,7 @@ export default function EmployeeManagement() {
     if (token) {
       loadData();
     }
-  }, [token]);
+  }, [token, search]);
 
   const deleteRow = (id) => {
     setData((prevData) => prevData.filter(item => item.id !== id))
@@ -130,7 +130,7 @@ export default function EmployeeManagement() {
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns(deleteRow)} data={data} />
+                <DataTable columns={columns(deleteRow)} data={data} search={search} setSearch={setSearch} />
               </div>
             </Card>
           </div>

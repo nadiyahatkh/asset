@@ -160,6 +160,7 @@ export default function AddAset() {
                     control={form.control}
                     name="category_id"
                     render={({ field }) => (
+                      <>
                       <Select
                       value={field.value ? field.value.toString() : ""}
                         onValueChange={(value) => {
@@ -177,6 +178,10 @@ export default function AddAset() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {form.formState.errors.category_id && (
+                        <FormMessage type="error" className="italic">{form.formState.errors.category_id.message}</FormMessage>
+                      )}
+                      </>
                     )}
                   />
                 </div>
