@@ -20,7 +20,7 @@ export default function DetailPengajuan() {
       if (token && id) {
         const response = await fetchApplicantDetail({ token, id });
         setDetail(response?.data);
-        setActionCompleted(response?.data?.status === 'accepted' || response?.data?.status === 'denied');
+        setActionCompleted(response?.data?.status === 'Disetujui' || response?.data?.status === 'Ditolak');
       }
     };
 

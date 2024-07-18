@@ -73,7 +73,17 @@ export const columns = [
   },
   {
     accessorKey: 'type',
-    header: 'Tipe'
+    header: 'Tipe',
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize"> {row.getValue("type")}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    }
   },
   {
     accessorKey: 'Aksi',

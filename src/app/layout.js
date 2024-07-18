@@ -20,7 +20,6 @@ const disabledNavbar = ["/login", "/register"]
 
 export default function RootLayout({ children }) {
   const pathname = usePathname()
-  console.log(children)
   return (
     <html lang="en">
       <body className={cn(

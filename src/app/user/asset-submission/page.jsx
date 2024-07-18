@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const FormSchema = z.object({
-    asset_id: z.preprocess((val) => Number(val), z.number().min(1, { message: "asset wajib diisi." })),
+    asset_id: z.string().min(1, { message: "asset wajib diisi." }),
     submission_date: z.date({
       required_error: "Tanggal mulai is required.",
     }),
@@ -36,12 +36,14 @@ export default function PengajuanAset(){
     const token = session?.user?.token;
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [assets, setAssets] = useState([]);
+    const [assetId, setAssetId] = useState()
     const router = useRouter()
 
     useEffect(() => {
         const loadData = async () => {
           try {
             const response = await fetchGetAsetApplicant({ token });
+            console.log(response)
             setAssets(response);
           } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -67,6 +69,7 @@ export default function PengajuanAset(){
     });
 
     const onSubmit= async (data) => {
+        data.asset_id = assetId;
         try{
             const result = await createApplicantUser({data, token, path: selectedFiles.map(file => file.file) });
             toast.success("created successfully");
@@ -130,7 +133,8 @@ export default function PengajuanAset(){
                                         <Select
                                             value={field.value ? field.value.toString() : ""}
                                             onValueChange={(value) => {
-                                                field.onChange(Number(value)); // Update react-hook-form state
+                                                field.onChange(value); // Update react-hook-form state
+                                                setAssetId(value)
                                             }}
                                             {...field}
                                         >

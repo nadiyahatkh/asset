@@ -57,17 +57,7 @@ export const columns = (deleteRow) => [
       },
   {
     accessorKey: 'asset_name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Nama Aset
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    }
+    header: 'Nama Aset'
   },
   {
     accessorKey: 'category',
@@ -94,7 +84,17 @@ export const columns = (deleteRow) => [
   },
   {
     accessorKey: 'status',
-    header: 'Status'
+    header: 'Status',
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize"> {row.getValue("status")}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    }
   },
   {
     accessorKey: 'document',

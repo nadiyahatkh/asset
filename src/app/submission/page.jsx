@@ -27,6 +27,8 @@ const FormSchema = z.object({
   });
 
 export default function Pengajuan() {
+  const [statusFilter, setStatusFilter] = useState([]);
+  const [typeFilter, setTypeFilter] = useState([]);
   const [search, setSearch] = useState('')
   const [data, setData] = useState([]);
   const { data: session } = useSession();
@@ -35,7 +37,7 @@ export default function Pengajuan() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const pengajuan = await fetchApplicantAdmin({ token, search });
+        const pengajuan = await fetchApplicantAdmin({ token, search, status: statusFilter, type: typeFilter });
         console.log(pengajuan)
         setData(pengajuan.data);
       } catch (error) {
@@ -45,7 +47,7 @@ export default function Pengajuan() {
     if (token) {
       loadData();
     }
-  }, [token, search]);
+  }, [token, search, statusFilter, typeFilter]);
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -123,7 +125,7 @@ export default function Pengajuan() {
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns} data={data} search={search} setSearch={setSearch} />
+                <DataTable columns={columns} data={data} search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} typeFilter={typeFilter} setTypeFilter={setTypeFilter} />
               </div>
             </Card>
           </div>

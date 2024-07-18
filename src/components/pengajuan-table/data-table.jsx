@@ -35,8 +35,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CirclePlus, Settings2 } from 'lucide-react';
+import { DataTableFacetedFilter } from './data-table-faceted-filter';
+import { incomeType, statuses } from './constants';
 
-export function DataTable({ columns, data, search, setSearch }) {
+export function DataTable({ columns, data, search, setSearch, statusFilter, setStatusFilter, typeFilter, setTypeFilter }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -58,6 +60,7 @@ export function DataTable({ columns, data, search, setSearch }) {
     getPaginationRowModel: getPaginationRowModel()
   });
 
+
   return (
     <>
       {/* Filters */}
@@ -69,18 +72,24 @@ export function DataTable({ columns, data, search, setSearch }) {
             onChange={(e) => setSearch(e.target.value)}
             className='max-w-sm'
           />
-        </div>
-        <div className="">
-            <button className="flex items-center ml-4 py-2 px-3 rounded-lg border-2 border-dashed relative">
-                <CirclePlus className="h-4 w-4 mr-2" /> 
-                <span className='text-sm font-semibold'>Status</span>
-            </button>
-        </div>
-        <div className="">
-            <button className="flex items-center ml-4 py-2 px-3 rounded-lg border-2 border-dashed relative">
-                <CirclePlus className="h-4 w-4 mr-2" /> 
-                <span className='text-sm font-semibold'>Tipe</span>
-            </button>
+          {table.getColumn("type") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("type")}
+            title="Status"
+            options={statuses}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
+        )}
+        {table.getColumn("type") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("type")}
+            title="Type"
+            options={incomeType}
+            statusFilter={typeFilter}
+            setStatusFilter={setTypeFilter}
+          />
+        )}
         </div>
 
 

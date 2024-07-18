@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-export const fetchApplicant = async ({token, search = ''}) => {
+export const fetchApplicant = async ({token, search}) => {
     try {
         const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?search=${search}`, {
           method: 'GET',
@@ -129,7 +129,7 @@ export const fetchApplicant = async ({token, search = ''}) => {
     }
 
     export const removeApplicant = async ({ id, token }) => {
-      console.log(id, token)
+    
       try {
         const response = await fetch(`http://45.64.99.242:8850/api/applicant/delete/${id}`, {
           method: 'DELETE',
@@ -217,9 +217,11 @@ export const fetchApplicant = async ({token, search = ''}) => {
         }
       }
 
-      export const fetchAssetData = async ({token, search = ''}) => {
+      export const fetchAssetData = async ({ token, search, status }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}`, {
+          const statusParams = status.map(s => `status[]=${s}`).join('&');
+      
+          const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}&${statusParams}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -227,17 +229,19 @@ export const fetchApplicant = async ({token, search = ''}) => {
           })
           .then((res) => res.json())
           .then((data) => {
-           return {
-            data: data,
-            message: "successs"
-           }
+            return {
+              data: data,
+              message: "success"
+            }
           })
-          return response.data
+      
+          return response.data;
         } catch (error) {
           console.error(error);
-          return "abs"
+          return "abs";
         }
       }
+      
 
       export const fetchAssetDataId = async ({token, id}) => {
         try {
@@ -374,9 +378,11 @@ export const fetchApplicant = async ({token, search = ''}) => {
         }
       };
 
-      export const fetchApplicantAdmin = async ({token, search}) => {
+      export const fetchApplicantAdmin = async ({token, search, status, type}) => {
+        const statusParams = status.map(s => `status[]=${s}`).join('&');
+        const typeParams = type.map(t => `type[]=${t}`).join('&');
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index?search=${search}`, {
+          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index?search=${search}&${statusParams}&${typeParams}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
