@@ -49,6 +49,7 @@ export default function Dashboard() {
   const [cardData, setCardData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const { data: session } = useSession();
+  const [nareast, setNareast] = useState()
   const token = session?.user?.token;
 
   useEffect(() => {
@@ -77,6 +78,7 @@ export default function Dashboard() {
           category: category.category,
           total_price: category.total_price,
         })));
+        setNareast(data.nearest_return)
       } catch (error) {
         console.error('Gagal mengambil data:', error);
       }
@@ -116,7 +118,7 @@ export default function Dashboard() {
                 Terdapat 5 pengembalian terdekat
               </p>
             </section>
-            {uesrSalesData.map((d, i) => (
+            {nareast?.map((d, i) => (
               <SalesCard
                 key={i}
                 date={d.date}

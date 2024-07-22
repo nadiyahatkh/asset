@@ -1,77 +1,64 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
 import { addDays, format } from "date-fns";
-import { z } from "zod";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { useEffect, useState } from 'react';
 import { columns } from "./columns";
 import { DataTable } from "@/components/user/pengajuanAset-table/data-table";
-import { fetchApplicant } from "../apiService";
+import { fetchApplicant, selectRemoveApplicant } from "../apiService";
 import { useSession } from "next-auth/react";
-
-// const FormSchema = z.object({
-//     dob: z.date({
-//       required_error: "A date of birth is required.",
-//     }),
-// });
+import { Calendar as CalendarIcon } from "lucide-react";
 
 export default function User() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState('');
   const { data: session } = useSession();
   const token = session?.user?.token;
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const [date, setDate] = useState({
+    from: new Date(2024, 0, 1),
+    to: new Date(2024, 11, 31)
+  });
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const pengajuanData = await fetchApplicant({ token, search });
-        setData(pengajuanData.data);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      }
-    };
+  const loadData = async () => {
+    try {
+      const start_date = date.from ? format(date.from, 'yyyy-MM-dd') : '';
+      const end_date = date.to ? format(date.to, 'yyyy-MM-dd') : '';
+      const pengajuanData = await fetchApplicant({ token, search, start_date, end_date, page, per_page: perPage });
+      setData(pengajuanData.data.data);
+      setTotalPages(pengajuanData.total_page);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
+  };
+
     if (token) {
       loadData();
     }
-  }, [token, search]);
+  }, [token, search, page, perPage, date]);
 
   const deleteRow = (id) => {
-    setData((prevData) => prevData.filter(item => item.id !== id))
+    setData((prevData) => prevData.filter(item => item.id !== id));
   }
 
-  // const form = useForm({
-  //   resolver: zodResolver(FormSchema),
-  // });
-
-  // function onSubmit(data) {
-  //   toast({
-  //     title: "You submitted the following values:",
-  //     description: (
-  //       <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-  //         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-  //       </pre>
-  //     ),
-  //   });
-  // }
-  const [date, setDate] = useState({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
-  });
-
-  // const removeApplicant = async (id) => {
-  //   try {
-  //     const result = await removeApplicant({id, token})
-
-  //   }
-  // }
+  const deleteRows = async (ids) => {
+    try {
+      const response = await selectRemoveApplicant({ ids, token });
+      if (response) {
+        setData((prevData) => prevData.filter(item => !ids.includes(item.id)));
+      }
+    } catch (error) {
+      console.error('Failed to delete rows:', error);
+    }
+  };
 
   return (
     <div className="py-4">
@@ -87,40 +74,41 @@ export default function User() {
           {/* Right section */}
           <div className="flex items-center space-x-4">
           <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                id="date"
-                variant={"outline"}
-                className={cn(
-                  "w-[300px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={date?.from}
-                selected={date}
-                onSelect={setDate}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="date"
+                      variant={"outline"}
+                      className={cn(
+                        "w-[300px] justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date?.from ? (
+                        date.to ? (
+                          <>
+                            {format(date.from, "LLL dd, y")} -{" "}
+                            {format(date.to, "LLL dd, y")}
+                          </>
+                        ) : (
+                          format(date.from, "LLL dd, y")
+                        )
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      initialFocus
+                      mode="range"
+                      defaultMonth={date?.from}
+                      selected={date}
+                      onSelect={setDate}
+                      numberOfMonths={2}
+                    />
+                  </PopoverContent>
+              </Popover>
             {/* Add Asset Button */}
             <Button variant="solid" className="" style={{ background: "#F9B421" }}>
                 <Link href="./user/asset-submission">
@@ -131,7 +119,18 @@ export default function User() {
         </div>
         <Card className="shadow-md">
           <div className="container mx-auto p-4">
-            <DataTable columns={columns(deleteRow)} data={data} search={search} setSearch={setSearch} />
+          <DataTable
+            columns={columns(deleteRow)}
+            data={data}
+            search={search}
+            setSearch={setSearch}
+            onDelete={deleteRows}
+            currentPage={page}
+            totalPages={totalPages}
+            setPage={setPage}
+            perPage={perPage}
+            setPerPage={setPerPage}
+          />
           </div>
         </Card>
       </div>

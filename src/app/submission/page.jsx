@@ -14,17 +14,13 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useState } from 'react';
 import { DataTable } from "@/components/pengajuan-table/data-table";
 import { columns } from "./columns";
-import { fetchApplicantAdmin } from "../apiService";
+import { fetchApplicantAdmin, selectRemoveSubmission } from "../apiService";
 import { useSession } from "next-auth/react";
 
 
 
 
-const FormSchema = z.object({
-    dob: z.date({
-      required_error: "A date of birth is required.",
-    }),
-  });
+
 
 export default function Pengajuan() {
   const [statusFilter, setStatusFilter] = useState([]);
@@ -33,13 +29,22 @@ export default function Pengajuan() {
   const [data, setData] = useState([]);
   const { data: session } = useSession();
   const token = session?.user?.token;
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [date, setDate] = useState({
+    from: new Date(2024, 0, 1),
+    to: new Date(2024, 11, 31)
+  });
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const pengajuan = await fetchApplicantAdmin({ token, search, status: statusFilter, type: typeFilter });
-        console.log(pengajuan)
-        setData(pengajuan.data);
+        const start_date = date.from ? format(date.from, 'yyyy-MM-dd') : '';
+        const end_date = date.to ? format(date.to, 'yyyy-MM-dd') : '';
+        const pengajuan = await fetchApplicantAdmin({ token, search, status: statusFilter, type: typeFilter, page, per_page: perPage, start_date, end_date });
+        setData(pengajuan.data.data);
+        setTotalPages(pengajuan.total_page)
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -47,22 +52,19 @@ export default function Pengajuan() {
     if (token) {
       loadData();
     }
-  }, [token, search, statusFilter, typeFilter]);
+  }, [token, search, statusFilter, typeFilter, page, perPage, date]);
 
-    const form = useForm({
-        resolver: zodResolver(FormSchema),
-      });
-
-      function onSubmit(data) {
-        toast({
-          title: "You submitted the following values:",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-            </pre>
-          ),
-        });
-      }
+      const deleteRows = async (ids) => {
+        try {
+          const response = await selectRemoveSubmission({ ids, token });
+          console.log(response)
+          if (response) {
+            setData((prevData) => prevData.filter(item => !ids.includes(item.id)));
+          }
+        } catch (error) {
+          console.error('Failed to delete rows:', error);
+        }
+      };
 
     return (
         <div className="py-4">
@@ -77,55 +79,62 @@ export default function Pengajuan() {
               </div>
               {/* Right section */}
               <div className="flex items-center space-x-4">
-                <Form {...form} className="flex-grow">
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                      control={form.control}
-                      name="dob"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "w-[240px] pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Pilih tanggal</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date > new Date() || date < new Date("1900-01-01")
-                                }
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
+              <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="date"
+                      variant={"outline"}
+                      className={cn(
+                        "w-[300px] justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
                       )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date?.from ? (
+                        date.to ? (
+                          <>
+                            {format(date.from, "LLL dd, y")} -{" "}
+                            {format(date.to, "LLL dd, y")}
+                          </>
+                        ) : (
+                          format(date.from, "LLL dd, y")
+                        )
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      initialFocus
+                      mode="range"
+                      defaultMonth={date?.from}
+                      selected={date}
+                      onSelect={setDate}
+                      numberOfMonths={2}
                     />
-                  </form>
-                </Form>
+                  </PopoverContent>
+              </Popover>
               </div>
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns} data={data} search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} typeFilter={typeFilter} setTypeFilter={setTypeFilter} />
+                <DataTable 
+                  columns={columns} 
+                  data={data} 
+                  search={search} 
+                  setSearch={setSearch} 
+                  statusFilter={statusFilter} 
+                  setStatusFilter={setStatusFilter} 
+                  typeFilter={typeFilter} 
+                  setTypeFilter={setTypeFilter} 
+                  currentPage={page}
+                  totalPages={totalPages}
+                  setPage={setPage}
+                  perPage={perPage}
+                  setPerPage={setPerPage}
+                  onDelete={deleteRows} 
+                />
               </div>
             </Card>
           </div>

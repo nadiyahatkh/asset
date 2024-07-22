@@ -36,6 +36,7 @@ export const columns = (deleteRow) => [
           />
         ),
         cell: ({ row }) => (
+          
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}

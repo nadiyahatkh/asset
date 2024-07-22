@@ -35,8 +35,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CirclePlus, Settings2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon, TrashIcon } from '@radix-ui/react-icons';
 
-export function DataTable({ columns, data, search, setSearch }) {
+export function DataTable({ columns, data, search, setSearch, totalPages,  currentPage, setPage, perPage, setPerPage, onDelete }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -58,6 +60,11 @@ export function DataTable({ columns, data, search, setSearch }) {
     getPaginationRowModel: getPaginationRowModel()
   });
 
+  const handleDelete = () => {
+    const deleteRows = table.getSelectedRowModel().rows.map(row => row.original.id);
+    onDelete(deleteRows);
+  };
+
   return (
     <>
       {/* Filters */}
@@ -69,13 +76,14 @@ export function DataTable({ columns, data, search, setSearch }) {
             onChange={(e) => setSearch(e.target.value)}
             className='max-w-sm'
           />
+          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+          <Button variant="outline" size="sm" onClick={handleDelete} className="ml-4">
+            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+            Delete ({table.getFilteredSelectedRowModel().rows.length})
+          </Button>
+        ) : null}
         </div>
-        <div className="">
-            <button className="flex items-center ml-4 py-2 px-3 rounded-lg border-2 border-dashed relative">
-                <CirclePlus className="h-4 w-4 mr-2" /> 
-                <span className='text-sm font-semibold'>Status</span>
-            </button>
-        </div>
+        
         {/* Column visibility */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -161,23 +169,68 @@ export function DataTable({ columns, data, search, setSearch }) {
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+        <div className="flex items-center space-x-2">
+          <p className="text-sm font-medium">Rows per page</p>
+          <Select
+            value={`${perPage}`}
+            onValueChange={(value) => {
+              setPerPage(Number(value));
+            }}
           >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+            <SelectTrigger className="h-8 w-[70px]">
+              <SelectValue placeholder={perPage} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="6">6</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="30">30</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => setPage(1)}
+              disabled={currentPage === 1}
+            >
+              <span className="sr-only">Go to first page</span>
+              <DoubleArrowLeftIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => setPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <span className="sr-only">Go to previous page</span>
+              <ChevronLeftIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => setPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <span className="sr-only">Go to next page</span>
+              <ChevronRightIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => setPage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <span className="sr-only">Go to last page</span>
+              <DoubleArrowRightIcon className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </>

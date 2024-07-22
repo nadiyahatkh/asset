@@ -9,7 +9,7 @@ import { Form, FormField } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify'
-
+import { useRouter } from 'next/navigation';
 
 
 const FormSchema = z.object({
@@ -25,6 +25,7 @@ export default function ProfilAdmin() {
     const { data: session } = useSession();
     const token = session?.user?.token;
     const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter()
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -36,7 +37,6 @@ export default function ProfilAdmin() {
 
 
     const onSubmit = async (data) => {
-        console.log(data)
         try {
           const result = await updateProfile({ data, token });
           toast.success("Employee created successfully");
@@ -73,6 +73,7 @@ export default function ProfilAdmin() {
     };
 
     return (
+        <>
         <div className="py-4">
             <div className="w-full max-w-7xl mx-auto">
                 <p className="title font-manrope font-bold text-2xl leading-10">Profile</p>
@@ -167,7 +168,7 @@ export default function ProfilAdmin() {
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 font-semibold rounded-lg" style={{ background: "#F9B421" }}>Save Profile</button>
+                                    <button type="submit" className="px-4 py-2 font-semibold rounded-lg" style={{ background: "#F9B421" }}>Save Profile</button>
                                 </div>
 
                             </form>
@@ -176,5 +177,6 @@ export default function ProfilAdmin() {
                 </div>
             </div>
         </div>
+        </>
     );
 }

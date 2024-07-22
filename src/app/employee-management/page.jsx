@@ -13,7 +13,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/managemenKaryawan-table/data-table";
 import { columns } from "./columns";
 import { Card } from "@/components/ui/card";
-import { fetchEmployee } from "../apiService";
+import { fetchEmployee, selectRemoveEmployee } from "../apiService";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -29,12 +29,16 @@ export default function EmployeeManagement() {
   const [data, setData] = useState([]);
   const { data: session } = useSession();
   const token = session?.user?.token;
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const employeeData = await fetchEmployee({ token, search });
-        setData(employeeData.data);
+        const employeeData = await fetchEmployee({ token, search, page, per_page: perPage });
+        setData(employeeData.data.data);
+        setTotalPages(employeeData.total_page)
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -42,11 +46,22 @@ export default function EmployeeManagement() {
     if (token) {
       loadData();
     }
-  }, [token, search]);
+  }, [token, search, page, perPage]);
 
   const deleteRow = (id) => {
     setData((prevData) => prevData.filter(item => item.id !== id))
   }
+
+  const deleteRows = async (ids) => {
+    try {
+      const response = await selectRemoveEmployee({ ids, token });
+      if (response) {
+        setData((prevData) => prevData.filter(item => !ids.includes(item.id)));
+      }
+    } catch (error) {
+      console.error('Failed to delete rows:', error);
+    }
+  };
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -130,7 +145,17 @@ export default function EmployeeManagement() {
             </div>
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
-                <DataTable columns={columns(deleteRow)} data={data} search={search} setSearch={setSearch} />
+                <DataTable 
+                  columns={columns(deleteRow)} 
+                  data={data} search={search} 
+                  setSearch={setSearch} 
+                  currentPage={page}
+                  totalPages={totalPages}
+                  setPage={setPage}
+                  perPage={perPage}
+                  setPerPage={setPerPage}
+                  onDelete={deleteRows}
+                  />
               </div>
             </Card>
           </div>

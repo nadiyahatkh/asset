@@ -13,9 +13,20 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    // Clear previous error
+    setError("");
+    
+    // Validate fields
+    if (!value.email || !value.password) {
+      setError("Email and password are required");
+      return;
+    }
+
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -25,16 +36,15 @@ export default function LoginPage() {
 
       if (res && !res.error) {
         const session = await getSession();
-        console.log('Session after login:', session);
         const userRole = session?.user?.role;
-        console.log('User Role:', userRole);
         const redirectUrl = +userRole === 1 ? '/dashboard' : '/';
         router.push(redirectUrl);
       } else {
-        console.log('Sign in error:', res.error);
+        setError("Invalid email or password");
       }
     } catch (error) {
       console.log('Handle login error:', error);
+      setError("An unexpected error occurred");
     }
   };
 
@@ -50,6 +60,7 @@ export default function LoginPage() {
             <Label className="text-2xl font-semibold mb-4 block">Sign In</Label>
           </div>
           <form className="space-y-2" onSubmit={handleLogin}>
+            {error && <div className="text-red-600 text-center mb-4">{error}</div>}
             <Input
               placeholder="name@example.com"
               type="email"

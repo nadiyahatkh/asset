@@ -1,24 +1,43 @@
 import { format } from "date-fns";
 
-export const fetchApplicant = async ({token, search}) => {
-    try {
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?search=${search}`, {
-          method: 'GET',
+export const fetchApplicant = async ({token, search = '', start_date, end_date, page, per_page}) => {
+  try {
+      const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?start_date=${start_date}&end_date=${end_date}&search=${search}&page=${page}&per_page=${per_page}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
+      .then((res) => res.json())
+      .then((data) => {
+       return {
+        data: data,
+        message: "successs"
+       }
+      })
+      return response.data
+    } catch (error) {
+      console.error(error);
+      return "abs";
+    }
+  };
+
+  export const selectRemoveApplicant = async ({ ids, token }) => {
+      try {
+        const response = await fetch(`http://45.64.99.242:8850/api/applicant/destroy`, {
+          method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
-          }
-        })
-        .then((res) => res.json())
-        .then((data) => {
-         return {
-          data: data,
-          message: "successs"
-         }
-        })
-        return response.data
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ ids }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to remove item Applicant');
+        }
+        return await response.json();
       } catch (error) {
-        console.error(error);
-        return "abs";
+        console.error('Error removing item Applicant:', error);
       }
     };
 
@@ -217,11 +236,11 @@ export const fetchApplicant = async ({token, search}) => {
         }
       }
 
-      export const fetchAssetData = async ({ token, search, status }) => {
+      export const fetchAssetData = async ({ token, search, status, page, per_page, start_date, end_date }) => {
         try {
           const statusParams = status.map(s => `status[]=${s}`).join('&');
       
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}&${statusParams}`, {
+          const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}&${statusParams}&start_date=${start_date}&end_date=${end_date}&page=${page}&per_page=${per_page}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -284,10 +303,6 @@ export const fetchApplicant = async ({token, search}) => {
           return "abs"
         }
       }
-
-
-
-
 
       export const createAset = async ({ data, token, path }) => {
         try {
@@ -378,11 +393,32 @@ export const fetchApplicant = async ({token, search}) => {
         }
       };
 
-      export const fetchApplicantAdmin = async ({token, search, status, type}) => {
+      export const selectRemoveAsset = async ({ ids, token }) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/aset/destroy`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ids }),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to remove item Asset');
+          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error removing item Asset:', error);
+        }
+      };
+
+      
+
+      export const fetchApplicantAdmin = async ({token, search, status, type, page, per_page, start_date, end_date}) => {
         const statusParams = status.map(s => `status[]=${s}`).join('&');
         const typeParams = type.map(t => `type[]=${t}`).join('&');
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index?search=${search}&${statusParams}&${typeParams}`, {
+          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index?search=${search}&start_date=${start_date}&end_date=${end_date}&page=${page}&per_page=${per_page}&${statusParams}&${typeParams}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -451,10 +487,29 @@ export const fetchApplicant = async ({token, search}) => {
         return await response.json();
       };
 
-
-      export const fetchEmployee = async ({token, search}) => {
+      export const selectRemoveSubmission = async ({ ids, token }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/employee/index?search=${search}`, {
+          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/destroy`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ids }),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to remove item Submission');
+          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error removing item Submission:', error);
+        }
+      };
+
+
+      export const fetchEmployee = async ({token, search, page, per_page}) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/employee/index?page=${page}&per_page=${per_page}&search=${search}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -491,6 +546,25 @@ export const fetchApplicant = async ({token, search}) => {
           return await response.json();
         } catch (error) {
           console.error('Error removing item Applicant:', error);
+        }
+      };
+
+      export const selectRemoveEmployee = async ({ ids, token }) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/employee/destroy`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ids }),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to remove Employee');
+          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error removing Employee:', error);
         }
       };
 

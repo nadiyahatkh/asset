@@ -27,7 +27,6 @@ export function DataTableFacetedFilter({
   statusFilter,
   setStatusFilter,
 }) {
-  console.log(statusFilter)
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(statusFilter);
 

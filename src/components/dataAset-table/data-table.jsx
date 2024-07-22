@@ -30,7 +30,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CirclePlus, Settings2 } from 'lucide-react';
+import { CirclePlus, Settings2, TrashIcon } from 'lucide-react';
 
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from '@/components/ui/command';
@@ -43,7 +43,7 @@ import { ChevronLeftIcon, ChevronRightIcon, Cross2Icon, DoubleArrowLeftIcon, Dou
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { statuses } from './constants';
 
-export function DataTable({ columns, data, search, setSearch, statusFilter , setStatusFilter}) {
+export function DataTable({ columns, data, search, setSearch, statusFilter , setStatusFilter, totalPages, currentPage, setPage, perPage, setPerPage, onDelete}) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -65,6 +65,11 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel()
   });
+
+  const handleDelete = () => {
+    const deleteRows = table.getSelectedRowModel().rows.map(row => row.original.id);
+    onDelete(deleteRows);
+  };
 
 
 
@@ -100,6 +105,12 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
+        {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+          <Button variant="outline" size="sm" onClick={handleDelete} className="ml-4">
+            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+            Delete ({table.getFilteredSelectedRowModel().rows.length})
+          </Button>
+        ) : null}
         </div>
         
 
@@ -189,36 +200,35 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="flex items-center space-x-2">
-        <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">Rows per page</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${perPage}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value));
+              setPerPage(Number(value));
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue placeholder={perPage} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[6, 10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="6">6</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="30">30</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-center space-x-2">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            Page {currentPage} of {totalPages}
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => setPage(1)}
+              disabled={currentPage === 1}
             >
               <span className="sr-only">Go to first page</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -226,8 +236,8 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
             <Button
               variant="outline"
               className="h-8 w-8 p-0"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => setPage(currentPage - 1)}
+              disabled={currentPage === 1}
             >
               <span className="sr-only">Go to previous page</span>
               <ChevronLeftIcon className="h-4 w-4" />
@@ -235,8 +245,8 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
             <Button
               variant="outline"
               className="h-8 w-8 p-0"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={() => setPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
             >
               <span className="sr-only">Go to next page</span>
               <ChevronRightIcon className="h-4 w-4" />
@@ -244,8 +254,8 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
+              onClick={() => setPage(totalPages)}
+              disabled={currentPage === totalPages}
             >
               <span className="sr-only">Go to last page</span>
               <DoubleArrowRightIcon className="h-4 w-4" />

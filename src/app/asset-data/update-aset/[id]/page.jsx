@@ -59,6 +59,10 @@ export default function ubahAset(){
         setSelectedFiles(selectedFiles.filter(file => file.file.name !== fileName));
     };
 
+    const handleRemoveImage = (filePath) => {
+        setImage(image.filter(file => file.path !== filePath));
+    };
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
 
@@ -332,8 +336,8 @@ export default function ubahAset(){
                                         <div className="mt-4 space-y-2">
                                             {image?.map(file => (
                                                 <Card key={file.path} className="flex justify-between items-center">
-                                                    <span className="text-sm text-muted-foreground">{file.file?.path}</span>
-                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.file?.path)}>
+                                                    <span className="text-sm text-muted-foreground">{file.path}</span>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveImage(file.path)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>
                                                 </Card>
