@@ -6,8 +6,11 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
 import { acceptApplicant, denyApplicant, fetchApplicantDetail } from "@/app/apiService";
 import { useParams, useRouter } from "next/navigation";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export default function DetailPengajuan() {
+  const [isDisetujuiDialogOpen, setIsDisetujuiDialogOpen] = useState(false)
+  const [isDitolakDialogOpen, setIsDitolakDialogOpen] = useState(false)
   const { id } = useParams(); // Get id from the URL parameters
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -106,9 +109,38 @@ export default function DetailPengajuan() {
             </div>
             <div className="flex flex-col justify-end">
               <div className="flex space-x-2">
-              <Button variant="outline" onClick={handleDeny} style={{ display: isActionCompleted ? 'none' : 'inline-block', border: 'none', color: '#F9B421' }}>Tolak</Button>
-              <Button variant="outline" onClick={handleAccept} style={{ display: isActionCompleted ? 'none' : 'inline-block', backgroundColor: "#F9B421" }}>Setujui</Button>
-
+                <Button variant="outline" onClick={() => setIsDitolakDialogOpen(true)}  style={{ display: isActionCompleted ? 'none' : 'inline-block', border: 'none', color: '#F9B421' }}>Tolak</Button>
+                <Button variant="outline" onClick={() => setIsDisetujuiDialogOpen(true)}  style={{ display: isActionCompleted ? 'none' : 'inline-block', backgroundColor: "#F9B421" }}>Setujui</Button>
+              {/* <Button variant="outline" onClick={handleDeny}>Tolak</Button>
+              <Button variant="outline" onClick={handleAccept} >Setujui</Button> */}
+                  <AlertDialog open={isDisetujuiDialogOpen} onClose={() => setIsDisetujuiDialogOpen(false)}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Anda Bisa Saja Ingin Tolak Pengajuan Ini
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setIsDisetujuiDialogOpen(false)}>Batal</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleAccept}>Ya</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <AlertDialog open={isDitolakDialogOpen} onClose={() => setIsDitolakDialogOpen(false)}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Anda Bisa Saja Ingin Mensetujui Pengajuan Ini
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setIsDitolakDialogOpen(false)}>Batal</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeny}>Ya</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           </div>

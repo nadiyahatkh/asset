@@ -218,7 +218,7 @@ export default function PengajuanAset(){
                                         <div className="mt-4 space-y-2">
                                             {selectedFiles.map(file => (
                                                 <Card key={file.name} className="flex justify-between items-center">
-                                                    <span className="text-sm text-muted-foreground">{file.file.name}</span>
+                                                    <span className="text-sm text-muted-foreground p-2">{file.file.name}</span>
                                                     <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.file.name)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>

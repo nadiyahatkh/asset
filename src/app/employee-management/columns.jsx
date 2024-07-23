@@ -46,17 +46,7 @@ export const columns = (deleteRow) => [
       },
   {
     accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Nama Karyawan
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    }
+    header: 'Nama Karyawan'
   },
   {
     accessorKey: 'employee.nip',

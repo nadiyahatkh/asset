@@ -8,6 +8,7 @@ import { ChevronsUpDown, User, LogOut, LogIn } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function StoreSwitcher({ className, items = [] }) {
     const [open, setOpen] = useState(false);
@@ -30,7 +31,11 @@ export default function StoreSwitcher({ className, items = [] }) {
                     aria-label="Select a store"
                     className={cn("w-[200px] justify-between", className)}
                 >
-                    <img src={profileImage} alt="Profile Image" className="w-4 h-4 rounded-full mr-2" />
+                    <Avatar className="w-4 h-4 rounded-full mr-2">
+                        <AvatarImage src={profileImage} alt="@shadcn" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    {/* <img src={profileImage} alt="Profile Image" className="w-4 h-4 rounded-full mr-2" /> */}
                     {session?.user?.name || 'Guest'}
                     <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
                 </Button>

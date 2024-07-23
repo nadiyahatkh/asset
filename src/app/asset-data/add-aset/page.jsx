@@ -14,8 +14,6 @@ import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { CalendarIcon, CircleX, CloudDownload } from 'lucide-react';
 import { createAset, fetchCategory } from '@/app/apiService';
 import { useRouter } from 'next/navigation';
@@ -75,14 +73,13 @@ export default function AddAset() {
 
     try {
       const result = await createAset({ data, token, path: selectedFiles.map(file => file.file) });
-      toast.success("Asset created successfully!");
+      
       // Reset form setelah submit berhasil
       form.reset();
 
       // Redirect to another page
-      router.push('/asset-data'); // Ganti dengan path halaman tujuan
+      router.push('/asset-data?success=true'); // Ganti dengan path halaman tujuan
     } catch (error) {
-      toast.error("Failed to create asset.");
       console.error('Error creating asset:', error);
     }
   };
@@ -330,7 +327,7 @@ export default function AddAset() {
                     <div className='mt-4 space-y-2'>
                       {selectedFiles.map((file) => (
                         <Card key={file.name} className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground text-black" >{file.file.name}</span>
+                          <span className="text-sm text-muted-foreground text-black p-2" >{file.file.name}</span>
                           <Button variant="danger" type="button" onClick={() => handleRemoveFile(file.file.name)}>
                             <CircleX className="h-4 w-4"/>
                           </Button>

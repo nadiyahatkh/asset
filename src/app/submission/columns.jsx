@@ -16,6 +16,14 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
 export const columns = [
     {
         id: "select",
@@ -41,35 +49,39 @@ export const columns = [
       },
   {
     accessorKey: 'asset.asset_name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Nama Aset
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    }
+    header: 'Nama Aset'
   },
   {
     accessorKey: 'asset.category.name',
     header: 'Kategori'
   },
   {
-    accessorKey: 'expiry_date',
+    accessorKey: 'submission_date',
     header: 'Tanggal Pengajuan',
-    cell: info => new Date(info.getValue()).toLocaleDateString(),
+    cell: info => formatDate(info.getValue()),
   },
   {
-    accessorKey: 'accepted_at',
+    accessorKey: 'expiry_date',
     header: 'Tanggal Masa Habis',
-    cell: info => new Date(info.getValue()).toLocaleDateString(),
+    cell: info => formatDate(info.getValue()),
   },
   {
     accessorKey: 'user.name',
     header: 'Pengaju'
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize"> {row.getValue("status")}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    }
   },
   {
     accessorKey: 'type',

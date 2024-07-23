@@ -25,6 +25,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { removeAssetData } from '../apiService';
 import { formatCurrency } from '../utils/formatCurrency';
 
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
   
 
 export const columns = (deleteRow) => [
@@ -75,12 +83,12 @@ export const columns = (deleteRow) => [
   {
     accessorKey: 'received_date',
     header: 'Tanggal',
-    cell: info => new Date(info.getValue()).toLocaleDateString(),
+    cell: info => formatDate(info.getValue()),
   },
   {
     accessorKey: 'expiration_date',
     header: 'Expired',
-    cell: info => new Date(info.getValue()).toLocaleDateString(),
+    cell: info => formatDate(info.getValue()),
   },
   {
     accessorKey: 'status',

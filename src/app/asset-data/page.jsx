@@ -28,14 +28,9 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-
-
-const FormSchema = z.object({
-    dob: z.date({
-      required_error: "A date of birth is required.",
-    }),
-  });
 
 export default function DataAset() {
   const [sorting, setSorting] = useState([]);
@@ -66,10 +61,27 @@ export default function DataAset() {
     getPaginationRowModel: getPaginationRowModel()
   });
 
-  const [date, setDate] = useState({
+  const defaultDate = {
     from: new Date(2024, 0, 1),
     to: new Date(2024, 11, 31)
-  });
+  };
+
+  const [date, setDate] = useState(defaultDate);
+
+  const searchParams = useSearchParams();
+  const success = searchParams.get('success');
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (success) {
+      setOpen(true);
+      // Menghapus query parameter dari URL setelah alert ditampilkan
+      const params = new URLSearchParams(searchParams);
+      params.delete('success');
+      router.replace(`/asset-data?${params.toString()}`, { scroll: false });
+    }
+  }, [success, router, searchParams]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -92,19 +104,6 @@ export default function DataAset() {
     setData((prevData) => prevData.filter(item => item.id !== id));
   };
 
-  // const handleDelete = async () => {
-  //   const selectedIds = table.getSelectedRowModel().rows.map(row => row.original.id);
-    
-  //   try {
-  //     const response = await selectRemoveAsset({ ids: selectedIds, token });
-  //     if (response) {
-  //       setData((prevData) => prevData.filter(item => !selectedIds.includes(item.id)));
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to delete rows:', error);
-  //   }
-  // };
-
   const deleteRows = async (ids) => {
     try {
       const response = await selectRemoveAsset({ ids, token });
@@ -116,94 +115,109 @@ export default function DataAset() {
     }
   };
   
+  const resetDateFilter = () => {
+    setDate(defaultDate);
+  };
 
+  const isDateDefault = () => {
+    return date.from.getTime() === defaultDate.from.getTime() && date.to.getTime() === defaultDate.to.getTime();
+  };
 
-    const form = useForm({
-        resolver: zodResolver(FormSchema),
-      });
-
-    return (
-        <div className="py-4">
-          <div className="w-full max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              {/* Left section */}
-              <div>
-                <p className="title font-manrope font-bold text-2xl leading-10">Data Aset</p>
-                <p className="text-muted-foreground text-sm">
-                  Here's a list of your assets.
-                </p>
+  return (
+    <div className="py-4">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <AlertDialog open={open} onOpenChange={setOpen}>
+            <AlertDialogContent>
+              <AlertDialogTitle>Success!</AlertDialogTitle>
+              <AlertDialogDescription>
+                Asset created successfully!
+              </AlertDialogDescription>
+              <div className="flex justify-end mt-4">
+                <AlertDialogAction onClick={() => setOpen(false)}>OK</AlertDialogAction>
               </div>
-              {/* Right section */}
-              <div className="flex items-center space-x-4">
-              <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="date"
-                      variant={"outline"}
-                      className={cn(
-                        "w-[300px] justify-start text-left font-normal",
-                        !date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date?.from ? (
-                        date.to ? (
-                          <>
-                            {format(date.from, "LLL dd, y")} -{" "}
-                            {format(date.to, "LLL dd, y")}
-                          </>
-                        ) : (
-                          format(date.from, "LLL dd, y")
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={date?.from}
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
-                    />
-                  </PopoverContent>
-              </Popover>
-
-                {/* Delete Button */}
-                <Button variant="outline" className="text-red-500" style={{ color: '#F9B421', border: 'none' }}>
-                    Delete
+            </AlertDialogContent>
+          </AlertDialog>
+          {/* Left section */}
+          <div>
+            <p className="title font-manrope font-bold text-2xl leading-10">Data Aset</p>
+            <p className="text-muted-foreground text-sm">
+              Here's a list of your assets.
+            </p>
+          </div>
+          {/* Right section */}
+          <div className="flex items-center space-x-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-[300px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date?.from ? (
+                    date.to ? (
+                      <>
+                        {format(date.from, "LLL dd, y")} -{" "}
+                        {format(date.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(date.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
-                {/* Add Asset Button */}
-                <Button variant="solid" className="" style={{ background: "#F9B421" }}>
-                    <Link href="./asset-data/add-aset">
-                        Tambah Aset
-                    </Link>
-                </Button>
-              </div>
-            </div>
-            <Card className="shadow-md">
-              <div className="container mx-auto p-4">
-                <DataTable 
-                columns={columns(deleteRow)} 
-                data={data} 
-                setData={setData} 
-                search={search} 
-                setSearch={setSearch} 
-                statusFilter={statusFilter} 
-                setStatusFilter={setStatusFilter} 
-                totalPages={totalPages} 
-                setPage={setPage} 
-                perPage={perPage} 
-                setPerPage={setPerPage} 
-                currentPage={page}
-                onDelete={deleteRows} 
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={date?.from}
+                  selected={date}
+                  onSelect={setDate}
+                  numberOfMonths={2}
                 />
-              </div>
-            </Card>
+              </PopoverContent>
+            </Popover>
+
+            {/* Conditionally Render Reset Date Filter Button */}
+            {!isDateDefault() && (
+              <Button variant="outline" className="text-red-500" style={{ color: '#F9B421', border: 'none' }} onClick={resetDateFilter}>
+                Reset Date
+              </Button>
+            )}
+            {/* Add Asset Button */}
+            <Button variant="solid" className="" style={{ background: "#F9B421" }}>
+              <Link href="./asset-data/add-aset">
+                Tambah Aset
+              </Link>
+            </Button>
           </div>
         </div>
-    );
+        <Card className="shadow-md">
+          <div className="container mx-auto p-4">
+            <DataTable 
+              columns={columns(deleteRow)} 
+              data={data} 
+              setData={setData} 
+              search={search} 
+              setSearch={setSearch} 
+              statusFilter={statusFilter} 
+              setStatusFilter={setStatusFilter} 
+              totalPages={totalPages} 
+              setPage={setPage} 
+              perPage={perPage} 
+              setPerPage={setPerPage} 
+              currentPage={page}
+              onDelete={deleteRows} 
+            />
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
 }

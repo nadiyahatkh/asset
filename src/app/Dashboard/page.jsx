@@ -121,9 +121,9 @@ export default function Dashboard() {
             {nareast?.map((d, i) => (
               <SalesCard
                 key={i}
-                date={d.date}
+                expiry_date={d.expiry_date}
                 name={d.name}
-                merk={d.merk}
+                assetname={d.assetname}
               />
             ))}
           </CardContent>

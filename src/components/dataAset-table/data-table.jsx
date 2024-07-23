@@ -42,12 +42,13 @@ import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { ChevronLeftIcon, ChevronRightIcon, Cross2Icon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { statuses } from './constants';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 
 export function DataTable({ columns, data, search, setSearch, statusFilter , setStatusFilter, totalPages, currentPage, setPage, perPage, setPerPage, onDelete}) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
-  const [selectedValues, setSelectedValues] = useState(new Set());
+  const [isSelectDeleteOpen, setIsSelectDeleteOpen] = useState(false);
 
   const table = useReactTable({
     data,
@@ -69,6 +70,7 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
   const handleDelete = () => {
     const deleteRows = table.getSelectedRowModel().rows.map(row => row.original.id);
     onDelete(deleteRows);
+    setIsSelectDeleteOpen(false);
   };
 
 
@@ -106,11 +108,25 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
           </Button>
         )}
         {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-          <Button variant="outline" size="sm" onClick={handleDelete} className="ml-4">
+          <Button variant="outline" size="sm" onClick={() => setIsSelectDeleteOpen(true)} className="ml-4">
             <TrashIcon className="mr-2 size-4" aria-hidden="true" />
             Delete ({table.getFilteredSelectedRowModel().rows.length})
           </Button>
         ) : null}
+        <AlertDialog open={isSelectDeleteOpen} onClose={() => setIsSelectDeleteOpen(false)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tindakan ini tidak dapat dibatalkan. Ini akan menghapus Rows secara permanen dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsSelectDeleteOpen(false)}>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
         
 

@@ -15,11 +15,11 @@ export default function SalesCard(props) {
         <div className="text-sm">
           <p className='font-semibold'>{props.name}</p>
           <div className="text-ellipsis overflow-hidden whitespace-nowrap w-[120px] sm:w-auto text-gray-400">
-            Masa habis pakai : <div className='text-black'>{props.date}</div>
+            Masa habis pakai : <div className='text-black'>{props.expiry_date}</div>
           </div>
         </div>
       </section>
-      <p>{props.merk}</p>
+      <p>{props.assetname}</p>
     </div>
   );
 }
