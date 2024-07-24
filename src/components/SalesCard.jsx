@@ -1,9 +1,12 @@
 import React from 'react';
+import { format } from 'date-fns';
 
 export default function SalesCard(props) {
+  const formattedDate = format(new Date(props.expiry_date), 'dd-MM-yyyy');
+
   return (
-    <div className="flex flex-wrap justify-between gap-3">
-      <section className="flex justify-between gap-3">
+    <div className="flex justify-between gap-3">
+      <section className="flex gap-3">
         <div className="h-12 w-12 rounded-full bg-gray-100 p-1">
           <img
             width={200}
@@ -14,8 +17,9 @@ export default function SalesCard(props) {
         </div>
         <div className="text-sm">
           <p className='font-semibold'>{props.name}</p>
-          <div className="text-ellipsis overflow-hidden whitespace-nowrap w-[120px] sm:w-auto text-gray-400">
-            Masa habis pakai : <div className='text-black'>{props.expiry_date}</div>
+          <div className="flex items-center text-gray-400">
+            <span>Masa habis pakai : </span>
+            <span className='text-black ml-1'>{formattedDate}</span>
           </div>
         </div>
       </section>

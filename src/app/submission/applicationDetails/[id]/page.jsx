@@ -34,7 +34,8 @@ export default function DetailPengajuan() {
     try {
       const result = await acceptApplicant({ id, token });
       console.log('Applicant accepted:', result);
-      setActionCompleted(true); // Set state to true after successful acceptance
+      setActionCompleted(true); 
+      setIsDisetujuiDialogOpen(false);
     } catch (error) {
       console.error('Error accepting applicant:', error);
     }

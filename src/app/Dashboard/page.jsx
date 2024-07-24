@@ -16,40 +16,11 @@ import { fetchDashboard } from "../apiService";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
-const uesrSalesData = [
-  {
-    name: "Olivia Martin",
-    date: "21-10-2024",
-    merk: "Macbook Air 2020",
-  },
-  {
-    name: "Jackson Lee",
-    date: "21-10-2024",
-    merk: "Macbook Air 2020"
-  },
-  {
-    name: "Isabella Nguyen",
-    date: "21-10-2024",
-    merk: "Macbook Air 2020"
-  },
-  {
-    name: "William Kim",
-    date: "21-10-2024",
-    merk: "Macbook Air 2020"
-  },
-  {
-    name: "Sofia Davis",
-    date: "21-10-2024",
-    merk: "Macbook Air 2020"
-  }
-];
-
-
 export default function Dashboard() {
   const [cardData, setCardData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const { data: session } = useSession();
-  const [nareast, setNareast] = useState()
+  const [nearest, setNearest] = useState([]);
   const token = session?.user?.token;
 
   useEffect(() => {
@@ -78,7 +49,7 @@ export default function Dashboard() {
           category: category.category,
           total_price: category.total_price,
         })));
-        setNareast(data.nearest_return)
+        setNearest(data.nearest_return);
       } catch (error) {
         console.error('Gagal mengambil data:', error);
       }
@@ -88,14 +59,11 @@ export default function Dashboard() {
     }
   }, [token]);
 
-
-
   return (
     <div className="py-4">
       <div className="w-full max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <p className="title font-manrope font-bold text-2xl leading-10">Dashboard</p>
-          
         </div>
         <section className="grid w-full grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4 mb-4">
           {cardData.map((d, i) => (
@@ -111,21 +79,23 @@ export default function Dashboard() {
             <p className="p-4 font-semibold">Kategori Aset</p>
             <BarChart data={chartData} />
           </CardContent>
-          <CardContent className="flex justify-between gap-4">
+          <CardContent className="flex flex-col gap-4">
             <section>
               <p className="text-base font-bold">Pengembalian Terdekat</p>
               <p className="text-sm text-gray-400">
                 Terdapat 5 pengembalian terdekat
               </p>
             </section>
-            {nareast?.map((d, i) => (
-              <SalesCard
-                key={i}
-                expiry_date={d.expiry_date}
-                name={d.name}
-                assetname={d.assetname}
-              />
-            ))}
+            <div className="flex flex-col gap-4">
+              {nearest?.map((d, i) => (
+                <SalesCard
+                  key={i}
+                  expiry_date={d.expiry_date}
+                  name={d.name}
+                  assetname={d.assetname}
+                />
+              ))}
+            </div>
           </CardContent>
         </section>
       </div>
