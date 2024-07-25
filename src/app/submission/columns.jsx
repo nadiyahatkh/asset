@@ -75,7 +75,7 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="flex w-[100px] items-center">
-          <span className="capitalize"> {row.getValue("status")}</span>
+          <span className="capitalize"> {row.getValue("status").replace(/_/g, ' ')}</span>
         </div>
       );
     },

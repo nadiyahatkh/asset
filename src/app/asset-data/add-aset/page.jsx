@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, CircleX, CloudDownload } from 'lucide-react';
 import { createAset, fetchCategory } from '@/app/apiService';
 import { useRouter } from 'next/navigation';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const FormSchema = z.object({
   asset_code: z.string().min(1, { message: "Kode aset is required." }),
@@ -41,14 +42,10 @@ export default function AddAset() {
   const [status, setStatus] = useState('');
   const { data: session } = useSession();
   const token = session?.user?.token;
-  const [tanggalMulaiValue, setTanggalMulaiValue] = useState(null);
   const router = useRouter();
-
-  // Handle change untuk tanggal mulai
-  const handleTanggalMulaiChange = (date) => {
-    form.setValue('tanggalMulai', date); // Set nilai di react-hook-form
-    setTanggalMulaiValue(date);
-  };
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -73,13 +70,10 @@ export default function AddAset() {
 
     try {
       const result = await createAset({ data, token, path: selectedFiles.map(file => file.file) });
-      
-      // Reset form setelah submit berhasil
-      form.reset();
-
-      // Redirect to another page
-      router.push('/asset-data?success=true'); // Ganti dengan path halaman tujuan
+      setOpenSuccess(true)
     } catch (error) {
+      setErrorMessage('Error creating asset. Please try again.');
+      setOpenError(true)
       console.error('Error creating asset:', error);
     }
   };
@@ -300,6 +294,7 @@ export default function AddAset() {
                         <SelectItem value="6">Dalam Perbaikan</SelectItem>
                         <SelectItem value="7">Dalam Proses Peminjaman</SelectItem>
                         <SelectItem value="8">Tidak Layak Pakai</SelectItem>
+                        <SelectItem value="9">Dalam Proses Pengembalian</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -340,6 +335,23 @@ export default function AddAset() {
                   <Button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Submit</Button>
 
                   </div>
+                  {/* Success Dialog */}
+                  <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
+                    <AlertDialogContent>
+                    <AlertDialogTitle>Success</AlertDialogTitle>
+                      <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                      <AlertDialogAction onClick={() => router.push('/asset-data')}>OK</AlertDialogAction>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  {/* Error Dialog */}
+                  <AlertDialog open={openError} onOpenChange={setOpenError}>
+                    <AlertDialogContent>
+                    <AlertDialogTitle>Error</AlertDialogTitle>
+                      <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                      <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                    </AlertDialogContent>
+                  </AlertDialog>
               </form>
             </Form>
           </div>

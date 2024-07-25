@@ -53,6 +53,7 @@ const authOptions = {
     async jwt({ token, account, user }) {
       if (account?.provider === "credentials") {
         token.email = user.data.email;
+        token.foto = user.data.foto;
         token.name = user.data.name;
         token.role = user.data.role_id; // Set the role from the user object
         token.token = user.token;
@@ -62,6 +63,7 @@ const authOptions = {
     },
     async session({ session, token }) {
       session.user.email = token.email;
+      session.user.foto = token.foto;
       session.user.name = token.name;
       session.user.role = token.role; // Ensure role is set here
       session.user.token = token.token;

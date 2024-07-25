@@ -38,7 +38,7 @@ import { CirclePlus, Settings2 } from 'lucide-react';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { incomeType, statuses } from './constants';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon, TrashIcon } from '@radix-ui/react-icons';
+import { ChevronLeftIcon, ChevronRightIcon, Cross2Icon, DoubleArrowLeftIcon, DoubleArrowRightIcon, TrashIcon } from '@radix-ui/react-icons';
 
 export function DataTable({ columns, data, search, setSearch, statusFilter, setStatusFilter, typeFilter, setTypeFilter, totalPages, currentPage, setPage, perPage, setPerPage, onDelete }) {
   const [sorting, setSorting] = useState([]);
@@ -66,6 +66,8 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
     const deleteRows = table.getSelectedRowModel().rows.map(row => row.original.id);
     onDelete(deleteRows);
   };
+
+  const isFiltered = statusFilter.length > 0;
 
 
   return (
@@ -96,6 +98,16 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
             statusFilter={typeFilter}
             setStatusFilter={setTypeFilter}
           />
+        )}
+        {isFiltered && (
+          <Button
+            variant="ghost"
+            onClick={() => setStatusFilter([])}
+            className="h-8 px-2 lg:px-3"
+          >
+            Reset
+            <Cross2Icon className="ml-2 h-4 w-4" />
+          </Button>
         )}
         {table.getFilteredSelectedRowModel().rows.length > 0 ? (
           <Button variant="outline" size="sm" onClick={handleDelete} className="ml-4">

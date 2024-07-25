@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -9,16 +9,33 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { fetchNavbarProfile } from "./apiService";
 
 export default function StoreSwitcher({ className, items = [] }) {
     const [open, setOpen] = useState(false);
     const { status, data: session } = useSession();
+    const [foto, setFoto] = useState()
     const router = useRouter();
     const isAdmin = session?.user?.role === 1 ;  // Assuming role is stored in session
-    const profileImage = session?.user?.foto || 'default_profile_image_url';
     const handleSignOut = () => {
         signOut({ callbackUrl: '/login' }); // Redirect to login page after sign out
     };
+
+    
+
+    useEffect(() => {
+        const loadDataFoto = async () => {
+            try{
+                const profileData = await fetchNavbarProfile({token: session?.user?.token})
+                setFoto(profileData.data.foto)
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+              }
+        }
+        if (session?.user?.token) {
+            loadDataFoto()
+        }
+    }, [session?.user?.token])
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -32,8 +49,8 @@ export default function StoreSwitcher({ className, items = [] }) {
                     className={cn("w-[200px] justify-between", className)}
                 >
                     <Avatar className="w-4 h-4 rounded-full mr-2">
-                        <AvatarImage src={profileImage} alt="@shadcn" />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarImage src={foto} alt="@shadcn" />
+                        <AvatarFallback>{session?.user?.name || 'Guest'}</AvatarFallback>
                     </Avatar>
                     {/* <img src={profileImage} alt="Profile Image" className="w-4 h-4 rounded-full mr-2" /> */}
                     {session?.user?.name || 'Guest'}

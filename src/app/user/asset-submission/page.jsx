@@ -1,5 +1,6 @@
 'use client'
 import { createApplicantUser, fetchAssetData, fetchGetAsetApplicant } from "@/app/apiService";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -37,22 +38,26 @@ export default function PengajuanAset(){
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [assets, setAssets] = useState([]);
     const [assetId, setAssetId] = useState()
+    const [transactionType, setTransactionType] = useState('');
     const router = useRouter()
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const [openError, setOpenError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const loadData = async () => {
           try {
-            const response = await fetchGetAsetApplicant({ token });
+            const response = await fetchGetAsetApplicant({ token, type: transactionType });
             console.log(response)
             setAssets(response);
           } catch (error) {
             console.error('Failed to fetch data:', error);
           }
         };
-        if (token) {
+        if (token && transactionType) {
           loadData();
         }
-    }, [token]);
+    }, [token, transactionType]);
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -72,11 +77,10 @@ export default function PengajuanAset(){
         data.asset_id = assetId;
         try{
             const result = await createApplicantUser({data, token, path: selectedFiles.map(file => file.file) });
-            toast.success("created successfully");
-            form.reset();
-            router.push('/')
+            setOpenSuccess(true)
         } catch (error) {
-            toast.error("Failed to create asset.");
+            setErrorMessage('Error creating asset. Please try again.');
+            setOpenError(true)
             console.error('Error creating asset:', error);
         }
     }
@@ -105,7 +109,10 @@ export default function PengajuanAset(){
                                         control={form.control}
                                         name="type"
                                         render={({ field }) => (
-                                            <RadioGroup onValueChange={field.onChange} value={field.value?.toString()}>
+                                            <RadioGroup onValueChange={(value) => {
+                                                field.onChange(value);
+                                                setTransactionType(value);
+                                            }} value={field.value?.toString()}>
                                                 <div className="border rounded-lg p-4">
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem name="type" value="1" id="r1" style={{ color: "#F9B421" }} />
@@ -130,23 +137,29 @@ export default function PengajuanAset(){
                                         control={form.control}
                                         name="asset_id"
                                         render={({ field }) => (
-                                        <Select
-                                            value={field.value ? field.value.toString() : ""}
-                                            onValueChange={(value) => {
-                                                field.onChange(value); // Update react-hook-form state
-                                                setAssetId(value)
-                                            }}
-                                            {...field}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Pilih asset untuk ditampilkan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {assets?.map((item) => (
-                                                    <SelectItem key={item.id} value={item.id.toString()}>{item.asset_name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <>
+                                            {assets && assets.length > 0 ? (
+                                                <Select
+                                                    value={field.value ? field.value.toString() : ""}
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value); // Update react-hook-form state
+                                                        setAssetId(value)
+                                                    }}
+                                                    {...field}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Pilih asset untuk ditampilkan" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {assets?.map((item) => (
+                                                            <SelectItem key={item.id} value={item.id.toString()}>{item.asset_name}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            ) : (
+                                                <p className="text-sm text-red-500">Data aset tidak tersedia.</p>
+                                            )}
+                                        </>
                                         )}
                                     />
                                 </div>
@@ -230,6 +243,23 @@ export default function PengajuanAset(){
                                 <div className="flex justify-end">
                                     <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
                                 </div>
+                                {/* Success Dialog */}
+                                <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
+                                <AlertDialogContent>
+                                <AlertDialogTitle>Success</AlertDialogTitle>
+                                    <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => router.push('/')}>OK</AlertDialogAction>
+                                </AlertDialogContent>
+                                </AlertDialog>
+
+                                {/* Error Dialog */}
+                                <AlertDialog open={openError} onOpenChange={setOpenError}>
+                                <AlertDialogContent>
+                                <AlertDialogTitle>Error</AlertDialogTitle>
+                                    <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                </AlertDialogContent>
+                                </AlertDialog>
                             </form>
                         </Form>
                     </div>

@@ -1,5 +1,6 @@
 'use client'
 import { fetchAssetDataId, fetchCategory, updateAset } from "@/app/apiService";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -22,18 +23,14 @@ import { z } from "zod";
 
 
 const FormSchema = z.object({
-    asset_code: z.string().min(1, { message: "Kode aset is required." }),
-    asset_name: z.string().min(1, { message: "Nama aset is required." }),
-    category_id: z.string().min(1, { message: "Kategori wajib diisi." }),
-    item_condition: z.string().min(1, { message: "Kondisi is required." }),
-    price: z.string().min(1, { message: "Harga aset is required." }),
-    received_date: z.date({
-      required_error: "Tanggal mulai is required.",
-    }),
-    expiration_date: z.date({
-      required_error: "Tanggal habis is required.",
-    }),
-    status: z.string().min(1, { message: "Status is required." }),
+    asset_code: z.string().optional(),
+    asset_name: z.string().optional(),
+    category_id: z.string().optional(),
+    item_condition: z.string().optional(),
+    price: z.number().optional(),
+    received_date: z.date().optional(),
+    expiration_date: z.date().optional(),
+    status: z.string().optional(),
   });
 
 export default function ubahAset(){
@@ -46,8 +43,12 @@ export default function ubahAset(){
     const { data: session } = useSession();
     const token = session?.user?.token;
     const router = useRouter();
-    const [dataInput, setDataInput] = useState();
+    // const [dataInput, setDataInput] = useState();
     const [image, setImage] = useState()
+    const [deletedImages, setDeletedImages] = useState([]);
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const [openError, setOpenError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -60,8 +61,9 @@ export default function ubahAset(){
     };
 
     const handleRemoveImage = (filePath) => {
-        setImage(image.filter(file => file.path !== filePath));
-    };
+        setImage((prevImage) => prevImage.filter((file) => file.path !== filePath));
+        setDeletedImages((prevDeletedImages) => [...prevDeletedImages, filePath]);
+      };
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -69,16 +71,23 @@ export default function ubahAset(){
       });
 
       const onSubmit = async (data) => {
-        data.category_id = categoryId; // Set category_id from state
-        data.item_condition = itemCondition; // Set item_condition from state
-        data.status = status; 
+        const payload = {
+            ...data,
+            category_id: data.category_id || categoryId,
+            item_condition: data.item_condition || itemCondition,
+            status: data.status || status,
+            path: selectedFiles.map(file => file.file),
+            delete_images: deletedImages
+
+        };
+
         try{
-            const result = await updateAset({data, id, token, path: selectedFiles.map(file => file.file)})
-            toast.success("Asset update successfully!");
-            form.reset();
-            router.push('/asset-data')
+            const result = await updateAset({data: payload, id, token, path: selectedFiles.map(file => file.file)})
+            // form.reset();
+            setOpenSuccess(true);
         } catch(error) {
-            toast.error("Failed to update asset");
+            setErrorMessage('Error creating asset. Please try again.');
+            setOpenError(true)
             console.error("Error creating asser", error)
         }
       }
@@ -103,16 +112,15 @@ export default function ubahAset(){
           if (token && id) {
             const response = await fetchAssetDataId({ token, id });
             console.log(response);
-            form.setValue('asset_code', response.asset_code)
-            form.setValue('asset_name', response.asset_name)
-            form.setValue('category_id', response.category_id)
-            form.setValue('item_condition', response.item_condition)
-            form.setValue('price', response.price)
-            form.setValue('received_date', response.received_date)
-            form.setValue('expiration_date', response.expiration_date)
-            form.setValue('status', response.status)
-            setImage(response.image_assets)
-            setDataInput(response?.data);
+            form.setValue('asset_code', response.asset_code, {shouldValidate: true});
+            form.setValue('asset_name', response.asset_name, {shouldValidate: true});
+            form.setValue('category_id', response.category_id, {shouldValidate: true});
+            form.setValue('item_condition', response.item_condition, {shouldValidate: true});
+            form.setValue('price', response.price, {shouldValidate: true});
+            form.setValue('received_date', new Date(response.received_date), {shouldValidate: true});
+            form.setValue('expiration_date', new Date(response.expiration_date), {shouldValidate: true});
+            form.setValue('status', response.status, {shouldValidate: true});
+            setImage(response.image_assets);
           }
         };
     
@@ -299,6 +307,7 @@ export default function ubahAset(){
                                             <SelectItem value="Dalam_Perbaikan">Dalam Perbaikan</SelectItem>
                                             <SelectItem value="Dalam_Proses_Peminjaman">Dalam Proses Peminjaman</SelectItem>
                                             <SelectItem value="Tidak_Layak_Pakai">Tidak Layak Pakai</SelectItem>
+                                            <SelectItem value="Dalam_Proses_Pengembalian">Dalam Proses Pengembalian</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         )}
@@ -348,6 +357,24 @@ export default function ubahAset(){
                                 <div className="flex justify-end">
                                     <button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Aset</button>
                                 </div>
+                                {/* Success Dialog */}
+                                <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle>Success</AlertDialogTitle>
+                                    <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => router.push('/asset-data')}>OK</AlertDialogAction>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+                                {/* Error Dialog */}
+                                <AlertDialog open={openError} onOpenChange={setOpenError}>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle>Error</AlertDialogTitle>
+                                    <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                                
                             </form>
                         </Form>  
                     </div>

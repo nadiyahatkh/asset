@@ -14,6 +14,7 @@ export default function LoginPage() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,6 +28,8 @@ export default function LoginPage() {
       return;
     }
 
+    setIsSubmitting(true);
+    
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -45,6 +48,8 @@ export default function LoginPage() {
     } catch (error) {
       console.log('Handle login error:', error);
       setError("An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -80,8 +85,13 @@ export default function LoginPage() {
               }}
             />
             <div className="flex flex-col items-center space-y-4">
-              <Button style={{ backgroundColor: '#F9B421' }} className="text-gray-800 w-full" type="submit">
-                Sign In
+              <Button
+                style={{ backgroundColor: '#F9B421' }}
+                className="text-gray-800 w-full"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Loading...' : 'Sign In'}
               </Button>
             </div>
           </form>

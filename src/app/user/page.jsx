@@ -12,6 +12,8 @@ import { DataTable } from "@/components/user/pengajuanAset-table/data-table";
 import { fetchApplicant, selectRemoveApplicant } from "../apiService";
 import { useSession } from "next-auth/react";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export default function User() {
   const [data, setData] = useState([]);
@@ -22,10 +24,13 @@ export default function User() {
   const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [date, setDate] = useState({
+  const defaultDate = {
     from: new Date(2024, 0, 1),
     to: new Date(2024, 11, 31)
-  });
+  };
+
+  const [date, setDate] = useState(defaultDate);
+
 
   useEffect(() => {
   const loadData = async () => {
@@ -58,6 +63,14 @@ export default function User() {
     } catch (error) {
       console.error('Failed to delete rows:', error);
     }
+  };
+
+  const resetDateFilter = () => {
+    setDate(defaultDate);
+  };
+
+  const isDateDefault = () => {
+    return date.from.getTime() === defaultDate.from.getTime() && date.to.getTime() === defaultDate.to.getTime();
   };
 
   return (
@@ -109,6 +122,12 @@ export default function User() {
                     />
                   </PopoverContent>
               </Popover>
+
+              {!isDateDefault() && (
+              <Button variant="outline" className="text-red-500" style={{ color: '#F9B421', border: 'none' }} onClick={resetDateFilter}>
+                Reset Date
+              </Button>
+            )}
             {/* Add Asset Button */}
             <Button variant="solid" className="" style={{ background: "#F9B421" }}>
                 <Link href="./user/asset-submission">

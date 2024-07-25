@@ -10,13 +10,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 
 const FormSchema = z.object({
     username: z.string().min(1, { message: "Nama karyawan is required." }),
     email: z.string().min(1, { message: "Email is required." }),
     password: z.string().min(1, { message: "Password wajib diisi." }),
-    password_confirmation: z.string().min(1, { message: "Password wajib diisi." })
+    password_confirmation: z.string().min(1, { message: "Password wajib diisi." }),
+    foto: z.any().optional()
   });
 
 
@@ -26,6 +28,9 @@ export default function ProfilAdmin() {
     const token = session?.user?.token;
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter()
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const [openError, setOpenError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -33,20 +38,23 @@ export default function ProfilAdmin() {
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
-      });
+        defaultValues: {
+            foto: null
+        }
+    });
 
 
     const onSubmit = async (data) => {
         try {
-          const result = await updateProfile({ data, token });
-          toast.success("Employee created successfully");
-          form.reset();
-          router.push('/dashboard');
+            const result = await updateProfile({ data: { ...data, foto: data.foto ? data.foto[0] : null }, token });
+            setOpenSuccess(true)
         } catch (error) {
-          toast.error("Failed to create employee.");
-          console.error('Error creating employee:', error);
+            setErrorMessage('Error creating asset. Please try again.');
+            setOpenError(true)
+            console.error('Error updating profile:', error);
         }
-      };
+    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,11 +72,8 @@ export default function ProfilAdmin() {
       const handleProfileImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfileImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+            setProfileImage(URL.createObjectURL(file));
+            form.setValue('foto', e.target.files);
         }
     };
 
@@ -170,6 +175,24 @@ export default function ProfilAdmin() {
                                 <div className="flex justify-end">
                                     <button type="submit" className="px-4 py-2 font-semibold rounded-lg" style={{ background: "#F9B421" }}>Save Profile</button>
                                 </div>
+
+                                {/* Success Dialog */}
+                                    <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle>Success</AlertDialogTitle>
+                                        <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => router.push('/dashboard')}>OK</AlertDialogAction>
+                                    </AlertDialogContent>
+                                    </AlertDialog>
+
+                                    {/* Error Dialog */}
+                                    <AlertDialog open={openError} onOpenChange={setOpenError}>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle>Error</AlertDialogTitle>
+                                        <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                    </AlertDialogContent>
+                                    </AlertDialog>
 
                             </form>
                         </Form>

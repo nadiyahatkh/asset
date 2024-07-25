@@ -36,6 +36,10 @@ export default function updateEmpolyee() {
   const [departments, setDepartments] = useState([]);
   const [positions, setPositions] = useState([]);
 
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
   });
@@ -71,11 +75,10 @@ export default function updateEmpolyee() {
     data.position_id = positionId
     try {
       const result = await changeEmployees({ id, data, token });
-      toast.success("Employee created successfully");
-      form.reset();
-      router.push('/employee-management');
+      setOpenSuccess(true);
     } catch (error) {
-      toast.error("Failed to create employee.");
+      setErrorMessage('Error creating asset. Please try again.');
+      setOpenError(true)
       console.error('Error creating employee:', error);
     }
   };
@@ -211,6 +214,23 @@ export default function updateEmpolyee() {
                     <div className="flex justify-end">
                          <Button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Karyawan</Button>
                     </div>
+                    {/* Success Dialog */}
+                    <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
+                      <AlertDialogContent>
+                      <AlertDialogTitle>Success</AlertDialogTitle>
+                        <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                        <AlertDialogAction onClick={() => router.push('/employee-management')}>OK</AlertDialogAction>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {/* Error Dialog */}
+                    <AlertDialog open={openError} onOpenChange={setOpenError}>
+                      <AlertDialogContent>
+                      <AlertDialogTitle>Error</AlertDialogTitle>
+                        <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                        <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                      </AlertDialogContent>
+                    </AlertDialog>
 
                 </form>
             </Form>

@@ -41,9 +41,9 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       }
     };
 
-    export const fetchGetAsetApplicant = async ({token}) => {
+    export const fetchGetAsetApplicant = async ({token, type}) => {
       try {
-        const response = await fetch('http://45.64.99.242:8850/api/applicant/getaset', {
+        const response = await fetch(`http://45.64.99.242:8850/api/applicant/getaset?type=${type}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           }
@@ -196,7 +196,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           formData.append('password_confirmation', data.password_confirmation);
           if (data.foto) {
             formData.append('foto', data.foto);
-          }
+        }
       
           
           const response = await fetch(`http://45.64.99.242:8850/api/update`, {
@@ -218,6 +218,27 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       export const fetchProfileAdminId = async ({token}) => {
         try {
           const response = await fetch(`http://45.64.99.242:8850/api/detail`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          })
+          .then((res) => res.json())
+          .then((data) => {
+           return {
+            data: data,
+            message: "successs"
+           }
+          })
+          return response.data
+        } catch (error) {
+          console.error(error);
+          return "abs"
+        }
+      }
+
+      export const fetchNavbarProfile = async ({token}) => {
+        try {
+          const response = await fetch(`http://45.64.99.242:8850/api/navbar/`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -353,10 +374,17 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           formData.append('received_date', format(data.received_date, 'yyyy-MM-dd'));
           formData.append('expiration_date', format(data.expiration_date, 'yyyy-MM-dd'));
           formData.append('status', data.status);
+          
+
       
           if (path && path.length > 0) {
               path.forEach((file) => {
               formData.append('path[]', file);
+            });
+          }
+          if (data.delete_images && data.delete_images.length > 0) {
+              data.delete_images.forEach((file) => {
+              formData.append('delete_images[]', file);
             });
           }
           const response = await fetch(`http://45.64.99.242:8850/api/aset/update/${id}`, {

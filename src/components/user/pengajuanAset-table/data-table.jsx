@@ -37,11 +37,13 @@ import { Input } from '@/components/ui/input';
 import { CirclePlus, Settings2 } from 'lucide-react';
 import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export function DataTable({ columns, data, search, setSearch, totalPages, onDelete, currentPage, setPage, perPage, setPerPage }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [isSelectDeleteOpen, setIsSelectDeleteOpen] = useState(false);
 
   const table = useReactTable({
     data,
@@ -77,11 +79,25 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
             className='max-w-sm'
           />
           {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-          <Button variant="outline" size="sm" onClick={handleDelete} className="ml-4">
+          <Button variant="outline" size="sm" onClick={() => setIsSelectDeleteOpen(true)} className="ml-4">
             <TrashIcon className="mr-2 size-4" aria-hidden="true" />
             Delete ({table.getFilteredSelectedRowModel().rows.length})
           </Button>
         ) : null}
+          <AlertDialog open={isSelectDeleteOpen} onClose={() => setIsSelectDeleteOpen(false)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tindakan ini tidak dapat dibatalkan. Ini akan menghapus Rows secara permanen dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsSelectDeleteOpen(false)}>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
 

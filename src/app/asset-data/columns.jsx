@@ -73,7 +73,14 @@ export const columns = (deleteRow) => [
   },
   {
     accessorKey: 'item_condition',
-    header: 'Kondisi'
+    header: 'Kondisi',
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize"> {row.getValue("item_condition").replace(/_/g, ' ')}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'price',
@@ -96,7 +103,7 @@ export const columns = (deleteRow) => [
     cell: ({ row }) => {
       return (
         <div className="flex w-[100px] items-center">
-          <span className="capitalize"> {row.getValue("status")}</span>
+          <span className="capitalize"> {row.getValue("status").replace(/_/g, ' ')}</span>
         </div>
       );
     },

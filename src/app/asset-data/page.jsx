@@ -68,21 +68,6 @@ export default function DataAset() {
 
   const [date, setDate] = useState(defaultDate);
 
-  const searchParams = useSearchParams();
-  const success = searchParams.get('success');
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (success) {
-      setOpen(true);
-      // Menghapus query parameter dari URL setelah alert ditampilkan
-      const params = new URLSearchParams(searchParams);
-      params.delete('success');
-      router.replace(`/asset-data?${params.toString()}`, { scroll: false });
-    }
-  }, [success, router, searchParams]);
-
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -127,17 +112,6 @@ export default function DataAset() {
     <div className="py-4">
       <div className="w-full max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogContent>
-              <AlertDialogTitle>Success!</AlertDialogTitle>
-              <AlertDialogDescription>
-                Asset created successfully!
-              </AlertDialogDescription>
-              <div className="flex justify-end mt-4">
-                <AlertDialogAction onClick={() => setOpen(false)}>OK</AlertDialogAction>
-              </div>
-            </AlertDialogContent>
-          </AlertDialog>
           {/* Left section */}
           <div>
             <p className="title font-manrope font-bold text-2xl leading-10">Data Aset</p>
