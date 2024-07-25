@@ -46,6 +46,7 @@ export default function AddAset() {
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -71,10 +72,13 @@ export default function AddAset() {
     try {
       const result = await createAset({ data, token, path: selectedFiles.map(file => file.file) });
       setOpenSuccess(true)
+      setIsSubmitting(true);
     } catch (error) {
       setErrorMessage('Error creating asset. Please try again.');
       setOpenError(true)
       console.error('Error creating asset:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -332,7 +336,9 @@ export default function AddAset() {
                   )}
                 </div>
                   <div className="flex justify-end">
-                  <Button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Submit</Button>
+                  <Button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
+                     {isSubmitting ? 'Loading...' : 'Submit'}
+                  </Button>
 
                   </div>
                   {/* Success Dialog */}

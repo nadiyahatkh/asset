@@ -49,6 +49,7 @@ export default function ubahAset(){
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -85,11 +86,14 @@ export default function ubahAset(){
             const result = await updateAset({data: payload, id, token, path: selectedFiles.map(file => file.file)})
             // form.reset();
             setOpenSuccess(true);
+            setIsSubmitting(true);
         } catch(error) {
             setErrorMessage('Error creating asset. Please try again.');
             setOpenError(true)
             console.error("Error creating asser", error)
-        }
+        } finally {
+            setIsSubmitting(false);
+          }
       }
 
       useEffect(() => {
@@ -355,7 +359,9 @@ export default function ubahAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Aset</button>
+                                    <button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
+                                    {isSubmitting ? 'Loading...' : 'Ubah Aset'}
+                                    </button>
                                 </div>
                                 {/* Success Dialog */}
                                 <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>

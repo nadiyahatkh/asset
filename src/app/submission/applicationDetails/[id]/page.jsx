@@ -53,7 +53,6 @@ export default function DetailPengajuan() {
   };
   
 
-  if (!detail) return <p>Loading...</p>;
 
   return (
     <div className="py-4">
@@ -67,44 +66,47 @@ export default function DetailPengajuan() {
           <div className="flex">
             <div className="flex-shrink-0">
               <div className="flex">
-                <div className="bg-gray-200 w-60 h-60">
-                <img src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col space-y-2 ml-2">
-                  <div className="bg-gray-200 w-28 h-28">
-                  <img src={detail.Images[1]} alt="Image 2" className="w-full h-full object-cover" />
+              {detail?.Images.length > 0 && (
+                  <div className="bg-gray-200 w-60 h-60 rounded-lg overflow-hidden">
+                    <img src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-gray-200 w-28 h-28">
-                  <img src={detail.Images[2]} alt="Image 3" className="w-full h-full object-cover" />
+                )}
+                {detail?.Images.length > 1 && (
+                  <div className="flex flex-col space-y-2 ml-2">
+                    {detail?.Images.slice(1, 3).map((image, index) => (
+                      <div key={index} className="bg-gray-200 w-28 h-28 rounded-lg overflow-hidden">
+                        <img src={image} alt={`Image ${index + 2}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
                   </div>
-                </div>
+                )}
               </div>
             </div>
             <div className="flex-grow px-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Nama Aset</Label>
-                  <p className="font-semibold text-sm">{detail.NameAsset}</p>
+                  <p className="font-semibold text-sm">{detail?.NameAsset}</p>
                 </div>
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Kategori</Label>
-                  <p className="font-semibold text-sm">{detail.Category}</p>
+                  <p className="font-semibold text-sm">{detail?.Category}</p>
                 </div>
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Tanggal Pengajuan</Label>
-                  <p className="font-semibold text-sm">{new Date(detail.SubmissionDate).toLocaleDateString()}</p>
+                  <p className="font-semibold text-sm">{new Date(detail?.SubmissionDate).toLocaleDateString()}</p>
                 </div>
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Tanggal Masa Habis</Label>
-                  <p className="font-semibold text-sm">{new Date(detail.ExpiryDate).toLocaleDateString()}</p>
+                  <p className="font-semibold text-sm">{new Date(detail?.ExpiryDate).toLocaleDateString()}</p>
                 </div>
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Pengaju</Label>
-                  <p className="font-semibold text-sm">{detail.UserApplicants}</p>
+                  <p className="font-semibold text-sm">{detail?.UserApplicants}</p>
                 </div>
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Tipe</Label>
-                  <p className="font-semibold text-sm">{detail.type}</p>
+                  <p className="font-semibold text-sm">{detail?.type}</p>
                 </div>
               </div>
             </div>

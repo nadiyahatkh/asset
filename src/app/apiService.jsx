@@ -22,6 +22,25 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
     }
   };
 
+  export const fetchDetailApplicantUser = async ({ token, id }) => {
+    try {
+      const response = await fetch(`http://45.64.99.242:8850/api/applicant/index/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+  
+      const data = await response.json();
+      return {
+        data,
+        message: "success"
+      };
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
   export const selectRemoveApplicant = async ({ ids, token }) => {
       try {
         const response = await fetch(`http://45.64.99.242:8850/api/applicant/destroy`, {

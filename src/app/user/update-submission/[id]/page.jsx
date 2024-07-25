@@ -37,6 +37,9 @@ export default function UbahPengajuanAset(){
     const token = session?.user?.token;
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [assets, setAssets] = useState()
+    const [transactionType, setTransactionType] = useState('');
+    const [assetId, setAssetId] = useState();
+    const [image, setImage]  = useState()
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -53,6 +56,7 @@ export default function UbahPengajuanAset(){
       });
 
       const onSubmit= async (data) => {
+        data.asset_id = assetId;
         try{
             const result = await updateApplicantUser({id, data, token, path: selectedFiles.map(file => file.file) });
             toast.success("created successfully");
@@ -87,6 +91,7 @@ export default function UbahPengajuanAset(){
             form.setValue('submission_date', response.submission_date)
             form.setValue('expiry_date', response.expiry_date)
             form.setValue('type', response.type)
+            setImage(response.image_assets);
           }
         };
     
@@ -118,7 +123,10 @@ export default function UbahPengajuanAset(){
                                         control={form.control}
                                         name="type"
                                         render={({ field }) => (
-                                            <RadioGroup onValueChange={field.onChange} value={field.value?.toString()}>
+                                            <RadioGroup onValueChange={(value) => {
+                                                field.onChange(value);
+                                                setTransactionType(value);
+                                            }} value={field.value?.toString()}>
                                                 <div className="border rounded-lg p-4">
                                                     <div className="flex items-center space-x-2">
                                                         <RadioGroupItem name="type" value="1" id="r1" style={{ color: "#F9B421" }} />
@@ -143,22 +151,29 @@ export default function UbahPengajuanAset(){
                                         control={form.control}
                                         name="asset_id"
                                         render={({ field }) => (
-                                        <Select
-                                            value={field.value ? field.value.toString() : ""}
-                                            onValueChange={(value) => {
-                                                field.onChange(Number(value)); // Update react-hook-form state
-                                            }}
-                                            {...field}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Pilih asset untuk ditampilkan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {assets?.map((item) => (
-                                                    <SelectItem key={item.id} value={item.id.toString()}>{item.asset_name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <>
+                                            {assets && assets.length > 0 ? (
+                                                <Select
+                                                    value={field.value ? field.value.toString() : ""}
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value); // Update react-hook-form state
+                                                        setAssetId(value)
+                                                    }}
+                                                    {...field}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Pilih asset untuk ditampilkan" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {assets?.map((item) => (
+                                                            <SelectItem key={item.id} value={item.id.toString()}>{item.asset_name}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            ) : (
+                                                <p className="text-sm text-red-500">Data aset tidak tersedia.</p>
+                                            )}
+                                        </>
                                         )}
                                     />
                                 </div>
@@ -230,12 +245,24 @@ export default function UbahPengajuanAset(){
                                         <div className="mt-4 space-y-2">
                                             {selectedFiles.map(file => (
                                                 <Card key={file.name} className="flex justify-between items-center">
-                                                    <span className="text-sm text-muted-foreground p-2">{file.name}</span>
+                                                    <span className="text-sm text-muted-foreground p-2">{file.file.name}</span>
                                                     <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.name)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>
                                                 </Card>
                                             ))}
+                                            {image?.length > 0 && (
+                                                <div className="mt-4 space-y-2">
+                                                    {image?.map(file => (
+                                                        <Card key={file.path} className="flex justify-between items-center">
+                                                            <span className="text-sm text-muted-foreground p-2">{file.path}</span>
+                                                            <Button type="button" variant="danger" onClick={() => handleRemoveImage(file.path)}>
+                                                                <CircleX className="h-4 w-4"/>
+                                                            </Button>
+                                                        </Card>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
