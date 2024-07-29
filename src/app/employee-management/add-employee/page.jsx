@@ -1,6 +1,7 @@
 "use client"
 import { createEmployee, fetchDepartement, fetchPosition } from "@/app/apiService";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -37,6 +39,7 @@ export default function AddEmployee() {
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -71,6 +74,7 @@ export default function AddEmployee() {
     console.log(data)
     data.departement_id = departmentId;
     data.position_id = positionId
+    setIsLoading(true);
     try {
       const result = await createEmployee({ data, token });
       setOpenSuccess(true)
@@ -78,6 +82,8 @@ export default function AddEmployee() {
       setErrorMessage('Error creating asset. Please try again.');
       setOpenError(true)
       console.error('Error creating employee:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,7 +199,23 @@ export default function AddEmployee() {
                         />
                     </div>
                     <div className="flex justify-end">
-                        <Button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Tambah Karyawan</Button>
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="px-4 py-2 text-sm font-semibold rounded-lg"
+                      style={{ background: "#F9B421" }}
+                    >
+                      {isLoading ? (
+                        <TailSpin
+                          height="20"
+                          width="20"
+                          color="#ffffff"
+                          ariaLabel="loading"
+                        />
+                      ) : (
+                        "Tambah Karyawan"
+                      )}
+                    </Button>
                     </div>
                     {/* Success Dialog */}
                     <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>

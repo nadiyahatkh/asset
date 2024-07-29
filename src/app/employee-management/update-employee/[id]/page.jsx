@@ -1,5 +1,6 @@
 "use client"
 import { changeEmployees, fetchDepartement, fetchEmployeeDataId, fetchPosition } from "@/app/apiService";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -10,16 +11,17 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  name: z.string().min(1, { message: "Nama karyawan is required." }),
-  email: z.string().min(1, { message: "Email is required." }),
-  password: z.string().min(1, { message: "Password wajib diisi." }),
-  nip: z.string().min(1, { message: "nip is required." }),
-  department_id: z.string().min(1, { message: "Department wajib diisi." }),
-  position_id: z.string().min(1, { message: "Posisi wajib diisi." }),
+  name: z.string().optional(),
+  email: z.string().optional(),
+  password: z.string().optional(),
+  nip: z.string().optional(),
+  department_id: z.string().optional(),
+  position_id: z.string().optional(),
 });
 
 export default function updateEmpolyee() {
@@ -28,8 +30,8 @@ export default function updateEmpolyee() {
   const token = session?.user?.token;
   const router = useRouter();
 
-  const [dataInput, setDataInput] = useState()
 
+  const [originalData, setOriginalData] = useState({});
   const [departmentId, setDepartmentId] = useState();
   const [positionId, setPositionId] = useState();
 
@@ -39,6 +41,7 @@ export default function updateEmpolyee() {
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -70,16 +73,22 @@ export default function updateEmpolyee() {
   }, [token]);
 
   const onSubmit = async (data) => {
-    console.log(data)
-    data.departement_id = departmentId;
-    data.position_id = positionId
+    const payload = {
+      ...data,
+      departement_id: data.departement_id || originalData.departmentId,
+      position_id: data.position_id || originalData.positionId,
+
+  };
+  setIsLoading(true);
     try {
-      const result = await changeEmployees({ id, data, token });
+      const result = await changeEmployees({ id, data: payload, token, originalData });
       setOpenSuccess(true);
     } catch (error) {
-      setErrorMessage('Error creating asset. Please try again.');
+      setErrorMessage('Error updated employee. Please try again.');
       setOpenError(true)
       console.error('Error creating employee:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -94,7 +103,7 @@ export default function updateEmpolyee() {
             form.setValue('nip', response.employee.nip)
             form.setValue('department_id', response.employee.department_id)
             form.setValue('position_id', response.employee.position_id)
-            setDataInput(response?.data)
+            setOriginalData(response)
         }
     };
     fetchData()
@@ -212,13 +221,30 @@ export default function updateEmpolyee() {
                         />
                     </div>
                     <div className="flex justify-end">
-                         <Button type="submit" className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Karyawan</Button>
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="px-4 py-2 text-sm font-semibold rounded-lg"
+                      style={{ background: "#F9B421" }}
+                      onClick={() => (console.log(form))}
+                    >
+                      {isLoading ? (
+                        <TailSpin
+                          height="20"
+                          width="20"
+                          color="#ffffff"
+                          ariaLabel="loading"
+                        />
+                      ) : (
+                        "Ubah Karyawan"
+                      )}
+                    </Button>
                     </div>
                     {/* Success Dialog */}
                     <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
                       <AlertDialogContent>
                       <AlertDialogTitle>Success</AlertDialogTitle>
-                        <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                        <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
                         <AlertDialogAction onClick={() => router.push('/employee-management')}>OK</AlertDialogAction>
                       </AlertDialogContent>
                     </AlertDialog>

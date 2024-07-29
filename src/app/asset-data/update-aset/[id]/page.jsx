@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -27,7 +28,7 @@ const FormSchema = z.object({
     asset_name: z.string().optional(),
     category_id: z.string().optional(),
     item_condition: z.string().optional(),
-    price: z.number().optional(),
+    price: z.preprocess((val) => Number(String(val).replace(/[^0-9]/g, '')), z.number().optional()),
     received_date: z.date().optional(),
     expiration_date: z.date().optional(),
     status: z.string().optional(),
@@ -79,14 +80,18 @@ export default function ubahAset(){
             status: data.status || status,
             path: selectedFiles.map(file => file.file),
             delete_images: deletedImages
+            
 
         };
+        if (typeof data.price === 'string') {
+            data.price = Number(data.price.replace(/[^0-9]/g, ''));
+          }
+        setIsSubmitting(true);
 
         try{
             const result = await updateAset({data: payload, id, token, path: selectedFiles.map(file => file.file)})
             // form.reset();
             setOpenSuccess(true);
-            setIsSubmitting(true);
         } catch(error) {
             setErrorMessage('Error creating asset. Please try again.');
             setOpenError(true)
@@ -130,6 +135,17 @@ export default function ubahAset(){
     
         fetchData();
       }, [token, id]);
+
+      const formatPrice = (value) => {
+        if (!value) return "";
+        const numberValue = Number(value.replace(/[^0-9]/g, ""));
+        const numberFormat = new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0,
+        });
+        return numberFormat.format(numberValue).replace('Rp', 'Rp ');
+      };
 
     return(
         <div className="py-4">
@@ -232,7 +248,7 @@ export default function ubahAset(){
                                         control={form.control}
                                         name="price"
                                         render={({ field }) => (
-                                        <Input {...field} placeholder="Rp. 129,000,000" type="text" />
+                                        <Input {...field} placeholder="Rp. 129,000,000" type="text" value={field.value} onChange={(e) => field.onChange(formatPrice(e.target.value))} />
                                         )}
                                     />
                                 </div>
@@ -359,8 +375,17 @@ export default function ubahAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
-                                    {isSubmitting ? 'Loading...' : 'Ubah Aset'}
+                                    <button type="submit" disabled={isSubmitting} onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
+                                    {isSubmitting ? (
+                                        <TailSpin
+                                        height="20"
+                                        width="20"
+                                        color="#ffffff"
+                                        ariaLabel="loading"
+                                        />
+                                    ) : (
+                                        "Pengajuan"
+                                    )}
                                     </button>
                                 </div>
                                 {/* Success Dialog */}

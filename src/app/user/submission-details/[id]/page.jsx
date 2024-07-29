@@ -78,6 +78,10 @@ export default function DetailPengajuanAset() {
                                 <Label className="text-sm">Tipe</Label>
                                 <p className="font-semibold text-sm">{detail?.type}</p>
                                 </div>
+                                <div className="col-span-1 md:col-span-1">
+                                <Label className="text-sm">Status</Label>
+                                <p className="font-semibold text-sm">{detail?.status}</p>
+                                </div>
                             </div>
                         </div>
                     </div>

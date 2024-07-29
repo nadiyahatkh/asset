@@ -49,6 +49,7 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [isSelectDeleteOpen, setIsSelectDeleteOpen] = useState(false);
+  const [pendingSearch, setPendingSearch] = useState(search);
 
   const table = useReactTable({
     data,
@@ -77,6 +78,12 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
 
   const isFiltered = statusFilter.length > 0;
 
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setSearch(pendingSearch);
+    }
+  };
+
   return (
     <>
       {/* Filters */}
@@ -84,8 +91,9 @@ export function DataTable({ columns, data, search, setSearch, statusFilter , set
         <div className='flex items-center py-4'>
           <Input
             placeholder='Filter tasks...'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={pendingSearch}
+            onChange={(e) => setPendingSearch(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
             className='max-w-sm'
           />
           {table.getColumn("status") && (

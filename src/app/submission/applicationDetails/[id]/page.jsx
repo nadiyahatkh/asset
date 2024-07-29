@@ -35,7 +35,7 @@ export default function DetailPengajuan() {
       const result = await acceptApplicant({ id, token });
       console.log('Applicant accepted:', result);
       setActionCompleted(true); 
-      setIsDisetujuiDialogOpen(false);
+      router.push('/submission');
     } catch (error) {
       console.error('Error accepting applicant:', error);
     }
@@ -107,6 +107,10 @@ export default function DetailPengajuan() {
                 <div className="col-span-1 md:col-span-1">
                   <Label className="text-sm">Tipe</Label>
                   <p className="font-semibold text-sm">{detail?.type}</p>
+                </div>
+                <div className="col-span-1 md:col-span-1">
+                  <Label className="text-sm">Status</Label>
+                  <p className="font-semibold text-sm">{detail?.status}</p>
                 </div>
               </div>
             </div>

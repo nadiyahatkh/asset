@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getSession, signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { TailSpin } from "react-loader-spinner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -91,7 +92,16 @@ export default function LoginPage() {
                 type="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Loading...' : 'Sign In'}
+                {isSubmitting ? (
+                    <TailSpin
+                    height="20"
+                    width="20"
+                    color="#ffffff"
+                    ariaLabel="loading"
+                    />
+                ) : (
+                    "Sign In"
+                )}
               </Button>
             </div>
           </form>

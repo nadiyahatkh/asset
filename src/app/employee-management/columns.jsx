@@ -20,6 +20,10 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { removeEmployee } from '../apiService';
 
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
 
 export const columns = (deleteRow) => [
     {
@@ -59,15 +63,12 @@ export const columns = (deleteRow) => [
   {
     accessorKey: 'employee.department.name',
     header: 'Departemen',
-    // cell: ({ row }) => {
-    //   const date = new Date(row.getValue('tanggalmasahabis'));
-    //   const formatted = date.toLocaleDateString();
-    //   return <div className='font-medium'>{formatted}</div>;
-    // }
+    cell: ({ row }) => capitalizeFirstLetter(row.original.employee.department.name)
   },
   {
     accessorKey: 'employee.position.name',
-    header: 'Posisi'
+    header: 'Posisi',
+    cell: ({ row }) => capitalizeFirstLetter(row.original.employee.position.name)
   },
   {
     accessorKey: 'Aksi',

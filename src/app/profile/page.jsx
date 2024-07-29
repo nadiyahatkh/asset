@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { TailSpin } from 'react-loader-spinner';
 
 
 const FormSchema = z.object({
@@ -31,6 +32,7 @@ export default function ProfilAdmin() {
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -45,6 +47,7 @@ export default function ProfilAdmin() {
 
 
     const onSubmit = async (data) => {
+        setIsLoading(true)
         try {
             const result = await updateProfile({ data: { ...data, foto: data.foto ? data.foto[0] : null }, token });
             setOpenSuccess(true)
@@ -52,7 +55,9 @@ export default function ProfilAdmin() {
             setErrorMessage('Error creating asset. Please try again.');
             setOpenError(true)
             console.error('Error updating profile:', error);
-        }
+        } finally {
+            setIsLoading(false);
+          }
     };
 
 
@@ -173,7 +178,18 @@ export default function ProfilAdmin() {
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" className="px-4 py-2 font-semibold rounded-lg" style={{ background: "#F9B421" }}>Save Profile</button>
+                                    <button type="submit" disabled={isLoading} className="px-4 py-2 font-semibold rounded-lg" style={{ background: "#F9B421" }}>
+                                    {isLoading ? (
+                                        <TailSpin
+                                        height="20"
+                                        width="20"
+                                        color="#ffffff"
+                                        ariaLabel="loading"
+                                        />
+                                    ) : (
+                                        "Save Profile"
+                                    )}
+                                    </button>
                                 </div>
 
                                 {/* Success Dialog */}

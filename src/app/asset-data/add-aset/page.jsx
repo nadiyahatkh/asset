@@ -18,13 +18,14 @@ import { CalendarIcon, CircleX, CloudDownload } from 'lucide-react';
 import { createAset, fetchCategory } from '@/app/apiService';
 import { useRouter } from 'next/navigation';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { TailSpin } from 'react-loader-spinner';
 
 const FormSchema = z.object({
   asset_code: z.string().min(1, { message: "Kode aset is required." }),
   asset_name: z.string().min(1, { message: "Nama aset is required." }),
   category_id: z.preprocess((val) => Number(val), z.number().min(1, { message: "Kategori wajib diisi." })),
   item_condition: z.string().min(1, { message: "Kondisi is required." }),
-  price: z.string().min(1, { message: "Harga aset is required." }),
+  price: z.preprocess((val) => Number(String(val).replace(/[^0-9]/g, '')), z.number().min(1, { message: "Harga aset is required." })),
   received_date: z.date({
     required_error: "Tanggal mulai is required.",
   }),
@@ -69,10 +70,16 @@ export default function AddAset() {
     data.item_condition = itemCondition; // Set item_condition from state
     data.status = status; 
 
+    if (typeof data.price === 'string') {
+      data.price = Number(data.price.replace(/[^0-9]/g, ''));
+    }
+
+    setIsSubmitting(true);
+
     try {
       const result = await createAset({ data, token, path: selectedFiles.map(file => file.file) });
       setOpenSuccess(true)
-      setIsSubmitting(true);
+      
     } catch (error) {
       setErrorMessage('Error creating asset. Please try again.');
       setOpenError(true)
@@ -87,7 +94,6 @@ export default function AddAset() {
       try {
         const category = await fetchCategory({ token });
         setCategory(category.data);
-        console.log(category);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -96,6 +102,17 @@ export default function AddAset() {
       loadData();
     }
   }, [token]);
+
+  const formatPrice = (value) => {
+    if (!value) return "";
+    const numberValue = Number(value.replace(/[^0-9]/g, ""));
+    const numberFormat = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    });
+    return numberFormat.format(numberValue).replace('Rp', 'Rp ');
+  };
 
   return (
     <div className="py-4">
@@ -217,7 +234,7 @@ export default function AddAset() {
                     control={form.control}
                     name="price"
                     render={({ field }) => (
-                      <Input {...field} placeholder="Rp. 129,000,000" type="text" />
+                      <Input {...field} placeholder="Rp. 129,000,000" type="text" value={field.value} onChange={(e) => field.onChange(formatPrice(e.target.value))} />
                     )}
                   />
                 </div>
@@ -337,7 +354,16 @@ export default function AddAset() {
                 </div>
                   <div className="flex justify-end">
                   <Button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
-                     {isSubmitting ? 'Loading...' : 'Submit'}
+                  {isSubmitting ? (
+                      <TailSpin
+                            height="20"
+                            width="20"
+                            color="#ffffff"
+                            ariaLabel="loading"
+                            />
+                        ) : (
+                            "Submit"
+                        )}
                   </Button>
 
                   </div>

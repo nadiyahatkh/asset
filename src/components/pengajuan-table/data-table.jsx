@@ -44,6 +44,7 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [pendingSearch, setPendingSearch] = useState(search);
 
   const table = useReactTable({
     data,
@@ -62,13 +63,14 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
     getPaginationRowModel: getPaginationRowModel()
   });
 
-  const handleDelete = () => {
-    const deleteRows = table.getSelectedRowModel().rows.map(row => row.original.id);
-    onDelete(deleteRows);
+
+  const isFiltered = statusFilter.length > 0 || typeFilter.length > 0;
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setSearch(pendingSearch);
+    }
   };
-
-  const isFiltered = statusFilter.length > 0;
-
 
   return (
     <>
@@ -77,8 +79,9 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
         <div className='flex items-center py-4'>
           <Input
             placeholder='Filter tasks...'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={pendingSearch}
+            onChange={(e) => setPendingSearch(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
             className='max-w-sm'
           />
           {table.getColumn("type") && (
@@ -102,19 +105,16 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => setStatusFilter([])}
+            onClick={() => {
+              setStatusFilter([]);
+              setTypeFilter([]);
+            }}
             className="h-8 px-2 lg:px-3"
           >
             Reset
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
-        {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-          <Button variant="outline" size="sm" onClick={handleDelete} className="ml-4">
-            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
-            Delete ({table.getFilteredSelectedRowModel().rows.length})
-          </Button>
-        ) : null}
         </div>
 
 
@@ -200,10 +200,6 @@ export function DataTable({ columns, data, search, setSearch, statusFilter, setS
 
       {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select

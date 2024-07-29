@@ -1,5 +1,7 @@
 'use client'
 import { fetchApplicantUserId, fetchGetAsetApplicant, updateApplicantUser } from "@/app/apiService";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -14,21 +16,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, CircleX, CloudDownload } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { z } from "zod";
 
 
 const FormSchema = z.object({
-    asset_id: z.preprocess((val) => Number(val), z.number().min(1, { message: "asset wajib diisi." })),
-    submission_date: z.date({
-      required_error: "Tanggal mulai is required.",
-    }),
-    expiry_date: z.date({
-      required_error: "Tanggal habis is required.",
-    }),
-    type: z.string().min(1, { message: "type is required." }),
+    asset_id: z.string().optional(),
+    submission_date: z.string().optional(),
+    expiry_date: z.string().optional(),
+    type: z.number().optional(),
 });
 
 export default function UbahPengajuanAset(){
@@ -37,70 +36,120 @@ export default function UbahPengajuanAset(){
     const token = session?.user?.token;
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [assets, setAssets] = useState()
+    const [assetId, setAssetId] = useState()
     const [transactionType, setTransactionType] = useState('');
-    const [assetId, setAssetId] = useState();
-    const [image, setImage]  = useState()
+    const [image, setImage] = useState()
+    const [deletedImages, setDeletedImages] = useState([]);
+    const router = useRouter();
+
+    const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
-        const newFiles = files.map(file => ({ url: URL.createObjectURL(file), name: file.name }));
+        const newFiles = files.map(file => ({ file: file }));
         setSelectedFiles([...selectedFiles, ...newFiles]);
-    };
+      };
 
     const handleRemoveFile = (fileName) => {
-        setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
+        setSelectedFiles(selectedFiles.filter(file => file.file.name !== fileName));
     };
+
+    const handleRemoveImage = (filePath) => {
+        setImage((prevImage) => prevImage.filter((file) => file.path !== filePath));
+        setDeletedImages((prevDeletedImages) => [...prevDeletedImages, filePath]);
+      };
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
       });
 
       const onSubmit= async (data) => {
-        data.asset_id = assetId;
+        console.log(data)
+        const payload = {
+            ...data,
+            asset_id: data.asset_id || assetId,
+            path: selectedFiles.map(file => file.file),
+            delete_images: deletedImages
+
+        };
+        setIsLoading(true);
         try{
-            const result = await updateApplicantUser({id, data, token, path: selectedFiles.map(file => file.file) });
-            toast.success("created successfully");
+            const result = await updateApplicantUser({id, data: payload, token, path: selectedFiles.map(file => file.file) });
+            console.log('Update result:', result); // Log the result
             form.reset();
-            router.push('/')
+            setOpenSuccess(true)
         } catch (error) {
-            toast.error("Failed to create asset.");
+            setErrorMessage('Error creating asset. Please try again.');
+            setOpenError(true)
             console.error('Error creating asset:', error);
-        }
+        } finally {
+            setIsLoading(false);
+          }
     }
 
     useEffect(() => {
         const loadData = async () => {
           try {
-            const response = await fetchGetAsetApplicant({ token });
+            const response = await fetchGetAsetApplicant({ token, type: transactionType });
+            console.log(response)
             setAssets(response);
           } catch (error) {
             console.error('Failed to fetch data:', error);
           }
         };
-        if (token) {
+        if (token && transactionType) {
           loadData();
         }
-    }, [token]);
+    }, [token, transactionType]);
 
     useEffect(() => {
         const fetchData = async () => {
+            
           if (token && id) {
             const response = await fetchApplicantUserId({ token, id });
             console.log(response);
-            form.setValue('asset_id', response.asset_id)
+            form.setValue('asset_id', response.asset_id.toString())
             form.setValue('submission_date', response.submission_date)
             form.setValue('expiry_date', response.expiry_date)
             form.setValue('type', response.type)
             setImage(response.image_assets);
+            setTransactionType(response.type)
+            setAssetId(response.asset_id);  // Set assetId
           }
         };
     
         fetchData();
       }, [token, id]);
 
+      useEffect(() => {
+        const fetchAssets = async () => {
+            if (transactionType === 1) {
+                const response = await fetchGetAsetApplicant({ token, type: transactionType });
+                setAssets(response);
+            }
+        };
+
+        if (token && transactionType) {
+            fetchAssets();
+        }
+    }, [transactionType, token]);
+
+
     return(
         <div className="py-4">
             <div className="w-full max-w-7xl mx-auto">
+                <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/" >Home</BreadcrumbLink>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+                </Breadcrumb>
+                <hr className="mb-4" />
                 <p className="title font-manrope font-bold text-2xl leading-10">Ubah Pengajuan Aset</p>
                 <p className="title text-muted-foreground text-sm mb-5">Here's a list of your assets.</p>
                 <hr className="mb-4" />
@@ -129,14 +178,14 @@ export default function UbahPengajuanAset(){
                                             }} value={field.value?.toString()}>
                                                 <div className="border rounded-lg p-4">
                                                     <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem name="type" value="1" id="r1" style={{ color: "#F9B421" }} />
+                                                        <RadioGroupItem name="type" value="1" id="r1" style={{ color: "#F9B421" }} disabled={transactionType === 2} />
                                                         <Label htmlFor="r1">Peminjaman</Label>
                                                     </div>
                                                     <p className="title text-muted-foreground text-xs ml-6">Memungkinkan pengguna untuk mengajukan permohonan peminjaman.</p>
                                                 </div>
                                                 <div className="border rounded-lg p-4">
                                                     <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem name="type" value="2" id="r2" style={{ color: "#F9B421" }} />
+                                                        <RadioGroupItem name="type" value="2 " id="r2" style={{ color: "#F9B421" }} disabled={transactionType === 1} />
                                                         <Label htmlFor="r2">Pengembalian</Label>
                                                     </div>
                                                     <p className="title text-muted-foreground text-xs ml-6">Mengembalikan aset setelah penggunaan selesai</p>
@@ -146,16 +195,17 @@ export default function UbahPengajuanAset(){
                                     />
                                 </div>
                                 <div className="mb-4">
-                                    <Label className="block text-sm mb-2 font-semibold" htmlFor="kategori">Aset</Label>
+                                    <Label className="block text-sm mb-2 font-semibold">Aset</Label>
                                     <FormField
                                         control={form.control}
                                         name="asset_id"
                                         render={({ field }) => (
-                                        <>
+                                            <>
                                             {assets && assets.length > 0 ? (
                                                 <Select
                                                     value={field.value ? field.value.toString() : ""}
                                                     onValueChange={(value) => {
+                                                        console.log(value)
                                                         field.onChange(value); // Update react-hook-form state
                                                         setAssetId(value)
                                                     }}
@@ -245,30 +295,63 @@ export default function UbahPengajuanAset(){
                                         <div className="mt-4 space-y-2">
                                             {selectedFiles.map(file => (
                                                 <Card key={file.name} className="flex justify-between items-center">
-                                                    <span className="text-sm text-muted-foreground p-2">{file.file.name}</span>
-                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.name)}>
+                                                    <span className="text-sm text-muted-foreground p-2">{file.file?.name}</span>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveFile(file.file.name)}>
                                                         <CircleX className="h-4 w-4"/>
                                                     </Button>
                                                 </Card>
                                             ))}
-                                            {image?.length > 0 && (
-                                                <div className="mt-4 space-y-2">
-                                                    {image?.map(file => (
-                                                        <Card key={file.path} className="flex justify-between items-center">
-                                                            <span className="text-sm text-muted-foreground p-2">{file.path}</span>
-                                                            <Button type="button" variant="danger" onClick={() => handleRemoveImage(file.path)}>
-                                                                <CircleX className="h-4 w-4"/>
-                                                            </Button>
-                                                        </Card>
-                                                    ))}
-                                                </div>
-                                            )}
+                                        </div>
+                                    )}
+                                    {image?.length > 0 && (
+                                        <div className="mt-4 space-y-2">
+                                            {image?.map(file => (
+                                                <Card key={file.path} className="flex justify-between items-center">
+                                                    <span className="text-sm text-muted-foreground p-2">{file.path}</span>
+                                                    <Button type="button" variant="danger" onClick={() => handleRemoveImage(file.path)}>
+                                                        <CircleX className="h-4 w-4"/>
+                                                    </Button>
+                                                </Card>
+                                            ))}
                                         </div>
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Ubah Pengajuan</button>
+                                <Button
+                                type="submit"
+                                disabled={isLoading}
+                                className="px-4 py-2 text-sm font-semibold rounded-lg"
+                                style={{ background: "#F9B421" }}
+                                >
+                                {isLoading ? (
+                                    <TailSpin
+                                    height="20"
+                                    width="20"
+                                    color="#ffffff"
+                                    ariaLabel="loading"
+                                    />
+                                ) : (
+                                    "Ubah Pengajuan"
+                                )}
+                                </Button>
                                 </div>
+                                {/* Success Dialog */}
+                                <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle>Success</AlertDialogTitle>
+                                    <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => router.push('/')}>OK</AlertDialogAction>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+                                {/* Error Dialog */}
+                                <AlertDialog open={openError} onOpenChange={setOpenError}>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle>Error</AlertDialogTitle>
+                                    <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </form>
                         </Form>
                     </div>

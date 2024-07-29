@@ -44,6 +44,7 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [isSelectDeleteOpen, setIsSelectDeleteOpen] = useState(false);
+  const [pendingSearch, setPendingSearch] = useState(search);
 
   const table = useReactTable({
     data,
@@ -65,6 +66,13 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
   const handleDelete = () => {
     const deleteRows = table.getSelectedRowModel().rows.map(row => row.original.id);
     onDelete(deleteRows);
+    setIsSelectDeleteOpen(false)
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setSearch(pendingSearch);
+    }
   };
 
   return (
@@ -74,8 +82,9 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
         <div className='flex items-center py-4'>
           <Input
             placeholder='Filter tasks...'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={pendingSearch}
+            onChange={(e) => setPendingSearch(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
             className='max-w-sm'
           />
           {table.getFilteredSelectedRowModel().rows.length > 0 ? (

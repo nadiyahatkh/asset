@@ -129,6 +129,12 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           });
         }
 
+        if (data.delete_images && data.delete_images.length > 0) {
+          data.delete_images.forEach((file) => {
+          formData.append('delete_images[]', file);
+        });
+      }
+
         const response = await fetch(`http://45.64.99.242:8850/api/applicant/update/${id}`, {
           method: 'POST',
           headers: {
@@ -647,16 +653,17 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
         }
       };
 
-      export const changeEmployees = async ({ id, data, token }) => {
+      export const changeEmployees = async ({ id, data, token, originalData }) => {
+        console.log(originalData)
         console.log(data)
         try {
           const formData = new FormData();
-          formData.append('name', data.name);
-          formData.append('email', data.email);
-          formData.append('password', data.password);
-          formData.append('nip', data.nip);
-          formData.append('department_id', data.department_id);
-          formData.append('position_id', data.position_id);
+          if (data.name !== originalData.name) formData.append('name', data.name);
+          if (data.email !== originalData.email) formData.append('email', data.email);
+          if (data.password) formData.append('password', data.password); // Append password only if provided
+          if (data.nip !== originalData.employee.nip) formData.append('nip', data.nip);
+          if (data.department_id !== originalData.department_id) formData.append('department_id', data.department_id);
+          if (data.position_id !== originalData.position_id) formData.append('position_id', data.position_id);
 
       
           const response = await fetch(`http://45.64.99.242:8850/api/employee/update/${id}`, {

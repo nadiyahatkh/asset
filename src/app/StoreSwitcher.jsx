@@ -18,7 +18,7 @@ export default function StoreSwitcher({ className, items = [] }) {
     const router = useRouter();
     const isAdmin = session?.user?.role === 1 ;  // Assuming role is stored in session
     const handleSignOut = () => {
-        signOut({ callbackUrl: '/login' }); // Redirect to login page after sign out
+        signOut({ callbackUrl: '/sign-in' }); // Redirect to login page after sign out
     };
 
     
@@ -74,12 +74,12 @@ export default function StoreSwitcher({ className, items = [] }) {
                     {status === 'authenticated' ? (
                         <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={handleSignOut}>
                             <LogOut className="mr-2 h-4 w-4" />
-                            LogOut
+                            Log Out
                         </button>
                     ) : (
-                        <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={() => router.push("/login")}>
+                        <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={() => router.push("/sign-in")}>
                             <LogIn className="mr-2 h-4 w-4" />
-                            LogIn
+                            Log In
                         </button>
                     )}
                 </div>

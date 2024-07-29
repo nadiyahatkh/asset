@@ -59,17 +59,7 @@ export default function Pengajuan() {
     }
   }, [token, search, statusFilter, typeFilter, page, perPage, date]);
 
-      const deleteRows = async (ids) => {
-        try {
-          const response = await selectRemoveSubmission({ ids, token });
-          console.log(response)
-          if (response) {
-            setData((prevData) => prevData.filter(item => !ids.includes(item.id)));
-          }
-        } catch (error) {
-          console.error('Failed to delete rows:', error);
-        }
-      };
+      
 
       const resetDateFilter = () => {
         setDate(defaultDate);
@@ -152,7 +142,6 @@ export default function Pengajuan() {
                   setPage={setPage}
                   perPage={perPage}
                   setPerPage={setPerPage}
-                  onDelete={deleteRows} 
                 />
               </div>
             </Card>

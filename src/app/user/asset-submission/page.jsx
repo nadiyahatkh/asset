@@ -1,6 +1,7 @@
 'use client'
 import { createApplicantUser, fetchAssetData, fetchGetAsetApplicant } from "@/app/apiService";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -18,19 +19,26 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { TailSpin } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
 const FormSchema = z.object({
     asset_id: z.string().min(1, { message: "asset wajib diisi." }),
-    submission_date: z.date({
-      required_error: "Tanggal mulai is required.",
-    }),
-    expiry_date: z.date({
-      required_error: "Tanggal habis is required.",
-    }),
+    submission_date: z.date().optional(),
+    expiry_date: z.date().optional(),
     type: z.string().min(1, { message: "type is required." }),
-});
+})
+// .refine((data) => {
+//   if (data.type === '1') {
+//     return data.submission_date && data.expiry_date;
+//   }
+//   return true;
+// }, {
+//   message: "Tanggal pengajuan dan jangka waktu harus diisi untuk peminjaman.",
+//   path: ["submission_date", "expiry_date"],
+// });
+
 
 export default function PengajuanAset(){
     const { data: session } = useSession();
@@ -43,12 +51,12 @@ export default function PengajuanAset(){
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {
           try {
             const response = await fetchGetAsetApplicant({ token, type: transactionType });
-            console.log(response)
             setAssets(response);
           } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -66,7 +74,7 @@ export default function PengajuanAset(){
       };
 
     const handleRemoveFile = (fileName) => {
-        setSelectedFiles(selectedFiles.filter(file => file.name !== fileName));
+        setSelectedFiles(selectedFiles.filter(file => file.file.name !== fileName));
     };
 
     const form = useForm({
@@ -75,18 +83,31 @@ export default function PengajuanAset(){
 
     const onSubmit= async (data) => {
         data.asset_id = assetId;
+        setIsLoading(true)
         try{
             const result = await createApplicantUser({data, token, path: selectedFiles.map(file => file.file) });
+            
             setOpenSuccess(true)
         } catch (error) {
-            setErrorMessage('Error creating asset. Please try again.');
+            const errorMessage = error.response?.data?.message || 'Error creating asset. Please try again.';
+            setErrorMessage(errorMessage);
             setOpenError(true)
             console.error('Error creating asset:', error);
-        }
+        } finally {
+            setIsLoading(false);
+          }
     }
     return(
         <div className="py-4">
             <div className="w-full max-w-7xl mx-auto">
+                <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/" className="text-black leading-10 " >Home</BreadcrumbLink>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+                </Breadcrumb>
+                <hr className="mb-4" />
                 <p className="title font-manrope font-bold text-2xl leading-10">Pengajuan Aset</p>
                 <p className="title text-muted-foreground text-sm mb-5">Here's a list of your assets.</p>
                 <hr className="mb-4" />
@@ -163,54 +184,59 @@ export default function PengajuanAset(){
                                         )}
                                     />
                                 </div>
-                                <div className="mb-4">
-                                <div className="flex justify-between items-center">
-                                    <div className="w-full mr-2">
-                                    <Label className="block text-sm mb-2">Tanggal Pengajuan</Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="submission_date"
-                                        render={({ field }) => (
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
-                                                {field.value ? format(field.value, 'PPP') : <span>Pilih tanggal pengajuan</span>}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date('1900-01-01') || date > new Date('2100-12-31')} initialFocus />
-                                            </PopoverContent>
-                                        </Popover>
-                                        )}
-                                    />
+                                {/* {transactionType == '2' &&( */}
+                                    <>
+                                    <div className="mb-4">
+                                    <div className="flex justify-between items-center">
+                                        <div className="w-full mr-2">
+                                        <Label className="block text-sm mb-2">Tanggal Pengajuan</Label>
+                                        <FormField
+                                            control={form.control}
+                                            name="submission_date"
+                                            render={({ field }) => (
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
+                                                    {field.value ? format(field.value, 'PPP') : <span>Pilih tanggal pengajuan</span>}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date('1900-01-01') || date > new Date('2100-12-31')} initialFocus />
+                                                </PopoverContent>
+                                            </Popover>
+                                            )}
+                                        />
+                                        </div>
+                                        <div className="w-full ml-2">
+                                        <Label className="block text-sm mb-2">Jangka Waktu</Label>
+                                        <FormField
+                                            control={form.control}
+                                            name="expiry_date"
+                                            render={({ field }) => (
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
+                                                    {field.value ? format(field.value, 'PPP') : <span>Pilih Jangka Waktu</span>}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date('1900-01-01') || date > new Date('2100-12-31')} initialFocus />
+                                                </PopoverContent>
+                                            </Popover>
+                                            )}
+                                        />
+                                        </div>
                                     </div>
-                                    <div className="w-full ml-2">
-                                    <Label className="block text-sm mb-2">Jangka Waktu</Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="expiry_date"
-                                        render={({ field }) => (
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
-                                                {field.value ? format(field.value, 'PPP') : <span>Pilih Jangka Waktu</span>}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date('1900-01-01') || date > new Date('2100-12-31')} initialFocus />
-                                            </PopoverContent>
-                                        </Popover>
-                                        )}
-                                    />
                                     </div>
-                                </div>
-                                </div>
+                                    
+                                    </>
+                                {/* )} */}
                                 <div className="mb-4">
                                     <Label className="block text-sm mb-2 font-semibold">Gambar Aset</Label>
                                     <div className="border-dashed border-2 rounded-lg flex flex-col items-center justify-center p-4 mb-1">
@@ -241,7 +267,24 @@ export default function PengajuanAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button>
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="px-4 py-2 text-sm font-semibold rounded-lg"
+                                    style={{ background: "#F9B421" }}
+                                    >
+                                    {isLoading ? (
+                                        <TailSpin
+                                        height="20"
+                                        width="20"
+                                        color="#ffffff"
+                                        ariaLabel="loading"
+                                        />
+                                    ) : (
+                                        "Pengajuan"
+                                    )}
+                                </Button>
+                                    {/* <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button> */}
                                 </div>
                                 {/* Success Dialog */}
                                 <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
