@@ -121,7 +121,7 @@ export const columns = (deleteRow) => [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`./user/update-submission/${id}`} className="flex items-center hover:bg-gray-100">
+              <Link href={`./user/update-submission/${id}`} className="flex items-center">
                 <PencilLine className="mr-2 h-4 w-4" />
                 Ubah
               </Link>
@@ -130,7 +130,7 @@ export const columns = (deleteRow) => [
               <Trash2 className='h-4 w-4 mr-2' /> Hapus
             </DropdownMenuItem>
             <DropdownMenuItem>
-            <Link href={`./user/submission-details/${id}`} className="flex items-center hover:bg-gray-100">
+            <Link href={`./user/submission-details/${id}`} className="flex items-center">
                 <PencilLine className="mr-2 h-4 w-4" />
                 Detail
               </Link>

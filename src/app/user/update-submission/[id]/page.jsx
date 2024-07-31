@@ -43,8 +43,8 @@ export default function UbahPengajuanAset(){
     const router = useRouter();
 
     const [openSuccess, setOpenSuccess] = useState(false);
-  const [openError, setOpenError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+    const [openError, setOpenError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,7 +68,6 @@ export default function UbahPengajuanAset(){
       });
 
       const onSubmit= async (data) => {
-        console.log(data)
         const payload = {
             ...data,
             asset_id: data.asset_id || assetId,
@@ -79,13 +78,12 @@ export default function UbahPengajuanAset(){
         setIsLoading(true);
         try{
             const result = await updateApplicantUser({id, data: payload, token, path: selectedFiles.map(file => file.file) });
-            console.log('Update result:', result); // Log the result
             form.reset();
             setOpenSuccess(true)
         } catch (error) {
-            setErrorMessage('Error creating asset. Please try again.');
+            setErrorMessage('Error update submission. Please try again.');
             setOpenError(true)
-            console.error('Error creating asset:', error);
+            console.error('Error update submission:', error);
         } finally {
             setIsLoading(false);
           }

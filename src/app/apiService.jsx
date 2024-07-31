@@ -584,7 +584,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
 
       export const removeEmployee = async ({ id, token }) => {
-        console.log(id, token)
+        
         try {
           const response = await fetch(`http://45.64.99.242:8850/api/employee/delete/${id}`, {
             method: 'DELETE',
@@ -622,7 +622,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       };
 
       export const createEmployee = async ({ data, token }) => {
-        console.log(data)
+        
         try {
           const formData = new FormData();
           formData.append('name', data.name);
@@ -654,8 +654,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       };
 
       export const changeEmployees = async ({ id, data, token, originalData }) => {
-        console.log(originalData)
-        console.log(data)
+        
         try {
           const formData = new FormData();
           if (data.name !== originalData.name) formData.append('name', data.name);

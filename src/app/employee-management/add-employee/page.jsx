@@ -3,7 +3,7 @@ import { createEmployee, fetchDepartement, fetchPosition } from "@/app/apiServic
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Form, FormField } from "@/components/ui/form";
+import { Form, FormField, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
@@ -79,7 +79,7 @@ export default function AddEmployee() {
       const result = await createEmployee({ data, token });
       setOpenSuccess(true)
     } catch (error) {
-      setErrorMessage('Error creating asset. Please try again.');
+      setErrorMessage('Error creating employee. Please try again.');
       setOpenError(true)
       console.error('Error creating employee:', error);
     } finally {
@@ -112,7 +112,12 @@ export default function AddEmployee() {
                         control={form.control}
                         name="name"
                         render={({ field }) => (
+                            <>
                             <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Alicia" type="text" />
+                            {form.formState.errors.name && (
+                              <FormMessage type="error" className="italic">{form.formState.errors.name.message}</FormMessage>
+                            )}
+                            </>
                         )}
                         />
                     </div>
@@ -122,7 +127,12 @@ export default function AddEmployee() {
                         control={form.control}
                         name="password"
                         render={({ field }) => (
-                            <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="****" type="password" />
+                          <>
+                          <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="****" type="password" />
+                          {form.formState.errors.password && (
+                              <FormMessage type="error" className="italic">{form.formState.errors.password.message}</FormMessage>
+                            )}
+                          </>
                         )}
                         />
                     </div>
@@ -132,7 +142,12 @@ export default function AddEmployee() {
                         control={form.control}
                         name="nip"
                         render={({ field }) => (
+                          <>
                             <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="121300" type="number" />
+                            {form.formState.errors.nip && (
+                              <FormMessage type="error" className="italic">{form.formState.errors.nip.message}</FormMessage>
+                            )}
+                          </>
                         )}
                         />
                     </div>
@@ -142,7 +157,12 @@ export default function AddEmployee() {
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="name@gmail.com" type="email" />
+                          <>
+                          <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="name@gmail.com" type="email" />
+                          {form.formState.errors.email && (
+                            <FormMessage type="error" className="italic">{form.formState.errors.email.message}</FormMessage>
+                          )}
+                          </>
                         )}
                         />
                     </div>
@@ -221,7 +241,7 @@ export default function AddEmployee() {
                     <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
                       <AlertDialogContent>
                       <AlertDialogTitle>Success</AlertDialogTitle>
-                        <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                        <AlertDialogDescription>Aset has been created employee successfully!</AlertDialogDescription>
                         <AlertDialogAction onClick={() => router.push('/employee-management')}>OK</AlertDialogAction>
                       </AlertDialogContent>
                     </AlertDialog>

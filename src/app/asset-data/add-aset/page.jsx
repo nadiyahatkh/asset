@@ -66,9 +66,8 @@ export default function AddAset() {
   });
 
   const onSubmit = async (data) => {
-    data.category_id = categoryId; // Set category_id from state
-    data.item_condition = itemCondition; // Set item_condition from state
-    data.status = status; 
+    data.category_id = categoryId;
+    data.item_condition = itemCondition;
 
     if (typeof data.price === 'string') {
       data.price = Number(data.price.replace(/[^0-9]/g, ''));

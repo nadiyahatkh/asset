@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { fetchDetailApplicantUser } from "@/app/apiService";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 
 export default function DetailPengajuanAset() {
     const { data: session } = useSession();
@@ -27,6 +28,14 @@ export default function DetailPengajuanAset() {
     return (
         <div className="py-4">
             <div className="w-full max-w-7xl mx-auto">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/" className="text-black leading-10 " >Home</BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+                <hr className="mb-4" />
                 <p className="title font-manrope font-bold text-2xl leading-10">Pengajuan Aset</p>
                 <p className="text-muted-foreground text-sm mb-5">
                     Pengajuan Aset - Detail aset

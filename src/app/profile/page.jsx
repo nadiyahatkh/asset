@@ -17,8 +17,8 @@ import { TailSpin } from 'react-loader-spinner';
 const FormSchema = z.object({
     username: z.string().min(1, { message: "Nama karyawan is required." }),
     email: z.string().min(1, { message: "Email is required." }),
-    password: z.string().min(1, { message: "Password wajib diisi." }),
-    password_confirmation: z.string().min(1, { message: "Password wajib diisi." }),
+    password: z.string().optional(),
+    password_confirmation: z.string().optional(),
     foto: z.any().optional()
   });
 
@@ -148,7 +148,7 @@ export default function ProfilAdmin() {
                                                 control={form.control}
                                                 name="password"
                                                 render={({ field }) => (
-                                                    <Input {...field} placeholder="" type={showPassword ? "text" : "password"} id="password" name="password" className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                                                    <Input {...field} placeholder="*****" type={showPassword ? "text" : "password"} id="password" name="password" className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
                                                 )}
                                                 />
                                                     <button type='button' className="absolute top-0 right-0 mt-2 mr-3" onClick={togglePasswordVisibility}>
@@ -171,7 +171,7 @@ export default function ProfilAdmin() {
                                                     control={form.control}
                                                     name="password_confirmation"
                                                     render={({ field }) => (
-                                                        <Input {...field} placeholder="" type={showPassword ? "text" : "password"} id="password_confirmation" className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                                                        <Input {...field} placeholder="*****" type={showPassword ? "text" : "password"} id="password_confirmation" className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
                                                     )}
                                                 />
                                         </div>

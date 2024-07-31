@@ -93,9 +93,9 @@ export default function ubahAset(){
             // form.reset();
             setOpenSuccess(true);
         } catch(error) {
-            setErrorMessage('Error creating asset. Please try again.');
+            setErrorMessage('Error update asset. Please try again.');
             setOpenError(true)
-            console.error("Error creating asser", error)
+            console.error("Error update asser", error)
         } finally {
             setIsSubmitting(false);
           }
@@ -120,12 +120,11 @@ export default function ubahAset(){
         const fetchData = async () => {
           if (token && id) {
             const response = await fetchAssetDataId({ token, id });
-            console.log(response);
             form.setValue('asset_code', response.asset_code, {shouldValidate: true});
             form.setValue('asset_name', response.asset_name, {shouldValidate: true});
             form.setValue('category_id', response.category_id, {shouldValidate: true});
             form.setValue('item_condition', response.item_condition, {shouldValidate: true});
-            form.setValue('price', response.price, {shouldValidate: true});
+            form.setValue('price', formatPrice(response.price.toString()), {shouldValidate: true});
             form.setValue('received_date', new Date(response.received_date), {shouldValidate: true});
             form.setValue('expiration_date', new Date(response.expiration_date), {shouldValidate: true});
             form.setValue('status', response.status, {shouldValidate: true});
@@ -384,7 +383,7 @@ export default function ubahAset(){
                                         ariaLabel="loading"
                                         />
                                     ) : (
-                                        "Pengajuan"
+                                        "Ubah Aset"
                                     )}
                                     </button>
                                 </div>
@@ -392,7 +391,7 @@ export default function ubahAset(){
                                 <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
                                     <AlertDialogContent>
                                     <AlertDialogTitle>Success</AlertDialogTitle>
-                                    <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                                    <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
                                     <AlertDialogAction onClick={() => router.push('/asset-data')}>OK</AlertDialogAction>
                                     </AlertDialogContent>
                                 </AlertDialog>
