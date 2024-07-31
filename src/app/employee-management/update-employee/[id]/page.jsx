@@ -96,7 +96,6 @@ export default function updateEmpolyee() {
     const fetchData = async () => {
         if(token && id) {
             const response = await fetchEmployeeDataId({ token, id });
-            console.log(response)
             form.setValue('name', response.name)
             form.setValue('email', response.email)
             form.setValue('password', response.password)
@@ -226,7 +225,6 @@ export default function updateEmpolyee() {
                       disabled={isLoading}
                       className="px-4 py-2 text-sm font-semibold rounded-lg"
                       style={{ background: "#F9B421" }}
-                      onClick={() => (console.log(form))}
                     >
                       {isLoading ? (
                         <TailSpin

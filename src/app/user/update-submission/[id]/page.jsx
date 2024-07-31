@@ -93,7 +93,6 @@ export default function UbahPengajuanAset(){
         const loadData = async () => {
           try {
             const response = await fetchGetAsetApplicant({ token, type: transactionType });
-            console.log(response)
             setAssets(response);
           } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -109,7 +108,6 @@ export default function UbahPengajuanAset(){
             
           if (token && id) {
             const response = await fetchApplicantUserId({ token, id });
-            console.log(response);
             form.setValue('asset_id', response.asset_id.toString())
             form.setValue('submission_date', response.submission_date)
             form.setValue('expiry_date', response.expiry_date)
@@ -203,7 +201,6 @@ export default function UbahPengajuanAset(){
                                                 <Select
                                                     value={field.value ? field.value.toString() : ""}
                                                     onValueChange={(value) => {
-                                                        console.log(value)
                                                         field.onChange(value); // Update react-hook-form state
                                                         setAssetId(value)
                                                     }}

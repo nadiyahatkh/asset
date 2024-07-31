@@ -32,7 +32,6 @@ const authOptions = {
           }
 
           const user = await res.json();
-          console.log('User from API:', user);
 
           if (user && user.data.email) {
             return {

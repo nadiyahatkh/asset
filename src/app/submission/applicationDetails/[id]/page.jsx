@@ -33,7 +33,6 @@ export default function DetailPengajuan() {
   const handleAccept = async () => {
     try {
       const result = await acceptApplicant({ id, token });
-      console.log('Applicant accepted:', result);
       setActionCompleted(true); 
       router.push('/submission');
     } catch (error) {
@@ -44,7 +43,6 @@ export default function DetailPengajuan() {
   const handleDeny = async () => {
     try {
       const result = await denyApplicant({ id, token });
-      console.log('Applicant denied:', result);
       setActionCompleted(true); // Set state to true after successful denial
       router.push('/submission');
     } catch (error) {

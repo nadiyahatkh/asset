@@ -71,7 +71,6 @@ export default function AddEmployee() {
   }, [token]);
 
   const onSubmit = async (data) => {
-    console.log(data)
     data.departement_id = departmentId;
     data.position_id = positionId
     setIsLoading(true);

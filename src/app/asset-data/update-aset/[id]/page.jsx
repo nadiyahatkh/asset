@@ -106,7 +106,6 @@ export default function ubahAset(){
           try {
             const category = await fetchCategory({ token });
             setCategory(category.data);
-            console.log(category);
           } catch (error) {
             console.error('Failed to fetch data:', error);
           }
@@ -374,7 +373,7 @@ export default function ubahAset(){
                                     )}
                                 </div>
                                 <div className="flex justify-end">
-                                    <button type="submit" disabled={isSubmitting} onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
+                                    <button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>
                                     {isSubmitting ? (
                                         <TailSpin
                                         height="20"

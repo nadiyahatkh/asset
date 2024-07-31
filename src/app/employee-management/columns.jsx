@@ -82,7 +82,6 @@ export const columns = (deleteRow) => [
       const handleDelete = async () => {
         try {
           const idToDelete = row.original.id;
-          console.log(row.original) // Sesuaikan dengan cara Anda mendapatkan ID yang tepat dari data baris
           await removeEmployee({ id: idToDelete, token: token });
           deleteRow(idToDelete);
           setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus

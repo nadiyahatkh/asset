@@ -10,9 +10,11 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { fetchNavbarProfile } from "./apiService";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export default function StoreSwitcher({ className, items = [] }) {
     const [open, setOpen] = useState(false);
+    const [showDialogLogOut, setShowDialogLogOut] = useState(false)
     const { status, data: session } = useSession();
     const [foto, setFoto] = useState()
     const router = useRouter();
@@ -72,7 +74,7 @@ export default function StoreSwitcher({ className, items = [] }) {
                         </>
                     )}
                     {status === 'authenticated' ? (
-                        <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={handleSignOut}>
+                        <button className="flex items-center p-1 rounded-md hover:bg-gray-100" onClick={() => setShowDialogLogOut(true)}>
                             <LogOut className="mr-2 h-4 w-4" />
                             Log Out
                         </button>
@@ -82,6 +84,20 @@ export default function StoreSwitcher({ className, items = [] }) {
                             Log In
                         </button>
                     )}
+                    <AlertDialog open={showDialogLogOut} onClose={() => setShowDialogLogOut(false)}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Anda Ingin Keluar Dari Akun {session?.user?.name}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setShowDialogLogOut(false)}>Batal</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleSignOut}>Ya</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
                 </div>
             </PopoverContent>
         </Popover>

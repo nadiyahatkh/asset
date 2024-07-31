@@ -284,7 +284,6 @@ export default function PengajuanAset(){
                                         "Pengajuan"
                                     )}
                                 </Button>
-                                    {/* <button type="submit" onClick={() => (console.log(form))} className="px-4 py-2 text-sm font-semibold rounded-lg" style={{ background: "#F9B421" }}>Buat Pengajuan</button> */}
                                 </div>
                                 {/* Success Dialog */}
                                 <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
