@@ -13,7 +13,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/managemenKaryawan-table/data-table";
 import { columns } from "./columns";
 import { Card } from "@/components/ui/card";
-import { fetchEmployee, selectRemoveEmployee } from "../apiService";
+import { fetchEmployee, removeEmployee, selectRemoveEmployee } from "../apiService";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -26,6 +26,8 @@ export default function EmployeeManagement() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -57,6 +59,16 @@ export default function EmployeeManagement() {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await removeEmployee({ id: idToDelete, token });
+      deleteRow(idToDelete);
+      setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+    } catch (error) {
+      console.error('Gagal menghapus data:', error);
+    }
+  };
+
     return (
         <div className="py-4">
           <div className="w-full max-w-7xl mx-auto">
@@ -65,7 +77,7 @@ export default function EmployeeManagement() {
               <div>
                 <p className="title font-manrope font-bold text-2xl leading-10">Manajemen Karyawan</p>
                 <p className="text-muted-foreground text-sm">
-                    Here's a list of your employe.
+                    Heres a list of your employe.
                 </p>
               </div>
               {/* Right section */}
@@ -81,7 +93,7 @@ export default function EmployeeManagement() {
             <Card className="shadow-md">
               <div className="container mx-auto p-4">
                 <DataTable 
-                  columns={columns(deleteRow)} 
+                  columns={columns(handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete)} 
                   data={data} search={search} 
                   setSearch={setSearch} 
                   currentPage={page}

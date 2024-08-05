@@ -11,7 +11,7 @@ const fontSans = FontSans({
   variable: "--font-sans",
 })
 
-const disabledNavbar = ["/sign-in", "/register"]
+const disabledNavbar = ["/sign-in"]
 
 // export const metadata = {
 //   title: "Asset",

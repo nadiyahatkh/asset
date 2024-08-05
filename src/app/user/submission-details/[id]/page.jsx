@@ -48,14 +48,14 @@ export default function DetailPengajuanAset() {
                         <div className="flex">
                         {detail?.Images.length > 0 && (
                             <div className="bg-gray-200 w-60 h-60 rounded-lg overflow-hidden">
-                                <Image src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
+                                <Image src={detail.Images[0]} alt="Image 1" width={240} height={240} className="w-full h-full object-cover" />
                             </div>
                             )}
                             {detail?.Images.length > 1 && (
                             <div className="flex flex-col space-y-2 ml-2">
                                 {detail?.Images.slice(1, 3).map((image, index) => (
                                 <div key={index} className="bg-gray-200 w-28 h-28 rounded-lg overflow-hidden">
-                                    <Image src={image} alt={`Image ${index + 2}`} className="w-full h-full object-cover" />
+                                    <Image src={image} alt={`Image ${index + 2}`} width={112} height={112} className="w-full h-full object-cover" />
                                 </div>
                                 ))}
                             </div>

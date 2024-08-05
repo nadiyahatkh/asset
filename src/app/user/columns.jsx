@@ -29,7 +29,7 @@ const formatDate = (dateString) => {
 }
 
 
-export const columns = (deleteRow) => [
+export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete) => [
   
     {
         id: "select",
@@ -92,21 +92,19 @@ export const columns = (deleteRow) => [
     accessorKey: 'Aksi',
     id: 'aksi',
     cell: ({ row, data }) => {
-      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-      const { data: session } = useSession();
-      const token = session?.user?.token;
+      
       const id = row.original.id;
 
-      const handleDelete = async () => {
-        try {
-          const idToDelete = row.original.id;
-          await removeApplicant({ id: idToDelete, token: token });
-          deleteRow(idToDelete)
-          setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
-        } catch (error) {
-          console.error('Gagal menghapus data:', error);
-        }
-      };
+      // const handleDelete = async () => {
+      //   try {
+      //     const idToDelete = row.original.id;
+      //     await removeApplicant({ id: idToDelete, token: token });
+      //     deleteRow(idToDelete)
+      //     setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+      //   } catch (error) {
+      //     console.error('Gagal menghapus data:', error);
+      //   }
+      // };
 
       return (
         <DropdownMenu>
@@ -129,7 +127,7 @@ export const columns = (deleteRow) => [
               </Link>
             </DropdownMenuItem>
             } 
-            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
+            <DropdownMenuItem onClick={() => { setIdToDelete(id); setIsDeleteDialogOpen(true); }} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus
             </DropdownMenuItem>
             <DropdownMenuItem>

@@ -18,12 +18,11 @@ import Link from 'next/link';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
-import React, { useRef, useState } from 'react';
 import Autoplay from "embla-carousel-autoplay"
 import { useSession } from 'next-auth/react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { removeAssetData } from '../apiService';
 import { formatCurrency } from '../utils/formatCurrency';
+import Image from 'next/image';
 
 
 const formatDate = (dateString) => {
@@ -35,7 +34,7 @@ const formatDate = (dateString) => {
 };
   
 
-export const columns = (deleteRow) => [
+export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete) => [
     {
         id: "select",
         header: ({ table }) => (
@@ -139,7 +138,7 @@ export const columns = (deleteRow) => [
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-square items-center justify-center p-0">
-                          <img src={image} alt={`Asset Image ${index}`} className="w-full h-full object-cover" />
+                          <Image src={image} alt={`Asset Image ${index}`} width={0} height={0} className="w-full h-full object-cover" />
                         </CardContent>
                       </Card>
                     </div>
@@ -160,22 +159,22 @@ export const columns = (deleteRow) => [
     accessorKey: 'Aksi',
     id: 'actions',
     cell: ({ row }) => {
-      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-      const { data: session } = useSession();
-      const token = session?.user?.token;
+      // const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+      // const { data: session } = useSession();
+      // const token = session?.user?.token;
       const id = row.original.id;
 
-      const handleDelete = async () => {
-        try {
-          const idToDelete = row.original.id;
-          await removeAssetData({ id: idToDelete, token: token });
+      // const handleDelete = async () => {
+      //   try {
+      //     const idToDelete = row.original.id;
+      //     await removeAssetData({ id: idToDelete, token: token });
           
-          deleteRow(idToDelete);
-          setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
-        } catch (error) {
-          console.error('Gagal menghapus data:', error);
-        }
-      };
+      //     deleteRow(idToDelete);
+      //     setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+      //   } catch (error) {
+      //     console.error('Gagal menghapus data:', error);
+      //   }
+      // };
 
       return (
         <DropdownMenu>
@@ -194,7 +193,7 @@ export const columns = (deleteRow) => [
                   Ubah
                 </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
+            <DropdownMenuItem onClick={() => { setIdToDelete(id); setIsDeleteDialogOpen(true); }} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "@/components/dataAset-table/data-table";
 import { useSession } from "next-auth/react";
-import { fetchAssetData, selectRemoveAsset } from "../apiService";
+import { fetchAssetData, removeAssetData, selectRemoveAsset } from "../apiService";
 import {
   ColumnDef,
   flexRender,
@@ -44,6 +44,8 @@ export default function DataAset() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
   const table = useReactTable({
     data,
     columns,
@@ -108,6 +110,17 @@ export default function DataAset() {
     return date.from.getTime() === defaultDate.from.getTime() && date.to.getTime() === defaultDate.to.getTime();
   };
 
+  const handleDelete = async () => {
+    try {
+      await removeAssetData({ id: idToDelete, token: token });
+      
+      deleteRow(idToDelete);
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error('Gagal menghapus data:', error);
+    }
+  };
+
   return (
     <div className="py-4">
       <div className="w-full max-w-7xl mx-auto">
@@ -116,7 +129,7 @@ export default function DataAset() {
           <div>
             <p className="title font-manrope font-bold text-2xl leading-10">Data Aset</p>
             <p className="text-muted-foreground text-sm">
-              Here's a list of your assets.
+              Heres a list of your assets.
             </p>
           </div>
           {/* Right section */}
@@ -175,7 +188,7 @@ export default function DataAset() {
         <Card className="shadow-md">
           <div className="container mx-auto p-4">
             <DataTable 
-              columns={columns(deleteRow)} 
+              columns={columns(handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete)} 
               data={data} 
               setData={setData} 
               search={search} 

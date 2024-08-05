@@ -72,13 +72,13 @@ export default function DetailPengajuan() {
           {detail?.Images.length > 0 && (
             <div className="flex items-start mb-4">
               <div onClick={() => handleImageClick(0)} className="bg-gray-200 w-60 h-60 rounded-lg overflow-hidden cursor-pointer">
-                <Image src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
+                <Image src={detail.Images[0]} alt="Image 1" width={240} height={240} className="w-full h-full object-cover" />
               </div>
               {detail?.Images.length > 1 && (
                 <div className="flex flex-col space-y-2 ml-4">
                   {detail?.Images.slice(1, 3).map((image, index) => (
                     <div key={index} onClick={() => handleImageClick(index + 1)} className="bg-gray-200 w-28 h-28 rounded-lg overflow-hidden cursor-pointer">
-                      <Image src={image} alt={`Image ${index + 2}`} className="w-full h-full object-cover" />
+                      <Image src={image} alt={`Image ${index + 2}`} width={112} height={112} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
@@ -87,7 +87,7 @@ export default function DetailPengajuan() {
           )}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogContent className="flex flex-col items-center justify-center">
-              <Image src={detail?.Images[selectedImageIndex]} alt={`Selected Image ${selectedImageIndex + 1}`} className="w-full h-60 object-cover rounded-lg mb-4" />
+              <Image src={detail?.Images[selectedImageIndex]} alt={`Selected Image ${selectedImageIndex + 1}`} className="w-full h-60 object-cover rounded-lg mb-4" width={600} height={240} />
               <Carousel
                 opts={{
                   align: "start",
@@ -100,7 +100,7 @@ export default function DetailPengajuan() {
                       <div className="p-1">
                         <Card>
                           <CardContent className="flex aspect-square items-center justify-center p-6">
-                            <Image src={image} alt={`Carousel Image ${index + 1}`} className="w-full h-full object-cover cursor-pointer" onClick={() => setSelectedImageIndex(index)} />
+                            <Image src={image} alt={`Carousel Image ${index + 1}`} width={240} height={240} className="w-full h-full object-cover cursor-pointer" onClick={() => setSelectedImageIndex(index)} />
                           </CardContent>
                         </Card>
                       </div>

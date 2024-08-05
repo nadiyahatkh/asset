@@ -77,7 +77,7 @@ export default function Pengajuan() {
               <div>
                 <p className="title font-manrope font-bold text-2xl leading-10">Pengajuan</p>
                 <p className="text-muted-foreground text-sm">
-                    Here's a list of your asset.
+                    Heres a list of your asset.
                 </p>
               </div>
               {/* Right section */}

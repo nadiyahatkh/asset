@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useState } from 'react';
 import { columns } from "./columns";
 import { DataTable } from "@/components/user/pengajuanAset-table/data-table";
-import { fetchApplicant, selectRemoveApplicant } from "../apiService";
+import { fetchApplicant, removeApplicant, selectRemoveApplicant } from "../apiService";
 import { useSession } from "next-auth/react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -23,6 +23,8 @@ export default function User() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
 
   const defaultDate = {
     from: new Date(2024, 0, 1),
@@ -73,6 +75,16 @@ export default function User() {
     return date.from.getTime() === defaultDate.from.getTime() && date.to.getTime() === defaultDate.to.getTime();
   };
 
+  const handleDelete = async () => {
+    try {
+      await removeApplicant({ id: idToDelete, token: token });
+      deleteRow(idToDelete)
+      setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
+    } catch (error) {
+      console.error('Gagal menghapus data:', error);
+    }
+  };
+
   return (
     <div className="py-4">
       <div className="w-full max-w-7xl mx-auto">
@@ -81,7 +93,7 @@ export default function User() {
           <div>
             <p className="title font-manrope font-bold text-2xl leading-10">Pengajuan Aset</p>
             <p className="text-muted-foreground text-sm">
-                Here's a list of your asset.
+                Heres a list of your asset.
             </p>
           </div>
           {/* Right section */}
@@ -139,7 +151,7 @@ export default function User() {
         <Card className="shadow-md">
           <div className="container mx-auto p-4">
           <DataTable
-            columns={columns(deleteRow)}
+            columns={columns(handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete)}
             data={data}
             search={search}
             setSearch={setSearch}
