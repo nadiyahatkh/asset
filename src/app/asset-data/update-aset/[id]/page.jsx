@@ -49,7 +49,7 @@ export default function ubahAset(){
     const [deletedImages, setDeletedImages] = useState([]);
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessages, setErrorMessages] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleFileChange = (event) => {
@@ -93,7 +93,8 @@ export default function ubahAset(){
             // form.reset();
             setOpenSuccess(true);
         } catch(error) {
-            setErrorMessage('Error update asset. Please try again.');
+            const message = JSON.parse(error.message)
+            setErrorMessages(Object.values(message.error).flat());
             setOpenError(true)
             console.error("Error update asser", error)
         } finally {
@@ -391,18 +392,24 @@ export default function ubahAset(){
                                     <AlertDialogContent>
                                     <AlertDialogTitle>Success</AlertDialogTitle>
                                     <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
-                                    <AlertDialogAction onClick={() => router.push('/asset-data')}>OK</AlertDialogAction>
+                                    <AlertDialogAction onClick={() => router.push('/asset-data')} style={{ background: "#F9B421" }}>OK</AlertDialogAction>
                                     </AlertDialogContent>
                                 </AlertDialog>
 
                                 {/* Error Dialog */}
                                 <AlertDialog open={openError} onOpenChange={setOpenError}>
                                     <AlertDialogContent>
-                                    <AlertDialogTitle>Error</AlertDialogTitle>
-                                    <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-                                    <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                    <AlertDialogTitle className="text-2xl">Error</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                        <div className="max-h-32 overflow-y-auto">
+                                            {errorMessages.map((message, index) => (
+                                            <p key={index} className="text-red-500 italic">{message}</p>
+                                            ))}
+                                        </div>
+                                        </AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => setOpenError(false)} style={{ background: "#F9B421" }}>Close</AlertDialogAction>
                                     </AlertDialogContent>
-                                </AlertDialog>
+                                    </AlertDialog>
                                 
                             </form>
                         </Form>  

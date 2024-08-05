@@ -25,8 +25,8 @@ import { z } from "zod";
 
 const FormSchema = z.object({
     asset_id: z.string().optional(),
-    submission_date: z.string().optional(),
-    expiry_date: z.string().optional(),
+    submission_date: z.date().optional(),
+    expiry_date: z.date().optional(),
     type: z.number().optional(),
 });
 
@@ -44,7 +44,7 @@ export default function UbahPengajuanAset(){
 
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessages, setErrorMessages] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,7 +81,8 @@ export default function UbahPengajuanAset(){
             form.reset();
             setOpenSuccess(true)
         } catch (error) {
-            setErrorMessage('Error update submission. Please try again.');
+            const message = JSON.parse(error.message)
+            setErrorMessages(Object.values(message.error).flat());
             setOpenError(true)
             console.error('Error update submission:', error);
         } finally {
@@ -93,6 +94,7 @@ export default function UbahPengajuanAset(){
         const loadData = async () => {
           try {
             const response = await fetchGetAsetApplicant({ token, type: transactionType });
+            console.log(response)
             setAssets(response);
           } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -108,10 +110,11 @@ export default function UbahPengajuanAset(){
             
           if (token && id) {
             const response = await fetchApplicantUserId({ token, id });
-            form.setValue('asset_id', response.asset_id.toString())
-            form.setValue('submission_date', response.submission_date)
-            form.setValue('expiry_date', response.expiry_date)
-            form.setValue('type', response.type)
+            console.log(response)
+            form.setValue('asset_id', response.asset_id.toString(), {shouldValidate: true})
+            form.setValue('submission_date', new Date(response.submission_date), {shouldValidate: true})
+            form.setValue('expiry_date', new Date(response.expiry_date), {shouldValidate: true})
+            form.setValue('type', response.type, {shouldValidate: true})
             setImage(response.image_assets);
             setTransactionType(response.type)
             setAssetId(response.asset_id);  // Set assetId
@@ -125,6 +128,7 @@ export default function UbahPengajuanAset(){
         const fetchAssets = async () => {
             if (transactionType === 1) {
                 const response = await fetchGetAsetApplicant({ token, type: transactionType });
+                console.log(response)
                 setAssets(response);
             }
         };
@@ -313,6 +317,7 @@ export default function UbahPengajuanAset(){
                                 </div>
                                 <div className="flex justify-end">
                                 <Button
+                                onClick={() => console.log(form)}
                                 type="submit"
                                 disabled={isLoading}
                                 className="px-4 py-2 text-sm font-semibold rounded-lg"
@@ -335,18 +340,23 @@ export default function UbahPengajuanAset(){
                                     <AlertDialogContent>
                                     <AlertDialogTitle>Success</AlertDialogTitle>
                                     <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
-                                    <AlertDialogAction onClick={() => router.push('/')}>OK</AlertDialogAction>
+                                    <AlertDialogAction onClick={() => router.push('/')} style={{ background: "#F9B421" }}>OK</AlertDialogAction>
                                     </AlertDialogContent>
                                 </AlertDialog>
 
-                                {/* Error Dialog */}
                                 <AlertDialog open={openError} onOpenChange={setOpenError}>
                                     <AlertDialogContent>
-                                    <AlertDialogTitle>Error</AlertDialogTitle>
-                                    <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-                                    <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                    <AlertDialogTitle className="text-2xl">Error</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                        <div className="max-h-32 overflow-y-auto">
+                                            {errorMessages.map((message, index) => (
+                                            <p key={index} className="text-red-500 italic">{message}</p>
+                                            ))}
+                                        </div>
+                                        </AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => setOpenError(false)} style={{ background: "#F9B421" }}>Close</AlertDialogAction>
                                     </AlertDialogContent>
-                                </AlertDialog>
+                                    </AlertDialog>
                             </form>
                         </Form>
                     </div>

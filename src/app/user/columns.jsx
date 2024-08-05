@@ -119,12 +119,16 @@ export const columns = (deleteRow) => [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            
+              {row.getValue("status").replace(/_/g, ' ') !== "Disetujui" &&
+            
+            <DropdownMenuItem >
               <Link href={`./user/update-submission/${id}`} className="flex items-center">
                 <PencilLine className="mr-2 h-4 w-4" />
                 Ubah
               </Link>
             </DropdownMenuItem>
+            } 
             <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
               <Trash2 className='h-4 w-4 mr-2' /> Hapus
             </DropdownMenuItem>

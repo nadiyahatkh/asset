@@ -104,13 +104,14 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
         });
     
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          const result = await response.text();
+          throw new Error(result);
         }
     
         const result = await response.json();
         return result;
       } catch (error) {
-        console.error('Error creating applicant:', error);
+        console.log('Error creating applicant:', error);
         throw error;
       }
     };
@@ -143,11 +144,13 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           body: formData,
         });
         if (!response.ok) {
-          throw new Error('Failed to update Aset');
+          const result = await response.text();
+          throw new Error(result);
         }
         return await response.json();
       } catch (error) {
-        console.error('Error update Aset:', error);
+        console.log('Error creating applicant:', error);
+        throw error;
       }
     };
 
@@ -377,13 +380,14 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           });
       
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const result = await response.text();
+            throw new Error(result);
           }
       
           const result = await response.json();
           return result;
         } catch (error) {
-          console.error('Error creating aset:', error);
+          console.log('Error creating aset:', error);
           throw error;
         }
       };
@@ -420,11 +424,13 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
             body: formData,
           });
           if (!response.ok) {
-            throw new Error('Failed to update Aset');
+            const result = await response.text();
+            throw new Error(result);
           }
           return await response.json();
         } catch (error) {
-          console.error('Error update Aset:', error);
+          console.log('Error update Aset:', error);
+          throw error;
         }
       };
       
@@ -642,13 +648,14 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           });
       
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const result = await response.text();
+            throw new Error(result);
           }
       
           const result = await response.json();
           return result;
         } catch (error) {
-          console.error('Error creating aset:', error);
+          console.log('Error creating aset:', error);
           throw error;
         }
       };
@@ -674,7 +681,8 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           });
       
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const result = await response.text();
+            throw new Error(result);
           }
       
           const result = await response.json();

@@ -75,6 +75,13 @@ export function DataTable({ columns, data, search, setSearch, totalPages,  curre
     }
   };
 
+  const handleOnChangeSearch = (e) => {
+    if (e.target.value === "") {
+      setSearch(e.target.value)
+    } 
+    setPendingSearch(e.target.value)
+  }
+
   return (
     <>
       {/* Filters */}
@@ -83,7 +90,7 @@ export function DataTable({ columns, data, search, setSearch, totalPages,  curre
           <Input
             placeholder='Filter tasks...'
             value={pendingSearch}
-            onChange={(e) => setPendingSearch(e.target.value)}
+            onChange={(e) => handleOnChangeSearch(e)}
             onKeyDown={handleSearchKeyDown}
             className='max-w-sm'
           />

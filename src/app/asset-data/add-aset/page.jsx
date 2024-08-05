@@ -46,7 +46,7 @@ export default function AddAset() {
   const router = useRouter();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFileChange = (event) => {
@@ -80,7 +80,8 @@ export default function AddAset() {
       setOpenSuccess(true)
       
     } catch (error) {
-      setErrorMessage('Error creating asset. Please try again.');
+      const message = JSON.parse(error.message)
+      setErrorMessages(Object.values(message.error).flat());
       setOpenError(true)
       console.error('Error creating asset:', error);
     } finally {
@@ -203,6 +204,7 @@ export default function AddAset() {
                     control={form.control}
                     name="item_condition"
                     render={({ field }) => (
+                      <>
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value); // Update react-hook-form state
@@ -223,6 +225,10 @@ export default function AddAset() {
                           <SelectItem value="7">Tidak Layak Pakai</SelectItem>
                         </SelectContent>
                       </Select>
+                      {form.formState.errors.item_condition && (
+                          <FormMessage type="error" className="italic">{form.formState.errors.item_condition.message}</FormMessage>
+                        )}
+                      </>
                     )}
                   />
                 </div>
@@ -233,7 +239,12 @@ export default function AddAset() {
                     control={form.control}
                     name="price"
                     render={({ field }) => (
+                      <>
                       <Input {...field} placeholder="Rp. 129,000,000" type="text" value={field.value} onChange={(e) => field.onChange(formatPrice(e.target.value))} />
+                      {form.formState.errors.price && (
+                        <FormMessage type="error" className="italic">{form.formState.errors.price.message}</FormMessage>
+                      )}
+                      </>
                     )}
                   />
                 </div>
@@ -246,6 +257,7 @@ export default function AddAset() {
                         control={form.control}
                         name="received_date"
                         render={({ field }) => (
+                          <>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -259,6 +271,11 @@ export default function AddAset() {
                               <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date('1900-01-01') || date > new Date('2100-12-31')} initialFocus />
                             </PopoverContent>
                           </Popover>
+                          {form.formState.errors.received_date && (
+                            <FormMessage type="error" className="italic">{form.formState.errors.received_date.message}</FormMessage>
+                          )}
+                          
+                          </>
                         )}
                       />
                       <Label className="title text-muted-foreground text-xs">Pilih tanggal mulai</Label>
@@ -269,6 +286,7 @@ export default function AddAset() {
                         control={form.control}
                         name="expiration_date"
                         render={({ field }) => (
+                          <>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -282,6 +300,10 @@ export default function AddAset() {
                               <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date('1900-01-01') || date > new Date('2100-12-31')} initialFocus />
                             </PopoverContent>
                           </Popover>
+                          {form.formState.errors.expiration_date && (
+                              <FormMessage type="error" className="italic">{form.formState.errors.expiration_date.message}</FormMessage>
+                            )}
+                          </>
                         )}
                       />
                       <Label className="title text-muted-foreground text-xs">Pilih tanggal habis</Label>
@@ -295,6 +317,7 @@ export default function AddAset() {
                     control={form.control}
                     name="status"
                     render={({ field }) => (
+                      <>
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value); // Update react-hook-form state
@@ -317,6 +340,10 @@ export default function AddAset() {
                         <SelectItem value="9">Dalam Proses Pengembalian</SelectItem>
                         </SelectContent>
                       </Select>
+                      {form.formState.errors.status && (
+                          <FormMessage type="error" className="italic">{form.formState.errors.status.message}</FormMessage>
+                        )}
+                      </>
                     )}
                   />
                 </div>
@@ -371,18 +398,24 @@ export default function AddAset() {
                     <AlertDialogContent>
                     <AlertDialogTitle>Success</AlertDialogTitle>
                       <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
-                      <AlertDialogAction onClick={() => router.push('/asset-data')}>OK</AlertDialogAction>
+                      <AlertDialogAction onClick={() => router.push('/asset-data')} style={{ background: "#F9B421" }} >OK</AlertDialogAction>
                     </AlertDialogContent>
                   </AlertDialog>
 
                   {/* Error Dialog */}
                   <AlertDialog open={openError} onOpenChange={setOpenError}>
-                    <AlertDialogContent>
-                    <AlertDialogTitle>Error</AlertDialogTitle>
-                      <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-                      <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                      <AlertDialogContent>
+                      <AlertDialogTitle className="text-2xl">Error</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          <div className="max-h-32 overflow-y-auto">
+                            {errorMessages.map((message, index) => (
+                              <p key={index} className="text-red-500 italic">{message}</p>
+                            ))}
+                          </div>
+                        </AlertDialogDescription>
+                        <AlertDialogAction onClick={() => setOpenError(false)} style={{ background: "#F9B421" }}>Close</AlertDialogAction>
+                      </AlertDialogContent>
+                    </AlertDialog>
               </form>
             </Form>
           </div>

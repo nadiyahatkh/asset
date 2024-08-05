@@ -50,7 +50,7 @@ export default function PengajuanAset(){
     const router = useRouter()
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessages, setErrorMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -89,8 +89,8 @@ export default function PengajuanAset(){
             
             setOpenSuccess(true)
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Error creating asset. Please try again.';
-            setErrorMessage(errorMessage);
+            const message = JSON.parse(error.message)
+            setErrorMessages(Object.values(message.error).flat());
             setOpenError(true)
             console.error('Error creating asset:', error);
         } finally {
@@ -290,18 +290,24 @@ export default function PengajuanAset(){
                                 <AlertDialogContent>
                                 <AlertDialogTitle>Success</AlertDialogTitle>
                                     <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
-                                    <AlertDialogAction onClick={() => router.push('/')}>OK</AlertDialogAction>
+                                    <AlertDialogAction onClick={() => router.push('/')} style={{ background: "#F9B421" }}>OK</AlertDialogAction>
                                 </AlertDialogContent>
                                 </AlertDialog>
 
                                 {/* Error Dialog */}
                                 <AlertDialog open={openError} onOpenChange={setOpenError}>
-                                <AlertDialogContent>
-                                <AlertDialogTitle>Error</AlertDialogTitle>
-                                    <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-                                    <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
-                                </AlertDialogContent>
-                                </AlertDialog>
+                                    <AlertDialogContent>
+                                    <AlertDialogTitle className="text-2xl">Error</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                        <div className="max-h-32 overflow-y-auto">
+                                            {errorMessages.map((message, index) => (
+                                            <p key={index} className="text-red-500 italic">{message}</p>
+                                            ))}
+                                        </div>
+                                        </AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => setOpenError(false)} style={{ background: "#F9B421" }}>Close</AlertDialogAction>
+                                    </AlertDialogContent>
+                                    </AlertDialog>
                             </form>
                         </Form>
                     </div>

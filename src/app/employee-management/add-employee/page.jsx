@@ -38,7 +38,7 @@ export default function AddEmployee() {
 
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
@@ -76,15 +76,17 @@ export default function AddEmployee() {
     setIsLoading(true);
     try {
       const result = await createEmployee({ data, token });
+      
       setOpenSuccess(true)
     } catch (error) {
-      setErrorMessage('Error creating employee. Please try again.');
+      const message = JSON.parse(error.message)
+      setErrorMessages(Object.values(message.error).flat());
       setOpenError(true)
       console.error('Error creating employee:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  };     
 
   return (
     <div className="py-4">
@@ -171,6 +173,7 @@ export default function AddEmployee() {
                         control={form.control}
                         name="department_id"
                         render={({ field }) => (
+                          <>
                             <Select
                             value={field.value ? field.value.toString() : ""}
                             onValueChange={(value) => {
@@ -188,6 +191,10 @@ export default function AddEmployee() {
                                 ))}
                             </SelectContent>
                             </Select>
+                            {form.formState.errors.department_id && (
+                                <FormMessage type="error" className="italic">{form.formState.errors.department_id.message}</FormMessage>
+                              )}
+                          </>
                         )}
                         />
                     </div>
@@ -197,6 +204,8 @@ export default function AddEmployee() {
                         control={form.control}
                         name="position_id"
                         render={({ field }) => (
+                          <>
+                          
                             <Select
                             value={field.value ? field.value.toString() : ""}
                             onValueChange={(value) => {
@@ -214,6 +223,10 @@ export default function AddEmployee() {
                                 ))}
                             </SelectContent>
                             </Select>
+                            {form.formState.errors.position_id && (
+                                <FormMessage type="error" className="italic">{form.formState.errors.position_id.message}</FormMessage>
+                              )}
+                          </>
                         )}
                         />
                     </div>
@@ -241,16 +254,22 @@ export default function AddEmployee() {
                       <AlertDialogContent>
                       <AlertDialogTitle>Success</AlertDialogTitle>
                         <AlertDialogDescription>Aset has been created employee successfully!</AlertDialogDescription>
-                        <AlertDialogAction onClick={() => router.push('/employee-management')}>OK</AlertDialogAction>
+                        <AlertDialogAction onClick={() => router.push('/employee-management')} style={{ background: "#F9B421" }}>OK</AlertDialogAction>
                       </AlertDialogContent>
                     </AlertDialog>
 
                     {/* Error Dialog */}
                     <AlertDialog open={openError} onOpenChange={setOpenError}>
                       <AlertDialogContent>
-                      <AlertDialogTitle>Error</AlertDialogTitle>
-                        <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-                        <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                      <AlertDialogTitle className="text-2xl">Error</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          <div className="max-h-32 overflow-y-auto">
+                            {errorMessages.map((message, index) => (
+                              <p key={index} className="text-red-500 italic">{message}</p>
+                            ))}
+                          </div>
+                        </AlertDialogDescription>
+                        <AlertDialogAction onClick={() => setOpenError(false)} style={{ background: "#F9B421" }}>Close</AlertDialogAction>
                       </AlertDialogContent>
                     </AlertDialog>
                 </form>

@@ -11,15 +11,18 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { fetchNavbarProfile } from "./apiService";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { TailSpin } from "react-loader-spinner";
 
 export default function StoreSwitcher({ className, items = [] }) {
     const [open, setOpen] = useState(false);
     const [showDialogLogOut, setShowDialogLogOut] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const { status, data: session } = useSession();
     const [foto, setFoto] = useState()
     const router = useRouter();
     const isAdmin = session?.user?.role === 1 ;  // Assuming role is stored in session
     const handleSignOut = () => {
+        setIsLoading(true)
         signOut({ callbackUrl: '/sign-in' }); // Redirect to login page after sign out
     };
 
@@ -94,7 +97,18 @@ export default function StoreSwitcher({ className, items = [] }) {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel onClick={() => setShowDialogLogOut(false)}>Batal</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleSignOut}>Ya</AlertDialogAction>
+                      <AlertDialogAction onClick={handleSignOut}>
+                                    {isLoading ? (
+                                        <TailSpin
+                                            height="20"
+                                            width="20"
+                                            color="#ffffff"
+                                            ariaLabel="loading"
+                                        />
+                                    ) : (
+                                        'Ya'
+                                    )}
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
