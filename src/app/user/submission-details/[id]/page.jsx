@@ -7,6 +7,7 @@ import { fetchDetailApplicantUser } from "@/app/apiService";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
+import Image from "next/image";
 
 export default function DetailPengajuanAset() {
     const { data: session } = useSession();
@@ -47,14 +48,14 @@ export default function DetailPengajuanAset() {
                         <div className="flex">
                         {detail?.Images.length > 0 && (
                             <div className="bg-gray-200 w-60 h-60 rounded-lg overflow-hidden">
-                                <img src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
+                                <Image src={detail.Images[0]} alt="Image 1" className="w-full h-full object-cover" />
                             </div>
                             )}
                             {detail?.Images.length > 1 && (
                             <div className="flex flex-col space-y-2 ml-2">
                                 {detail?.Images.slice(1, 3).map((image, index) => (
                                 <div key={index} className="bg-gray-200 w-28 h-28 rounded-lg overflow-hidden">
-                                    <img src={image} alt={`Image ${index + 2}`} className="w-full h-full object-cover" />
+                                    <Image src={image} alt={`Image ${index + 2}`} className="w-full h-full object-cover" />
                                 </div>
                                 ))}
                             </div>

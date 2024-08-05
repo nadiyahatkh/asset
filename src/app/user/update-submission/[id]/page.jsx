@@ -126,7 +126,7 @@ export default function UbahPengajuanAset(){
 
       useEffect(() => {
         const fetchAssets = async () => {
-            if (transactionType === 1) {
+            if (transactionType === 1 || 2) {
                 const response = await fetchGetAsetApplicant({ token, type: transactionType });
                 console.log(response)
                 setAssets(response);
@@ -151,7 +151,7 @@ export default function UbahPengajuanAset(){
                 </Breadcrumb>
                 <hr className="mb-4" />
                 <p className="title font-manrope font-bold text-2xl leading-10">Ubah Pengajuan Aset</p>
-                <p className="title text-muted-foreground text-sm mb-5">Here's a list of your assets.</p>
+                <p className="title text-muted-foreground text-sm mb-5">Here a list of your assets.</p>
                 <hr className="mb-4" />
                 <div className="flex items-start">
                     <div className="flex flex-col">

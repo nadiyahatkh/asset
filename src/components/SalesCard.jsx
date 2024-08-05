@@ -1,5 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
+import Image from 'next/image';
 
 export default function SalesCard(props) {
   const formattedDate = format(new Date(props.expiry_date), 'dd-MM-yyyy');
@@ -8,7 +9,7 @@ export default function SalesCard(props) {
     <div className="flex justify-between gap-3">
       <section className="flex gap-3">
         <div className="h-12 w-12 rounded-full bg-gray-100 p-1">
-          <img
+          <Image
             width={200}
             height={200}
             src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${props.name}`}

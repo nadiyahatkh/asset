@@ -24,7 +24,7 @@ const FormSchema = z.object({
   position_id: z.string().optional(),
 });
 
-export default function updateEmpolyee() {
+export default function UpdateEmpolyee() {
     const { id } = useParams()
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -113,7 +113,7 @@ export default function updateEmpolyee() {
     <div className="py-4">
       <div className="w-full max-w-7xl mx-auto">
         <p className="title font-manrope font-bold text-2xl leading-10">Manajemen Karyawan</p>
-        <p className="title text-muted-foreground text-sm mb-5">Here's a list of your employees.</p>
+        <p className="title text-muted-foreground text-sm mb-5">Heres a list of your employees.</p>
         <hr className="mb-4" />
         <div className="flex items-start">
           <div className="flex flex-col">
