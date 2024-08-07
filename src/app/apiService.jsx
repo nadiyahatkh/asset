@@ -1,8 +1,9 @@
 import { format } from "date-fns";
 
-export const fetchApplicant = async ({token, search = '', start_date, end_date, page, per_page}) => {
+export const fetchApplicant = async ({token, search = '', start_date, end_date, page, per_page, status}) => {
   try {
-      const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?start_date=${start_date}&end_date=${end_date}&search=${search}&page=${page}&per_page=${per_page}`, {
+    const statusParams = status.map(s => `status[]=${s}`).join('&');
+      const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?start_date=${start_date}&end_date=${end_date}&search=${search}&page=${page}&per_page=${per_page}&${statusParams}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

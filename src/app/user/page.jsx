@@ -25,6 +25,7 @@ export default function User() {
   const [totalPages, setTotalPages] = useState(0);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
+  const [statusFilter, setStatusFilter] = useState([]);
 
   const defaultDate = {
     from: new Date(2024, 0, 1),
@@ -39,7 +40,7 @@ export default function User() {
     try {
       const start_date = date.from ? format(date.from, 'yyyy-MM-dd') : '';
       const end_date = date.to ? format(date.to, 'yyyy-MM-dd') : '';
-      const pengajuanData = await fetchApplicant({ token, search, start_date, end_date, page, per_page: perPage });
+      const pengajuanData = await fetchApplicant({ token, search, start_date, end_date, page, per_page: perPage, status: statusFilter });
       setData(pengajuanData.data.data);
       setTotalPages(pengajuanData.total_page);
     } catch (error) {
@@ -50,7 +51,7 @@ export default function User() {
     if (token) {
       loadData();
     }
-  }, [token, search, page, perPage, date]);
+  }, [token, search, statusFilter, page, perPage, date]);
 
   const deleteRow = (id) => {
     setData((prevData) => prevData.filter(item => item.id !== id));
@@ -161,6 +162,8 @@ export default function User() {
             setPage={setPage}
             perPage={perPage}
             setPerPage={setPerPage}
+            statusFilter={statusFilter} 
+            setStatusFilter={setStatusFilter} 
           />
           </div>
         </Card>

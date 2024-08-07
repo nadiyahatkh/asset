@@ -144,7 +144,7 @@ export default function AddEmployee() {
                         name="nip"
                         render={({ field }) => (
                           <>
-                            <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="121300" type="number" />
+                            <Input {...field} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="121300" type="text" />
                             {form.formState.errors.nip && (
                               <FormMessage type="error" className="italic">{form.formState.errors.nip.message}</FormMessage>
                             )}

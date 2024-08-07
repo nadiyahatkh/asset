@@ -114,6 +114,10 @@ export default function DetailPengajuan() {
           </Dialog>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 mb-4">
             <div className="col-span-1">
+              <Label className="text-sm">Kode Aset</Label>
+              <p className="font-semibold text-sm">{detail?.CodeAsset}</p>
+            </div>
+            <div className="col-span-1">
               <Label className="text-sm">Nama Aset</Label>
               <p className="font-semibold text-sm">{detail?.NameAsset}</p>
             </div>

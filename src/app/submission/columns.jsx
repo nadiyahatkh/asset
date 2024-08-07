@@ -26,6 +26,10 @@ const formatDate = (dateString) => {
 
 export const columns = [
   {
+    accessorKey: 'asset.asset_code',
+    header: 'Kode Asset'
+  },
+  {
     accessorKey: 'asset.asset_name',
     header: 'Nama Aset'
   },
