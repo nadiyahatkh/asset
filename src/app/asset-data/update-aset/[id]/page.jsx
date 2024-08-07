@@ -254,7 +254,7 @@ export default function UbahAset(){
                                 <div className="mb-4">
                                     <div className="flex justify-between items-center">
                                         <div className="w-full mr-2">
-                                        <Label className="block text-sm mb-2">Tanggal Mulai</Label>
+                                        <Label className="block text-sm mb-2">Tanggal Pembelian</Label>
                                         <FormField
                                             control={form.control}
                                             name="received_date"
@@ -263,7 +263,7 @@ export default function UbahAset(){
                                                 <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
-                                                    {field.value ? format(field.value, 'PPP') : <span>Pilih tanggal mulai</span>}
+                                                    {field.value ? format(field.value, 'PPP') : <span>Pilih Tanggal Pembelian</span>}
                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                     </Button>
                                                 </FormControl>
@@ -274,10 +274,10 @@ export default function UbahAset(){
                                             </Popover>
                                             )}
                                         />
-                                        <Label className="title text-muted-foreground text-xs">Pilih tanggal mulai</Label>
+                                        <Label className="title text-muted-foreground text-xs">Pilih Tanggal Pembelian</Label>
                                         </div>
                                         <div className="w-full ml-2">
-                                        <Label className="block text-sm mb-2">Tanggal Habis</Label>
+                                        <Label className="block text-sm mb-2">Jangka Waktu</Label>
                                         <FormField
                                             control={form.control}
                                             name="expiration_date"
@@ -286,7 +286,7 @@ export default function UbahAset(){
                                                 <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
-                                                    {field.value ? format(field.value, 'PPP') : <span>Pilih tanggal habis</span>}
+                                                    {field.value ? format(field.value, 'PPP') : <span>Pilih Janggka Waktu</span>}
                                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                     </Button>
                                                 </FormControl>
@@ -297,7 +297,7 @@ export default function UbahAset(){
                                             </Popover>
                                             )}
                                         />
-                                        <Label className="title text-muted-foreground text-xs">Pilih tanggal habis</Label>
+                                        <Label className="title text-muted-foreground text-xs">Pilih Jangka Waktu</Label>
                                         </div>
                                     </div>
                                 </div>
