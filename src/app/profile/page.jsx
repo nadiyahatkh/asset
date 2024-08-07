@@ -195,7 +195,7 @@ export default function ProfilAdmin() {
                                     <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
                                     <AlertDialogContent>
                                     <AlertDialogTitle>Success</AlertDialogTitle>
-                                        <AlertDialogDescription>Aset has been created successfully!</AlertDialogDescription>
+                                        <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
                                         <AlertDialogAction onClick={() => router.push('/dashboard')}>OK</AlertDialogAction>
                                     </AlertDialogContent>
                                     </AlertDialog>
