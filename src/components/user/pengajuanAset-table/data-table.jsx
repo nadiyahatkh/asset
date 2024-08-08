@@ -116,7 +116,7 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
-          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+          {/* {table.getFilteredSelectedRowModel().rows.length > 0 ? (
           <Button variant="outline" size="sm" onClick={() => setIsSelectDeleteOpen(true)} className="ml-4">
             <TrashIcon className="mr-2 size-4" aria-hidden="true" />
             Delete ({table.getFilteredSelectedRowModel().rows.length})
@@ -135,7 +135,7 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
                 <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
-          </AlertDialog>
+          </AlertDialog> */}
         </div>
 
 
@@ -221,10 +221,7 @@ export function DataTable({ columns, data, search, setSearch, totalPages, onDele
 
       {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select

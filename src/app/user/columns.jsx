@@ -32,29 +32,29 @@ const formatDate = (dateString) => {
 
 export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete) => [
   
-    {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
+    // {
+    //     id: "select",
+    //     header: ({ table }) => (
+    //       <Checkbox
+    //         checked={
+    //           table.getIsAllPageRowsSelected() ||
+    //           (table.getIsSomePageRowsSelected() && "indeterminate")
+    //         }
+    //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //         aria-label="Select all"
+    //       />
+    //     ),
+    //     cell: ({ row }) => (
           
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
+    //       <Checkbox
+    //         checked={row.getIsSelected()}
+    //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //         aria-label="Select row"
+    //       />
+    //     ),
+    //     enableSorting: false,
+    //     enableHiding: false,
+    //   },
   {
     accessorKey: 'asset.asset_name',
     header: 'Nama Aset'
@@ -133,9 +133,11 @@ export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen,
               </Link>
             </DropdownMenuItem>
             } 
-            <DropdownMenuItem onClick={() => { setIdToDelete(id); setIsDeleteDialogOpen(true); }} className="text-red-500">
-              <Trash2 className='h-4 w-4 mr-2' /> Hapus
-            </DropdownMenuItem>
+            {status === "Belum Disetujui" &&
+              <DropdownMenuItem onClick={() => { setIdToDelete(id); setIsDeleteDialogOpen(true); }} className="text-red-500">
+                <Trash2 className='h-4 w-4 mr-2' /> Hapus
+              </DropdownMenuItem>
+            }
             <DropdownMenuItem>
             <Link href={`./user/submission-details/${id}`} className="flex items-center">
                 <PencilLine className="mr-2 h-4 w-4" />
