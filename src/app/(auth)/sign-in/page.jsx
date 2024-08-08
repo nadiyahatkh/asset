@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { getSession, signIn } from "next-auth/react";
-import { useState } from "react";
+import { getSession, signIn, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TailSpin } from "react-loader-spinner";
 
@@ -16,6 +16,7 @@ export default function LoginPage() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session, status } = useSession();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -53,6 +54,16 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      if (session?.user?.role === 'admin') {
+        router.push('/dashboard');
+      } else {
+        router.push('/');
+      }
+    }
+  }, [status, session, router]);
 
   return (
     <div className="w-full h-screen flex">
