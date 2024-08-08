@@ -138,7 +138,7 @@ export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen,
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-square items-center justify-center p-0">
-                          <Image src={image} alt={`Asset Image ${index}`} width={0} height={0} className="w-full h-full object-cover" />
+                          <Image src={image} alt={`Asset Image ${index}`} width={500} height={500} className="w-full h-full object-cover rounded" />
                         </CardContent>
                       </Card>
                     </div>
