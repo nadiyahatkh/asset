@@ -133,7 +133,7 @@ export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen,
               </Link>
             </DropdownMenuItem>
             } 
-            {status === "Belum Disetujui" &&
+            {row.getValue("status").replace(/_/g, ' ') === "Belum Disetujui" &&
               <DropdownMenuItem onClick={() => { setIdToDelete(id); setIsDeleteDialogOpen(true); }} className="text-red-500">
                 <Trash2 className='h-4 w-4 mr-2' /> Hapus
               </DropdownMenuItem>
