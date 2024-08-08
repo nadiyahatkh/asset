@@ -236,11 +236,14 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
             body: formData,
           });
           if (!response.ok) {
-            throw new Error('Failed to update Aset');
+            const result = await response.text();
+            throw new Error(result);
           }
-          return await response.json();
+          const result = await response.json();
+          return result;
         } catch (error) {
-          console.error('Error update Aset:', error);
+          console.log('Error creating aset:', error);
+          throw error;
         }
       };
 

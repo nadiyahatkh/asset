@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { MoreHorizontal, ArrowUpDown, PencilLine, Trash2 } from 'lucide-react';
+import { MoreHorizontal, ArrowUpDown, PencilLine, Trash2, CheckCircle2, XCircle, RefreshCw, CheckCheckIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useState } from 'react';
 import { removeApplicant } from '../apiService';
 import { useSession } from 'next-auth/react';
+import { CheckIcon } from '@radix-ui/react-icons';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -81,9 +82,25 @@ export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen,
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
+      const status = row.getValue("status").replace(/_/g, ' ');
+
+      let statusColor, statusIcon;
+
+      if (status === 'Disetujui') {
+        statusColor = 'text-green-500';
+        statusIcon = <CheckCheckIcon className="h-4 w-4 mr-2" />;
+      } else if (status === 'Ditolak') {
+        statusColor = 'text-red-500';
+        statusIcon = <XCircle className="h-4 w-4 mr-2" />;
+      } else if (status === 'Belum Disetujui') {
+        statusColor = 'text-yellow-500';
+        statusIcon = <RefreshCw className="h-4 w-4 mr-2" />;
+      }
+
       return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize"> {row.getValue("status").replace(/_/g, ' ')}</span>
+        <div className={`flex items-center ${statusColor}`}>
+          {statusIcon}
+          <span className="capitalize">{status}</span>
         </div>
       );
     },
@@ -94,17 +111,6 @@ export const columns = (handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen,
     cell: ({ row, data }) => {
       
       const id = row.original.id;
-
-      // const handleDelete = async () => {
-      //   try {
-      //     const idToDelete = row.original.id;
-      //     await removeApplicant({ id: idToDelete, token: token });
-      //     deleteRow(idToDelete)
-      //     setIsDeleteDialogOpen(false); // Tutup dialog setelah berhasil menghapus
-      //   } catch (error) {
-      //     console.error('Gagal menghapus data:', error);
-      //   }
-      // };
 
       return (
         <DropdownMenu>

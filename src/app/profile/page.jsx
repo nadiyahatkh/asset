@@ -31,7 +31,7 @@ export default function ProfilAdmin() {
     const router = useRouter()
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessages, setErrorMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -52,7 +52,8 @@ export default function ProfilAdmin() {
             const result = await updateProfile({ data: { ...data, foto: data.foto ? data.foto[0] : null }, token });
             setOpenSuccess(true)
         } catch (error) {
-            setErrorMessage('Error creating asset. Please try again.');
+            const message = JSON.parse(error.message)
+            setErrorMessages(Object.values(message.error).flat());
             setOpenError(true)
             console.error('Error updating profile:', error);
         } finally {
@@ -195,17 +196,23 @@ export default function ProfilAdmin() {
                                     <AlertDialog open={openSuccess} onOpenChange={setOpenSuccess}>
                                     <AlertDialogContent>
                                     <AlertDialogTitle>Success</AlertDialogTitle>
-                                        <AlertDialogDescription>Aset has been updated successfully!</AlertDialogDescription>
-                                        <AlertDialogAction onClick={() => router.push('/dashboard')}>OK</AlertDialogAction>
+                                        <AlertDialogDescription>Profile has been updated successfully!</AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => router.push('/dashboard')} style={{ background: "#F9B421" }}>OK</AlertDialogAction>
                                     </AlertDialogContent>
                                     </AlertDialog>
 
                                     {/* Error Dialog */}
                                     <AlertDialog open={openError} onOpenChange={setOpenError}>
                                     <AlertDialogContent>
-                                    <AlertDialogTitle>Error</AlertDialogTitle>
-                                        <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-                                        <AlertDialogAction onClick={() => setOpenError(false)}>Close</AlertDialogAction>
+                                    <AlertDialogTitle className="text-2xl">Error</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                        <div className="max-h-32 overflow-y-auto">
+                                            {errorMessages.map((message, index) => (
+                                            <p key={index} className="text-red-500 italic">{message}</p>
+                                            ))}
+                                        </div>
+                                        </AlertDialogDescription>
+                                        <AlertDialogAction onClick={() => setOpenError(false)} style={{ background: "#F9B421" }}>Close</AlertDialogAction>
                                     </AlertDialogContent>
                                     </AlertDialog>
 
