@@ -24,15 +24,37 @@ export default function BarChart({ data }) {
     total: item.total_price,
   }));
 
+  // const truncateLabel = (name) => {
+  //   return name.length > 10 ? `${name.substring(0, 10)}...` : name;
+  // };
+
   return (
-    <ResponsiveContainer width={"100%"} height={350}>
-      <BarGraph data={formattedData}>
-        <XAxis
+    <ResponsiveContainer width={"100%"} height={400}>
+      <BarGraph data={formattedData} margin={{ bottom: 50 }}>
+      <XAxis
           dataKey={"name"}
           tickLine={false}
           axisLine={false}
           stroke="#888888"
           fontSize={12}
+          interval={0} // Ensures all labels are shown
+          tick={({ x, y, payload }) => {
+            return (
+              <text
+                x={x}
+                y={y + 10} // Adjust vertical position
+                textAnchor="middle"
+                fill="#888888"
+                fontSize={12}
+              >
+                {payload.value.split(" ").map((line, index) => (
+                  <tspan x={x} dy={index === 0 ? 0 : 12} key={index}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            );
+          }}
         />
         <YAxis
           tickLine={false}

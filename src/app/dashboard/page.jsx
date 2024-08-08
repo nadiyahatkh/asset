@@ -74,12 +74,12 @@ export default function Dashboard() {
             />
           ))}
         </section>
-        <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-2">
-          <CardContent>
+        <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-5">
+          <CardContent className="lg:col-span-3">
             <p className="p-4 font-semibold">Kategori Aset</p>
             <BarChart data={chartData} />
           </CardContent>
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="lg:col-span-2 flex flex-col gap-4">
             <section>
               <p className="text-base font-bold">Pengembalian Terdekat</p>
               <p className="text-sm text-gray-400">

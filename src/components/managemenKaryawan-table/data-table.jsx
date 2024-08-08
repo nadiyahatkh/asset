@@ -138,7 +138,7 @@ export function DataTable({ columns, data, search, setSearch, totalPages,  curre
                   checked={column.getIsVisible()}
                   onCheckedChange={value => column.toggleVisibility(!!value)}
                 >
-                  {column.id}
+                  {column.id.replace(/_/g, ' ')}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>

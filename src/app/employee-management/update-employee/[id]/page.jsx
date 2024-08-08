@@ -97,6 +97,7 @@ export default function UpdateEmpolyee() {
     const fetchData = async () => {
         if(token && id) {
             const response = await fetchEmployeeDataId({ token, id });
+            console.log(response)
             form.setValue('name', response.name)
             form.setValue('email', response.email)
             form.setValue('password', response.password)
