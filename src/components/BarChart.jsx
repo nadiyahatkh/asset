@@ -9,19 +9,13 @@ import {
 } from "recharts";
 
 const formatYAxisTick = (value) => {
-  if (value >= 1000000) {
-    return `${value / 1000000} Juta`; // Mengonversi ke jutaan
-  } else if (value >= 1000) {
-    return `${value / 1000} Ribu`; // Mengonversi ke ribuan
-  } else {
-    return `${value}`;
-  }
+  return value.toString(); // Mengembalikan angka apa adanya
 };
 
 export default function BarChart({ data }) {
   const formattedData = data.map(item => ({
     name: item.category,
-    total: item.total_price,
+    total: item.total_category,
   }));
 
   // const truncateLabel = (name) => {
@@ -62,7 +56,7 @@ export default function BarChart({ data }) {
           stroke="#888888"
           fontSize={12}
           tickFormatter={formatYAxisTick}
-          domain={[0, 'auto']}
+          domain={[0]}
         />
         <Bar dataKey={"total"} radius={[4, 4, 0, 0]} fill="#F9B421" />
       </BarGraph>

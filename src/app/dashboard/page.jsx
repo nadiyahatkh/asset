@@ -47,7 +47,7 @@ export default function Dashboard() {
         ]);
         setChartData(data.asset_category.map(category => ({
           category: category.category,
-          total_price: category.total_price,
+          total_category: category.total_category,
         })));
         setNearest(data.nearest_return);
       } catch (error) {
