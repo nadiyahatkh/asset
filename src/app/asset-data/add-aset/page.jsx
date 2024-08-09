@@ -27,10 +27,10 @@ const FormSchema = z.object({
   item_condition: z.string().min(1, { message: "Kondisi is required." }),
   price: z.preprocess((val) => Number(String(val).replace(/[^0-9]/g, '')), z.number().min(1, { message: "Harga aset is required." })),
   received_date: z.date({
-    required_error: "Tanggal mulai is required.",
+    required_error: "Tanggal Pembelian is required.",
   }),
-  expiration_date: z.date({
-    required_error: "Tanggal habis is required.",
+  expiration_date: z.dahabiste({
+    required_error: "Jangka Waktu is required.",
   }),
   status: z.string().min(1, { message: "Status is required." }),
 });
@@ -332,12 +332,8 @@ export default function AddAset() {
                         <SelectItem value="1">Aktif</SelectItem>
                         <SelectItem value="2">Tidak Aktif</SelectItem>
                         <SelectItem value="3">Dipinjamkan</SelectItem>
-                        <SelectItem value="4">Dalam Pemeliharaan</SelectItem>
-                        <SelectItem value="5">Dalam Penyimpanan</SelectItem>
-                        <SelectItem value="6">Dalam Perbaikan</SelectItem>
-                        <SelectItem value="7">Dalam Proses Peminjaman</SelectItem>
-                        <SelectItem value="8">Tidak Layak Pakai</SelectItem>
-                        <SelectItem value="9">Dalam Proses Pengembalian</SelectItem>
+                        <SelectItem value="4">Dalam Proses Peminjaman</SelectItem>
+                        <SelectItem value="5">Dalam Proses Pengembalian</SelectItem>
                         </SelectContent>
                       </Select>
                       {form.formState.errors.status && (

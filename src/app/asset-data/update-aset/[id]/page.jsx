@@ -321,11 +321,7 @@ export default function UbahAset(){
                                             <SelectItem value="Aktif">Aktif</SelectItem>
                                             <SelectItem value="Tidak_Aktif">Tidak Aktif</SelectItem>
                                             <SelectItem value="Dipinjamkan">Dipinjamkan</SelectItem>
-                                            <SelectItem value="Dalam_Pemeliharaan">Dalam Pemeliharaan</SelectItem>
-                                            <SelectItem value="Dalam_Penyimpanan">Dalam Penyimpanan</SelectItem>
-                                            <SelectItem value="Dalam_Perbaikan">Dalam Perbaikan</SelectItem>
                                             <SelectItem value="Dalam_Proses_Peminjaman">Dalam Proses Peminjaman</SelectItem>
-                                            <SelectItem value="Tidak_Layak_Pakai">Tidak Layak Pakai</SelectItem>
                                             <SelectItem value="Dalam_Proses_Pengembalian">Dalam Proses Pengembalian</SelectItem>
                                             </SelectContent>
                                         </Select>
