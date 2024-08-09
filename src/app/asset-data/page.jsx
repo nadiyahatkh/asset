@@ -46,6 +46,7 @@ export default function DataAset() {
   const [totalPages, setTotalPages] = useState(0);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
   const table = useReactTable({
     data,
     columns,
@@ -111,13 +112,17 @@ export default function DataAset() {
   };
 
   const handleDelete = async () => {
+    setIsLoading(true)
     try {
       await removeAssetData({ id: idToDelete, token: token });
       
       deleteRow(idToDelete);
       setIsDeleteDialogOpen(false);
+      
     } catch (error) {
       console.error('Gagal menghapus data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -188,7 +193,7 @@ export default function DataAset() {
         <Card className="shadow-md">
           <div className="container mx-auto p-4">
             <DataTable 
-              columns={columns(handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete)} 
+              columns={columns(handleDelete, isDeleteDialogOpen, setIsDeleteDialogOpen, setIdToDelete, isLoading, setIsLoading)} 
               data={data} 
               setData={setData} 
               search={search} 

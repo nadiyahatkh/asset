@@ -126,7 +126,7 @@ export default function UbahPengajuanAset(){
 
       useEffect(() => {
         const fetchAssets = async () => {
-            if (transactionType === 1 || 2) {
+            if (transactionType === 1 ) {
                 const response = await fetchGetAsetApplicant({ token, type: transactionType });
                 console.log(response)
                 setAssets(response);
@@ -185,7 +185,7 @@ export default function UbahPengajuanAset(){
                                                 </div>
                                                 <div className="border rounded-lg p-4">
                                                     <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem name="type" value="2 " id="r2" style={{ color: "#F9B421" }} disabled={transactionType === 1} />
+                                                        <RadioGroupItem name="type" value="2" id="r2" style={{ color: "#F9B421" }} disabled={transactionType === 1} />
                                                         <Label htmlFor="r2">Pengembalian</Label>
                                                     </div>
                                                     <p className="title text-muted-foreground text-xs ml-6">Mengembalikan aset setelah penggunaan selesai</p>
