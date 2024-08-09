@@ -29,8 +29,8 @@ const FormSchema = z.object({
   received_date: z.date({
     required_error: "Tanggal Pembelian is required.",
   }),
-  expiration_date: z.dahabiste({
-    required_error: "Jangka Waktu is required.",
+  expiration_date: z.date({
+    required_error: "Jangka Waktu  is required.",
   }),
   status: z.string().min(1, { message: "Status is required." }),
 });
