@@ -56,9 +56,10 @@ export default function BarChart({ data }) {
           stroke="#888888"
           fontSize={12}
           tickFormatter={formatYAxisTick}
-          domain={[0]}
+          domain={[0, 'auto']}
+          allowDecimals={false}
         />
-        <Bar dataKey={"total"} radius={[4, 4, 0, 0]} fill="#F9B421" />
+        <Bar dataKey={"total"} radius={[5, 5, 0, 0]} fill="#F9B421" />
       </BarGraph>
     </ResponsiveContainer>
   );
