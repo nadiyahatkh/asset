@@ -337,7 +337,7 @@ export default function UbahAset(){
                                     <div className="border-dashed border-2 rounded-lg flex flex-col items-center justify-center p-4 mb-1">
                                     <CloudDownload className="h-4 w-4 mb-4" />
                                         <div className="text-sm font-semibold mb-2">Choose a file or drag & drop it here</div>
-                                        <div className="text-muted-foreground text-xs mb-5">JEPG, PNG up to 5 MB</div>
+                                        <div className="text-muted-foreground text-xs mb-5">JEPG, JPG, PNG up to 2 MB</div>
                                         <input
                                             name="path"
                                             type="file"
