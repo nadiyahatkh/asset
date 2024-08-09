@@ -66,11 +66,10 @@ export default function ProfilAdmin() {
         const fetchData = async () => {
             if(token) {
                 const response = await fetchProfileAdminId({ token });
-                console.log(response)
                 form.setValue('username', response.data.username, {shouldValidate: true})
                 form.setValue('email', response.data.email, {shouldValidate: true})
-                form.setValue('password', response.password, {shouldValidate: true})
-                form.setValue('password_confirmation', response.password_confirmation, {shouldValidate: true})
+                form.setValue('password', response.data.password, {shouldValidate: true})
+                form.setValue('password_confirmation', response.data.password_confirmation, {shouldValidate: true})
                 setProfileImage(response.data.foto);
             }
         };

@@ -86,7 +86,8 @@ export default function Dashboard() {
                 Terdapat 5 pengembalian terdekat
               </p>
             </section>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 overflow-y-auto scrollbar-hide"
+                  style={{ maxHeight: '400px' }}>
               {nearest?.map((d, i) => (
                 <SalesCard
                   key={i}
