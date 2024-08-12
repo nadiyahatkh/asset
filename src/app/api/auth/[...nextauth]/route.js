@@ -2,6 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 const authOptions = {
   session: {
     strategy: "jwt",
@@ -19,7 +21,7 @@ const authOptions = {
         const { email, password } = credentials;
 
         try {
-          const res = await fetch('http://45.64.99.242:8850/api/login', {
+          const res = await fetch(`${BASE_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
