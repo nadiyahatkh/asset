@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 const authOptions = {
   session: {

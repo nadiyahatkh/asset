@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchApplicant = async ({token, search = '', start_date, end_date, page, per_page, status}) => {
   try {
