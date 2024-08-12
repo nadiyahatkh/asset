@@ -1,9 +1,10 @@
 import { format } from "date-fns";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export const fetchApplicant = async ({token, search = '', start_date, end_date, page, per_page, status}) => {
   try {
     const statusParams = status.map(s => `status[]=${s}`).join('&');
-      const response = await fetch(`http://45.64.99.242:8850/api/applicant/index?start_date=${start_date}&end_date=${end_date}&search=${search}&page=${page}&per_page=${per_page}&${statusParams}`, {
+      const response = await fetch(`${BASE_URL}/api/applicant/index?start_date=${start_date}&end_date=${end_date}&search=${search}&page=${page}&per_page=${per_page}&${statusParams}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -25,7 +26,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
   export const fetchDetailApplicantUser = async ({ token, id }) => {
     try {
-      const response = await fetch(`http://45.64.99.242:8850/api/applicant/index/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/applicant/index/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -44,7 +45,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
   export const selectRemoveApplicant = async ({ ids, token }) => {
       try {
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/destroy`, {
+        const response = await fetch(`${BASE_URL}/api/applicant/destroy`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -63,7 +64,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
     export const fetchGetAsetApplicant = async ({token, type}) => {
       try {
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/getaset?type=${type}`, {
+        const response = await fetch(`${BASE_URL}/api/applicant/getaset?type=${type}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           }
@@ -96,7 +97,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           });
         }
     
-        const response = await fetch('http://45.64.99.242:8850/api/applicant/create', {
+        const response = await fetch(`${BASE_URL}/api/applicant/create`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -137,7 +138,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
         });
       }
 
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/update/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/applicant/update/${id}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -157,7 +158,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
     export const fetchApplicantUserId = async ({token, id}) => {
       try {
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/detail/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/applicant/detail/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           }
@@ -179,7 +180,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
     export const removeApplicant = async ({ id, token }) => {
     
       try {
-        const response = await fetch(`http://45.64.99.242:8850/api/applicant/delete/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/applicant/delete/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -197,7 +198,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
     export const fetchDashboard = async ({token}) => {
       try {
-          const response = await fetch(`http://45.64.99.242:8850/api/dashboard`, {
+          const response = await fetch(`${BASE_URL}/api/dashboard`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -228,7 +229,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
         }
       
           
-          const response = await fetch(`http://45.64.99.242:8850/api/update`, {
+          const response = await fetch(`${BASE_URL}/api/update`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -249,7 +250,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchProfileAdminId = async ({token}) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/detail`, {
+          const response = await fetch(`${BASE_URL}/api/detail`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -270,7 +271,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchNavbarProfile = async ({token}) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/navbar/`, {
+          const response = await fetch(`${BASE_URL}/api/navbar/`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -293,7 +294,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
         try {
           const statusParams = status.map(s => `status[]=${s}`).join('&');
       
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/index?search=${search}&${statusParams}&start_date=${start_date}&end_date=${end_date}&page=${page}&per_page=${per_page}`, {
+          const response = await fetch(`${BASE_URL}/api/aset/index?search=${search}&${statusParams}&start_date=${start_date}&end_date=${end_date}&page=${page}&per_page=${per_page}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -317,7 +318,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchAssetDataId = async ({token, id}) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/detail/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/aset/detail/${id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -338,7 +339,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchCategory = async ({token}) => {
         try {
-          const response = await fetch('http://45.64.99.242:8850/api/category/index', {
+          const response = await fetch(`${BASE_URL}/api/category/index`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -375,7 +376,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
             });
           }
       
-          const response = await fetch('http://45.64.99.242:8850/api/aset/create', {
+          const response = await fetch(`${BASE_URL}/api/aset/create`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -420,7 +421,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
               formData.append('delete_images[]', file);
             });
           }
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/update/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/aset/update/${id}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -441,7 +442,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const removeAssetData = async ({ id, token }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/delete/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/aset/delete/${id}`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -458,7 +459,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const selectRemoveAsset = async ({ ids, token }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/aset/destroy`, {
+          const response = await fetch(`${BASE_URL}/api/aset/destroy`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -481,7 +482,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
         const statusParams = status.map(s => `status[]=${s}`).join('&');
         const typeParams = type.map(t => `type[]=${t}`).join('&');
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index?search=${search}&start_date=${start_date}&end_date=${end_date}&page=${page}&per_page=${per_page}&${statusParams}&${typeParams}`, {
+          const response = await fetch(`${BASE_URL}/api/data/applicant/index?search=${search}&start_date=${start_date}&end_date=${end_date}&page=${page}&per_page=${per_page}&${statusParams}&${typeParams}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -503,7 +504,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchApplicantDetail = async ({ token, id }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/index/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/data/applicant/index/${id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -521,7 +522,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       };
       
     export const acceptApplicant = async ({id, token}) => {
-        const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/accepted/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/data/applicant/accepted/${id}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -536,7 +537,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       };
 
       export const denyApplicant = async ({id, token}) => {
-        const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/denied/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/data/applicant/denied/${id}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -552,7 +553,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const selectRemoveSubmission = async ({ ids, token }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/data/applicant/destroy`, {
+          const response = await fetch(`${BASE_URL}/api/data/applicant/destroy`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -572,7 +573,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchEmployee = async ({token, search, page, per_page}) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/employee/index?page=${page}&per_page=${per_page}&search=${search}`, {
+          const response = await fetch(`${BASE_URL}/api/employee/index?page=${page}&per_page=${per_page}&search=${search}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -596,7 +597,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
       export const removeEmployee = async ({ id, token }) => {
         
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/employee/delete/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/employee/delete/${id}`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -614,7 +615,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const selectRemoveEmployee = async ({ ids, token }) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/employee/destroy`, {
+          const response = await fetch(`${BASE_URL}/api/employee/destroy`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -643,7 +644,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           formData.append('position_id', data.position_id);
 
       
-          const response = await fetch('http://45.64.99.242:8850/api/employee/create', {
+          const response = await fetch('${BASE_URL}/api/employee/create', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -676,7 +677,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           if (data.position_id !== originalData.position_id) formData.append('position_id', data.position_id);
 
       
-          const response = await fetch(`http://45.64.99.242:8850/api/employee/update/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/employee/update/${id}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -699,7 +700,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchDepartement = async ({token}) => {
         try {
-          const response = await fetch('http://45.64.99.242:8850/api/department/index', {
+          const response = await fetch(`${BASE_URL}/api/department/index`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -720,7 +721,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchPosition = async ({token}) => {
         try {
-          const response = await fetch('http://45.64.99.242:8850/api/position/index', {
+          const response = await fetch(`${BASE_URL}/api/position/index`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
@@ -741,7 +742,7 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
 
       export const fetchEmployeeDataId = async ({token, id}) => {
         try {
-          const response = await fetch(`http://45.64.99.242:8850/api/employee/detail/${id}`, {
+          const response = await fetch(`${BASE_URL}/api/employee/detail/${id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             }
