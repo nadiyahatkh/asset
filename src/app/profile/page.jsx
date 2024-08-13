@@ -47,19 +47,35 @@ export default function ProfilAdmin() {
 
 
     const onSubmit = async (data) => {
-        setIsLoading(true)
+        setIsLoading(true);
         try {
-            const result = await updateProfile({ data: { ...data, foto: data.foto ? data.foto[0] : null }, token });
-            setOpenSuccess(true)
+            // Buat salinan data dan hapus password/password_confirmation jika tidak diisi
+            const filteredData = { ...data };
+    
+            if (!data.password) {
+                delete filteredData.password;
+            }
+    
+            if (!data.password_confirmation) {
+                delete filteredData.password_confirmation;
+            }
+    
+            filteredData.foto = data.foto ? data.foto[0] : null;
+
+            console.log('Filtered Data:', filteredData);
+    
+            const result = await updateProfile({ data: filteredData, token });
+            setOpenSuccess(true);
         } catch (error) {
-            const message = JSON.parse(error.message)
+            const message = JSON.parse(error.message);
             setErrorMessages(Object.values(message.error).flat());
-            setOpenError(true)
+            setOpenError(true);
             console.error('Error updating profile:', error);
         } finally {
             setIsLoading(false);
-          }
+        }
     };
+    
 
 
     useEffect(() => {

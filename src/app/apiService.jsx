@@ -222,8 +222,15 @@ export const fetchApplicant = async ({token, search = '', start_date, end_date, 
           const formData = new FormData();
           formData.append('username', data.username);
           formData.append('email', data.email);
-          formData.append('password', data.password);
-          formData.append('password_confirmation', data.password_confirmation);
+          // Hanya tambahkan password jika ada nilainya
+          if (data.password) {
+              formData.append('password', data.password);
+          }
+
+          // Hanya tambahkan password_confirmation jika ada nilainya
+          if (data.password_confirmation) {
+              formData.append('password_confirmation', data.password_confirmation);
+          }
           if (data.foto) {
             formData.append('foto', data.foto);
         }
